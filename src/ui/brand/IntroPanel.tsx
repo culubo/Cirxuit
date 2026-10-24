@@ -27,6 +27,7 @@ export default function IntroPanel(): React.ReactElement | null {
   const open = useIntro((s) => s.open);
   const setOpen = useIntro((s) => s.setOpen);
   const setBoardId = useStore((s) => s.setBoardId);
+  const setMode = useStore((s) => s.setMode);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { void loadSilkFont(); }, []);
@@ -119,7 +120,7 @@ export default function IntroPanel(): React.ReactElement | null {
               <button
                 key={s.board}
                 data-testid={`intro-start-${s.board}`}
-                onClick={() => { setBoardId(s.board); setOpen(false); }}
+                onClick={() => { setBoardId(s.board); setMode("simulate"); setOpen(false); }}
                 style={{
                   ...font,
                   display: "flex",

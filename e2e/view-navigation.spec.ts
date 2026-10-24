@@ -17,4 +17,10 @@ test("returning from Build PCB restores the selected board and closes layer shee
   await expect(page.getByTestId("layer-sheets")).toHaveCount(0);
   await page.getByTestId("schematic-toggle").click();
   await expect(page.getByTestId("layer-schematic")).toHaveAttribute("data-visible", "true");
+
+  await page.getByTestId("mode-build").click();
+  await page.getByTestId("intro-open").click();
+  await page.getByTestId("intro-start-demo-board").click();
+  await expect(page.getByTestId("mode-simulate")).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByTestId("board-switcher")).toHaveValue("demo-board");
 });
