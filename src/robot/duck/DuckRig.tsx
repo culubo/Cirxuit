@@ -45,6 +45,8 @@ function boardBounds(board: Board): { cx: number; cy: number; w: number; h: numb
 interface DuckScene {
   bodies: THREE.Group[];
   trunk: number;
+  /** The official HAT placeholder mesh in the Microduck CAD assembly. */
+  hatMesh: THREE.Mesh | null;
   /** Top-centre of the trunk shell, in the trunk body's frame (m). */
   seat: THREE.Vector3;
   /** Neck joint position in the trunk body's frame (m). */
@@ -56,7 +58,7 @@ interface DuckScene {
 }
 
 /** Build three.js meshes for every visual geom, grouped per MuJoCo body. */
-function buildScene(sim: DuckSim): DuckScene {
+function buildScene(sim: DuckSim, showReferenceHat: boolean): DuckScene {
   const { model, mj } = sim;
   const name = (adr: number): string => {
     const n = model.names as Int8Array;
@@ -116,10 +118,23 @@ function buildScene(sim: DuckSim): DuckScene {
   const trunk = mj.mj_name2id(model, mj.mjtObj.mjOBJ_BODY.value, "trunk_base");
   const neck = mj.mj_name2id(model, mj.mjtObj.mjOBJ_BODY.value, "neck");
   const trunkBox = new THREE.Box3();
+  let hatMesh: THREE.Mesh | null = null;
   for (let g = 0; g < model.ngeom; g++) {
     if (model.geom_group[g] !== 2 || model.geom_type[g] !== MESH) continue;
     const body = model.geom_bodyid[g] as number;
-    const mesh = new THREE.Mesh(meshGeometry(model.geom_dataid[g] as number), material(model.geom_matid[g] as number, g));
+    const meshId = model.geom_dataid[g] as number;
+    const meshName = name(model.name_meshadr[meshId] as number);
+    const mesh = new THREE.Mesh(meshGeometry(meshId), material(model.geom_matid[g] as number, g));
+    if (showReferenceHat && meshName === "elec_rpi_robot_hat_pcb") {
+      hatMesh = mesh;
+      mesh.visible = false; // The selectable KiCad board takes this mesh's place.
+    }
+    if (showReferenceHat && /^(top_head_shell|bottom_head_shell|face_part)$/.test(meshName)) {
+      const shell = mesh.material as THREE.MeshStandardMaterial;
+      shell.transparent = true;
+      shell.opacity = 0.12;
+      shell.depthWrite = false;
+    }
     const p = model.geom_pos as Float64Array, q = model.geom_quat as Float64Array;
     mesh.position.set(p[g * 3]!, p[g * 3 + 1]!, p[g * 3 + 2]!);
     mesh.quaternion.set(q[g * 4 + 1]!, q[g * 4 + 2]!, q[g * 4 + 3]!, q[g * 4]!);
@@ -137,6 +152,7 @@ function buildScene(sim: DuckSim): DuckScene {
   return {
     bodies,
     trunk,
+    hatMesh,
     seat: new THREE.Vector3(center.x, center.y, trunkBox.max.z),
     neckX: model.body_pos[neck * 3] as number,
     trunkLen: size.x,
@@ -167,7 +183,8 @@ export default function DuckRig({ board, active, boardGroup }: {
     return () => { cancelled = true; created?.dispose(); setReady(false); };
   }, [setReady]);
 
-  const scene = useMemo(() => (sim ? buildScene(sim) : null), [sim]);
+  const referenceHat = board.id === "microduck-hat-board";
+  const scene = useMemo(() => (sim ? buildScene(sim, referenceHat) : null), [sim, referenceHat]);
   useEffect(() => () => scene?.dispose(), [scene]);
   useEffect(() => { if (scene) setReady(true); }, [scene, setReady]);
 
@@ -247,7 +264,8 @@ export default function DuckRig({ board, active, boardGroup }: {
     const powered = f.phase !== "collapse";
     for (const m of scene.eyes) m.emissiveIntensity += ((powered ? 1.6 : 0) - m.emissiveIntensity) * Math.min(1, dt * 6);
 
-    // The board rides on the duck's back, flat, long side forward.
+    // The reference HAT occupies the actual HAT mesh in the official CAD.
+    // Other robot lessons still use a visible back-mounted cutaway board.
     const trunk = scene.bodies[scene.trunk]!;
     tmp.trunkPos.copy(trunk.position);
     tmp.trunkQ.copy(trunk.quaternion);
@@ -260,7 +278,19 @@ export default function DuckRig({ board, active, boardGroup }: {
     const seatX = Math.min(scene.seat.x * MM, scene.neckX * MM - 12 - bounds.w * s / 2);
     tmp.seat.copy(scene.seat).multiplyScalar(MM).setX(seatX).addScaledVector(new THREE.Vector3(0, 0, 1), lift)
       .applyQuaternion(tmp.trunkQ).add(tmp.trunkPos);
-    if (g) {
+    if (g && referenceHat && scene.hatMesh) {
+      const hat = scene.hatMesh;
+      hat.updateWorldMatrix(true, false);
+      const box = hat.geometry.boundingBox ?? (hat.geometry.computeBoundingBox(), hat.geometry.boundingBox!);
+      const hatCenter = box.getCenter(tmp.seat).setZ(box.max.z + 0.0005);
+      hat.localToWorld(hatCenter);
+      const hatRotation = hat.getWorldQuaternion(tmp.q);
+      const boardCenter = tmp.c.set(bounds.cx, bounds.cy, 0);
+      const R = g.quaternion.slerpQuaternions(IDENTITY, hatRotation, e);
+      tmp.at.lerpVectors(boardCenter, hatCenter, e);
+      g.scale.setScalar(1);
+      g.position.copy(tmp.at).sub(boardCenter.clone().applyQuaternion(R));
+    } else if (g) {
       const se = 1 + (s - 1) * e;
       tmp.c.set(bounds.cx, bounds.cy, 0);
       const R = g.quaternion.slerpQuaternions(IDENTITY, tmp.trunkQ, e);

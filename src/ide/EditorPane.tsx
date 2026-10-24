@@ -46,6 +46,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
   const codeErrors = problems.codeErrors;
   const codeWarnings = problems.code.filter((p) => p.severity === "warning").length;
   const fileName = boardId ? `${boardId}.sketch.js` : "sketch.js";
+  const reference = board?.simulation === "reference";
 
   return (
     <section
@@ -56,19 +57,19 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
       <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.5rem", borderBottom: `1px solid ${tokens.hairline}`, flexWrap: "wrap" }}>
         <button
           data-testid="run-button"
-          title="Build and run the sketch (⌘/Ctrl + Enter)"
+          title={reference ? "This sourced layout has no runnable circuit model" : "Build and run the sketch (⌘/Ctrl + Enter)"}
           onClick={() => void runner.run()}
-          disabled={!board || running}
-          style={button({ primary: true, disabled: !board || running })}
+          disabled={!board || running || reference}
+          style={button({ primary: true, disabled: !board || running || reference })}
         >
           {running ? "Running…" : <><MediaIcon kind="play" /> Run</>}
         </button>
         <button
           data-testid="step-button"
-          title="Run one pin call at a time (F10)"
+          title={reference ? "This sourced layout has no runnable circuit model" : "Run one pin call at a time (F10)"}
           onClick={() => void runner.step()}
-          disabled={!board || running}
-          style={button({ disabled: !board || running })}
+          disabled={!board || running || reference}
+          style={button({ disabled: !board || running || reference })}
         >
           <MediaIcon kind="step" /> Step
         </button>

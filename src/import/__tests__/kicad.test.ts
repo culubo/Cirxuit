@@ -65,4 +65,15 @@ describe("KiCad S-expression parser", () => {
     expect(arc.outline.length).toBeGreaterThan(5);
     expect(arc.outline.some((p) => Math.abs(p.x - 5) < 1e-6 && Math.abs(p.y + 5) < 1e-6)).toBe(true);
   });
+
+  it("keeps rotated bottom-side pads in KiCad board coordinates", () => {
+    const board = parseKiCadPcb(`(kicad_pcb
+      (layers (0 "F.Cu" signal) (31 "B.Cu" signal))
+      (net 1 "GND")
+      (footprint "Test:bottom" (layer "B.Cu") (at 100 50 -90)
+        (property "Reference" "J1") (property "Value" "Header")
+        (pad "1" thru_hole circle (at 23 29) (size 2 2) (drill 1) (layers "*.Cu") (net 1 "GND"))))`);
+    expect(board.parts[0]?.pads[0]?.position).toEqual({ x: 71, y: 73 });
+    expect(board.parts[0]?.pads[0]?.drillMm).toBe(1);
+  });
 });

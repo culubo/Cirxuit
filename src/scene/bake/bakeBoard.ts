@@ -51,6 +51,8 @@ export interface BakedSurfaces {
 
 export interface BakedLayers {
   copperTop: HTMLCanvasElement;
+  copperIn1: HTMLCanvasElement | undefined;
+  copperIn2: HTMLCanvasElement | undefined;
   copperBottom: HTMLCanvasElement;
   mask: HTMLCanvasElement;
   silk: HTMLCanvasElement;
@@ -156,6 +158,18 @@ function drawTracks(
     ctx.moveTo(t.start.x, t.start.y);
     ctx.lineTo(t.end.x, t.end.y);
     ctx.stroke();
+  }
+}
+
+function drawZones(ctx: Ctx, board: Board, layer: CopperLayer, style: string | ((netId: string) => string)): void {
+  for (const zone of board.zones ?? []) {
+    if (zone.layer !== layer || zone.points.length < 3) continue;
+    ctx.fillStyle = typeof style === "function" ? style(zone.netId) : style;
+    ctx.beginPath();
+    ctx.moveTo(zone.points[0]!.x, zone.points[0]!.y);
+    for (const point of zone.points.slice(1)) ctx.lineTo(point.x, point.y);
+    ctx.closePath();
+    ctx.fill();
   }
 }
 
@@ -378,13 +392,15 @@ function silkFilm(board: Board, frame: BoardFrame, lands: Land[], holes: Mountin
     ctx.fillText(part.ref, cx, y);
   });
 
-  // Board name along the bottom edge.
-  setFont(ctx, 1.2);
-  ctx.textAlign = "left";
-  ctx.textBaseline = "alphabetic";
-  const baseline = frame.minY + frame.heightMm - 1.3;
-  const nameX = frame.minX + (holes.some((h) => h.position.x < frame.minX + 6 && h.position.y > frame.minY + frame.heightMm - 6) ? 6 : 1.6);
-  ctx.fillText(board.name, nameX, baseline);
+  // An imported fabrication layout should not acquire a made-up silkscreen name.
+  if (board.simulation !== "reference") {
+    setFont(ctx, 1.2);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const baseline = frame.minY + frame.heightMm - 1.3;
+    const nameX = frame.minX + (holes.some((h) => h.position.x < frame.minX + 6 && h.position.y > frame.minY + frame.heightMm - 6) ? 6 : 1.6);
+    ctx.fillText(board.name, nameX, baseline);
+  }
 
   // Silk never prints on a mask opening.
   ctx.globalCompositeOperation = "destination-out";
@@ -430,6 +446,7 @@ function paintSurface(
   if (pass === "color") weave(ctx, frame, "#000", 0.022);
 
   // Copper under the mask: traces, land shoulders, via annuli.
+  drawZones(ctx, board, layer, s.maskCopper);
   drawTracks(ctx, board, layer, s.maskCopper);
   for (const { pad, square } of lands) {
     if (!pad.layers.includes(layer)) continue;
@@ -532,6 +549,7 @@ export function bakeSurfaces(board: Board): BakedSurfaces | null {
 function copperSheet(board: Board, frame: BoardFrame, layer: CopperLayer, lands: Land[]): HTMLCanvasElement {
   const canvas = makeCanvas(frame);
   const ctx = mmContext(canvas, frame);
+  drawZones(ctx, board, layer, (netId) => netColor(board, netId));
   drawTracks(ctx, board, layer, (netId) => netColor(board, netId));
   for (const { pad, square } of lands) {
     if (!pad.layers.includes(layer)) continue;
@@ -581,6 +599,8 @@ export function bakeLayers(board: Board): BakedLayers | null {
 
   return {
     copperTop: copperSheet(board, frame, "F.Cu", lands),
+    copperIn1: board.copperLayers.includes("In1.Cu") ? copperSheet(board, frame, "In1.Cu", lands) : undefined,
+    copperIn2: board.copperLayers.includes("In2.Cu") ? copperSheet(board, frame, "In2.Cu", lands) : undefined,
     copperBottom: copperSheet(board, frame, "B.Cu", lands),
     mask,
     silk: silkFilm(board, frame, lands, holes),

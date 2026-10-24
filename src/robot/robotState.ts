@@ -12,7 +12,7 @@ import type { Board, SimResult } from "../model/board-model";
 export type RobotState = "walking" | "limping" | "brownout";
 
 /** Boards that are the power system of a walking robot. */
-export const ROBOT_BOARD_IDS: ReadonlySet<string> = new Set(["biped-power-board"]);
+export const ROBOT_BOARD_IDS: ReadonlySet<string> = new Set(["biped-power-board", "microduck-hat-board"]);
 
 export function isRobotBoard(board: Board | null | undefined): boolean {
   return Boolean(board && ROBOT_BOARD_IDS.has(board.id));

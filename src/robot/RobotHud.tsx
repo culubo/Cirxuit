@@ -29,7 +29,17 @@ export default function RobotHud(): React.ReactElement | null {
   const ready = useRobotStore((s) => s.ready);
   const phase = useRobotStore((s) => s.phase);
   const reading = useMemo(() => readRobot(board, simResult), [board, simResult]);
-  if (!robotView || !isRobotBoard(board) || !reading) return null;
+  if (!robotView || !isRobotBoard(board)) return null;
+
+  if (board?.simulation === "reference") return (
+    <div data-testid="robot-hardware-reference" role="status" style={{
+      position: "absolute", top: "0.75rem", left: "50%", transform: "translateX(-50%)", zIndex: 10,
+      fontFamily: tokens.fontMono, fontSize: "0.75rem", color: tokens.text,
+      background: tokens.panel, border: `1px solid ${tokens.panelBorder}`, borderRadius: "4px",
+      padding: "0.35rem 0.8rem", whiteSpace: "nowrap", pointerEvents: "none",
+    }}>Microduck reference hardware · HAT in head · RK3566 on companion board</div>
+  );
+  if (!reading) return null;
 
   const { state, rail, stalled } = reading;
   return (

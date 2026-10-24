@@ -47,6 +47,11 @@ function segmentDistance(p: Vec2, a: Vec2, b: Vec2): number {
  * hole would collide with copper or a part. Non-rectangular outlines get none.
  */
 export function mountingHoles(board: Board): MountingHole[] {
+  const explicit = board.parts.flatMap((part) => part.pads
+    .filter((pad) => (pad.layers.length === 0 || pad.number === "MP") && pad.drillMm && pad.drillMm > 0)
+    .map((pad) => ({ position: pad.position, drillMm: pad.drillMm! })));
+  if (explicit.length) return explicit.filter((hole, index) => explicit.findIndex((other) =>
+    Math.hypot(other.position.x - hole.position.x, other.position.y - hole.position.y) < 0.01) === index);
   if (board.outline.length !== 4) return [];
   const b = outlineBounds(board.outline);
   if (b.width < 20 || b.height < 20) return [];

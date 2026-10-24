@@ -69,7 +69,7 @@ function BoardLoader(): null {
     void entry.load().then((board) => {
       if (cancelled) return;
       setBoard(board);
-      setSimResult(solve(board, { modes: {}, outputs: {} }));
+      setSimResult(board.simulation === "reference" ? null : solve(board, { modes: {}, outputs: {} }));
     });
     return () => { cancelled = true; };
   }, [boardId, setBoard, setSimResult, resetRuntimeState]);

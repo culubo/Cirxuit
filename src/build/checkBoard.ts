@@ -30,6 +30,11 @@ export function checkBoard(board: Board, options: CheckBoardOptions = {}): Probl
     problems.push({ id: `board-${seq++}`, source: "board", ...p });
   };
 
+  if (board.simulation === "reference") {
+    add({ severity: "info", message: "Official PCB layout reference. Voltages and motor behavior need a circuit model and are not simulated here." });
+    return problems;
+  }
+
   if (board.parts.length === 0) {
     add({ severity: "info", message: "This board is empty. Open Build PCB to place parts." });
     return problems;

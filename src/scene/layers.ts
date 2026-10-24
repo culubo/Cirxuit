@@ -10,7 +10,9 @@ export const EXPLODE_MM = {
   silk: 8.5,
   mask: 5.75,
   copperTop: 3,
+  copperIn1: 1.5,
   core: 0,
+  copperIn2: -1.5,
   copperBottom: -3,
   bottomSurface: -5.75,
 } as const;
@@ -37,5 +39,7 @@ export function labelMix(explode: number): number {
 /** z of a copper layer's top face at a given explode value. */
 export function copperZ(layer: string, explode: number, thicknessMm: number): number {
   if (layer === "B.Cu") return -thicknessMm + EXPLODE_MM.copperBottom * explode;
+  if (layer === "In1.Cu") return -thicknessMm / 3 + EXPLODE_MM.copperIn1 * explode;
+  if (layer === "In2.Cu") return -thicknessMm * 2 / 3 + EXPLODE_MM.copperIn2 * explode;
   return EXPLODE_MM.copperTop * explode;
 }

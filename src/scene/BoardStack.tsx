@@ -55,7 +55,9 @@ const LAYER_LABELS: { key: keyof typeof EXPLODE_MM; text: string; detail: string
   { key: "silk", text: "Silkscreen", detail: "epoxy ink" },
   { key: "mask", text: "Solder mask", detail: "LPI, ENIG openings" },
   { key: "copperTop", text: "F.Cu", detail: "35 µm copper" },
+  { key: "copperIn1", text: "In1.Cu", detail: "internal copper" },
   { key: "core", text: "FR-4 core", detail: "" },
+  { key: "copperIn2", text: "In2.Cu", detail: "internal copper" },
   { key: "copperBottom", text: "B.Cu", detail: "35 µm copper" },
   { key: "bottomSurface", text: "Bottom side", detail: "mask + pads" },
 ];
@@ -120,6 +122,8 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
       silk: new THREE.MeshStandardMaterial({ map: texture(films.silk, true), transparent: true, alphaTest: 0.3, roughness: 0.85, depthWrite: false }),
       mask: new THREE.MeshStandardMaterial({ map: texture(films.mask, true), transparent: true, roughness: 0.3, depthWrite: false, side: THREE.DoubleSide }),
       copperTop: new THREE.MeshStandardMaterial({ map: texture(films.copperTop, true), transparent: true, alphaTest: 0.4, metalness: 0.9, roughness: 0.32, side: THREE.DoubleSide }),
+      copperIn1: films.copperIn1 ? new THREE.MeshStandardMaterial({ map: texture(films.copperIn1, true), transparent: true, alphaTest: 0.4, metalness: 0.9, roughness: 0.32, side: THREE.DoubleSide }) : null,
+      copperIn2: films.copperIn2 ? new THREE.MeshStandardMaterial({ map: texture(films.copperIn2, true), transparent: true, alphaTest: 0.4, metalness: 0.9, roughness: 0.32, side: THREE.DoubleSide }) : null,
       copperBottom: new THREE.MeshStandardMaterial({ map: texture(films.copperBottom, true), transparent: true, alphaTest: 0.4, metalness: 0.9, roughness: 0.32, side: THREE.DoubleSide }),
       core: new THREE.MeshStandardMaterial({ map: texture(films.core, true), transparent: true, roughness: 0.8, side: THREE.DoubleSide }),
     };
@@ -139,7 +143,7 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
   }, [materials]);
   useEffect(() => () => {
     if (!filmMaterials) return;
-    for (const m of Object.values(filmMaterials)) { m.map?.dispose(); m.dispose(); }
+    for (const m of Object.values(filmMaterials)) { if (m) { m.map?.dispose(); m.dispose(); } }
   }, [filmMaterials]);
 
   const topFace = useRef<THREE.Mesh>(null);
@@ -148,6 +152,8 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
     silk: useRef<THREE.Mesh>(null),
     mask: useRef<THREE.Mesh>(null),
     copperTop: useRef<THREE.Mesh>(null),
+    copperIn1: useRef<THREE.Mesh>(null),
+    copperIn2: useRef<THREE.Mesh>(null),
     copperBottom: useRef<THREE.Mesh>(null),
     coreTop: useRef<THREE.Mesh>(null),
     coreBottom: useRef<THREE.Mesh>(null),
@@ -172,6 +178,8 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
     place(filmRefs.silk.current, 0.02 + EXPLODE_MM.silk * f, filmMaterials?.silk);
     place(filmRefs.mask.current, 0.01 + EXPLODE_MM.mask * f, filmMaterials?.mask, 0.62);
     place(filmRefs.copperTop.current, 0.005 + EXPLODE_MM.copperTop * f, filmMaterials?.copperTop);
+    place(filmRefs.copperIn1.current, -board.thicknessMm / 3 + EXPLODE_MM.copperIn1 * f, filmMaterials?.copperIn1 ?? undefined);
+    place(filmRefs.copperIn2.current, -board.thicknessMm * 2 / 3 + EXPLODE_MM.copperIn2 * f, filmMaterials?.copperIn2 ?? undefined);
     place(filmRefs.coreTop.current, 0.001, filmMaterials?.core);
     place(filmRefs.coreBottom.current, -board.thicknessMm - 0.001, filmMaterials?.core);
     place(filmRefs.copperBottom.current, -board.thicknessMm - 0.005 + EXPLODE_MM.copperBottom * f, filmMaterials?.copperBottom);
@@ -209,6 +217,8 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
           <mesh ref={filmRefs.silk} geometry={geometry.face} material={filmMaterials.silk} visible={false} />
           <mesh ref={filmRefs.mask} geometry={geometry.face} material={filmMaterials.mask} visible={false} />
           <mesh ref={filmRefs.copperTop} geometry={geometry.face} material={filmMaterials.copperTop} visible={false} />
+          {filmMaterials.copperIn1 && <mesh ref={filmRefs.copperIn1} geometry={geometry.face} material={filmMaterials.copperIn1} visible={false} />}
+          {filmMaterials.copperIn2 && <mesh ref={filmRefs.copperIn2} geometry={geometry.face} material={filmMaterials.copperIn2} visible={false} />}
           <mesh ref={filmRefs.coreTop} geometry={geometry.face} material={filmMaterials.core} visible={false} />
           <mesh ref={filmRefs.coreBottom} geometry={geometry.face} material={filmMaterials.core} visible={false} />
           <mesh ref={filmRefs.copperBottom} geometry={geometry.face} material={filmMaterials.copperBottom} visible={false} />
@@ -216,8 +226,10 @@ export default function BoardStack({ board }: BoardStackProps): React.ReactEleme
       )}
 
       {/* Layer names, shown once the stack is apart */}
-      {LAYER_LABELS.map((label, i) => {
+      {LAYER_LABELS.filter((label) => label.key !== "copperIn1" && label.key !== "copperIn2" || board.copperLayers.includes(label.key === "copperIn1" ? "In1.Cu" : "In2.Cu")).map((label, i) => {
         const z = label.key === "core" ? -th / 2
+          : label.key === "copperIn1" ? -th / 3 + EXPLODE_MM.copperIn1
+          : label.key === "copperIn2" ? -th * 2 / 3 + EXPLODE_MM.copperIn2
           : label.key === "copperBottom" || label.key === "bottomSurface" ? -th + EXPLODE_MM[label.key]
           : EXPLODE_MM[label.key];
         return (

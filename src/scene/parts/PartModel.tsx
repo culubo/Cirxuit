@@ -71,7 +71,7 @@ function frameOf(part: Part, family: PackageFamily): { origin: THREE.Vector2; an
 
 function localPads(part: Part, origin: THREE.Vector2, angle: number): LocalPad[] {
   const cos = Math.cos(-angle), sin = Math.sin(-angle);
-  return part.pads.map((pad) => {
+  return part.pads.filter((pad) => pad.layers.length > 0 && pad.number !== "" && pad.number !== "MP").map((pad) => {
     const dx = pad.position.x - origin.x, dy = -pad.position.y - origin.y;
     // Board-aligned pad size projected onto the local axes.
     const w = Math.abs(cos) * pad.sizeMm.w + Math.abs(sin) * pad.sizeMm.h;
@@ -171,7 +171,7 @@ export default function PartModel({ part, dimmed, thicknessMm }: PartModelProps)
       }}
     >
       <group ref={placed}>
-        <Family part={part} pads={pads} kit={kit} thicknessMm={thicknessMm} glow={glow} />
+        {part.fitted !== false && <Family part={part} pads={pads} kit={kit} thicknessMm={thicknessMm} glow={glow} />}
       </group>
       {(selected || hovered) && (
         <Line

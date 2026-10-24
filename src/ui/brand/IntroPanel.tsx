@@ -15,6 +15,7 @@ const STARTS: { board: string; title: string; detail: string }[] = [
   { board: "demo-board", title: "Light an LED", detail: "Run firmware that switches a transistor and watch the current reach the LED." },
   { board: "robot-controller-board", title: "Watch a board get built", detail: "A pick-and-place head assembles a 40-part robot controller, then it powers on." },
   { board: "biped-power-board", title: "Brown out a robot", detail: "Stall a walking robot's servos and see the battery rail collapse." },
+  { board: "microduck-hat-board", title: "Inspect Microduck's HAT", detail: "Open the documented four-layer Robot HAT and see where it sits in Microduck's head." },
 ];
 
 const WHY: string[] = [

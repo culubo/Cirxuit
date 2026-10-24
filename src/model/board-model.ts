@@ -11,6 +11,8 @@ export type Side = "top" | "bottom";
 export interface Board {
   id: string;
   name: string;
+  /** A sourced PCB layout whose active electronics are outside the DC solver. */
+  simulation?: "reference";
   outline: Vec2[];            // closed polygon from Edge.Cuts
   thicknessMm: number;        // usually 1.6
   copperLayers: CopperLayer[];
@@ -18,6 +20,8 @@ export interface Board {
   nets: Net[];
   tracks: Track[];
   vias: Via[];
+  /** KiCad filled copper polygons, including internal plane layers. */
+  zones?: Zone[];
   blocks: FunctionBlock[];    // the "function layer" floating above the board
   groundNetId: string;        // reference node for the solver
   railLimits?: { netId: string; minVolts: number; message: string }[];
@@ -51,6 +55,8 @@ export interface Part {
   position: Vec2;
   rotationDeg: number;
   side: Side;
+  /** False for a KiCad footprint that is present on copper but not assembled. */
+  fitted?: boolean;
   body: { w: number; h: number; height: number }; // mm, used for box rendering
   pads: Pad[];
   model?: ElectricalModel;    // absent means the solver ignores the part
@@ -63,6 +69,8 @@ export interface Pad {
   position: Vec2;             // board space, already rotated
   sizeMm: { w: number; h: number };
   layers: CopperLayer[];
+  /** KiCad drill diameter, including unplated mechanical holes. */
+  drillMm?: number;
 }
 
 export interface Net {
@@ -84,6 +92,12 @@ export interface Via {
   position: Vec2;
   drillMm: number;
   diameterMm: number;
+}
+
+export interface Zone {
+  netId: string;
+  layer: CopperLayer;
+  points: Vec2[];
 }
 
 export interface FunctionBlock {

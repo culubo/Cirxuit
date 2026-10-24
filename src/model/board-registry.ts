@@ -24,6 +24,11 @@ export const BOARD_REGISTRY: BoardEntry[] = [
     load: async () => (await import("./biped-power-board.json")).default as Board,
   },
   {
+    id: "microduck-hat-board",
+    label: "Microduck Robot HAT (reference)",
+    load: async () => (await import("./microduck-hat-board.json")).default as Board,
+  },
+  {
     id: "robot-controller-board",
     label: "Robot controller (assembly demo)",
     load: async () => (await import("./robot-controller-board.json")).default as Board,

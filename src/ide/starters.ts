@@ -54,6 +54,7 @@ export function starterSketch(boardId: string | null): string {
   switch (boardId) {
     case "demo-board": return DEMO_SKETCH;
     case "biped-power-board": return BIPED_SKETCH;
+    case "microduck-hat-board": return "// Microduck reference hardware: Pollen Robotics Robot HAT D1.\n// The RK3566 is on a separate Radxa Zero 3W, connected through J4.\n// This is sourced PCB geometry; its active power and motor circuits are not simulated.\n";
     case "robot-controller-board": return ROBOT_SKETCH;
     case CUSTOM_BOARD_ID: return BLINK_SKETCH;
     default: return "// Write your sketch here, then press Run.\n";

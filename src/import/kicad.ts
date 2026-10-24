@@ -1,4 +1,4 @@
-import type { Board, CopperLayer, Net, Pad, Part, Track, Vec2, Via } from "../model/board-model";
+import type { Board, CopperLayer, Net, Pad, Part, Track, Vec2, Via, Zone } from "../model/board-model";
 
 type SExpr = string | SExpr[];
 type List = SExpr[];
@@ -183,9 +183,12 @@ export function parseKiCadPcb(source: string, name = "Imported KiCad board"): Bo
         .flatMap((layer): CopperLayer[] => layer === "*.Cu" ? [...usedLayers] : isCopperLayer(layer) ? [layer] : []);
       const pad: Pad = {
         number: atom(entry, 1), netId,
-        position: rotate(local, origin, side === "bottom" ? -rotationDeg : rotationDeg),
+        // KiCad has already mirrored the footprint's local coordinates on B.Cu;
+        // its stored angle is still the board-space rotation.
+        position: rotate(local, origin, rotationDeg),
         sizeMm: { w: number(child(entry, "size"), 1), h: number(child(entry, "size"), 2) },
         layers: [...new Set(layers)],
+        drillMm: child(entry, "drill") ? number(child(entry, "drill"), 1) : undefined,
       };
       if (netId !== null) netMap.get(netId)!.pads.push({ ref, pad: pad.number });
       for (const layer of pad.layers) usedLayers.add(layer);
@@ -218,12 +221,21 @@ export function parseKiCadPcb(source: string, name = "Imported KiCad board"): Bo
     drillMm: number(child(via, "drill"), 1),
     diameterMm: number(child(via, "size"), 1),
   }));
+  const zones: Zone[] = children(root, "zone").flatMap((zone) => {
+    const netId = ensureNet(atom(child(zone, "net"), 1));
+    if (!netId) return [];
+    return children(zone, "filled_polygon").flatMap((fill): Zone[] => {
+      const layer = atom(child(fill, "layer"), 1);
+      const points = children(child(fill, "pts") ?? [], "xy").map(point);
+      return isCopperLayer(layer) && points.length >= 3 ? [{ netId, layer, points }] : [];
+    });
+  });
   const ground = [...netMap.values()].find((net) => /^(GND|GROUND|0|\/GND)$/i.test(net.name));
   const groundNetId = ground?.id ?? [...netMap.keys()][0] ?? "0";
   return {
     id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
     name, outline: edgePaths(root), thicknessMm: number(child(child(root, "general") ?? [], "thickness") ?? child(child(root, "setup") ?? [], "thickness"), 1, 1.6),
-    copperLayers: [...usedLayers], parts, nets: [...netMap.values()], tracks, vias, blocks: [], groundNetId,
+    copperLayers: [...usedLayers], parts, nets: [...netMap.values()], tracks, vias, zones, blocks: [], groundNetId,
   };
 }
 

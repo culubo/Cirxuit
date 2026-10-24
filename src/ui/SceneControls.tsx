@@ -55,6 +55,7 @@ export default function SceneControls(): React.ReactElement {
   const setSchematicOpacity = useStore((s) => s.setSchematicOpacity);
   const schematicVisible = showSchematic && explode > 0.6;
   const robotBoard = useStore((s) => isRobotBoard(s.board));
+  const reference = useStore((s) => s.board?.simulation === "reference");
   const robotView = useRobotStore((s) => s.robotView);
   const setRobotView = useRobotStore((s) => s.setRobotView);
   const robotModel = useRobotStore((s) => s.model);
@@ -81,7 +82,7 @@ export default function SceneControls(): React.ReactElement {
         />
       </div>
 
-      <div style={toggleRow}>
+      {!reference && <><div style={toggleRow}>
         <span style={label}>Current flow</span>
         <button
           data-testid="particle-toggle"
@@ -121,7 +122,7 @@ export default function SceneControls(): React.ReactElement {
         >
           {electronFlow ? "Electron" : "Conventional"}
         </button>
-      </div>
+      </div></>}
 
       {!inRobot && (
         <div style={toggleRow}>

@@ -43,7 +43,7 @@ export default function StatusBar({ problems }: { problems: ProblemSet }): React
       </button>
       <span style={{ color: tokens.hairline }}>│</span>
       <span data-testid="solver-status" style={item(simResult && !simResult.ok ? tokens.danger : tokens.textDim)}>
-        {!simResult ? "Circuit · not solved" : simResult.ok ? `Circuit solved · ${simResult.iterations + 1} pass${simResult.iterations === 0 ? "" : "es"}` : "✕ Circuit did not solve"}
+        {board?.simulation === "reference" ? "Layout reference · no circuit model" : !simResult ? "Circuit · not solved" : simResult.ok ? `Circuit solved · ${simResult.iterations + 1} pass${simResult.iterations === 0 ? "" : "es"}` : "✕ Circuit did not solve"}
       </span>
       {replay && (
         <>
