@@ -12,16 +12,10 @@ import Mascot, { orbUrl } from "./Mascot";
 import { useIntro } from "./intro";
 
 const STARTS: { board: string; title: string; detail: string }[] = [
-  { board: "demo-board", title: "Light an LED", detail: "Run firmware that switches a transistor and watch the current reach the LED." },
-  { board: "robot-controller-board", title: "Watch a board get built", detail: "A pick-and-place head assembles a 40-part robot controller, then it powers on." },
-  { board: "biped-power-board", title: "Brown out a robot", detail: "Stall a walking robot's servos and see the battery rail collapse." },
+  { board: "demo-board", title: "Light an LED", detail: "Change pin 8, run the sketch, and follow current through the transistor and LED." },
+  { board: "robot-controller-board", title: "Watch a board get built", detail: "Watch the placement head assemble the controller, then run its lamp test." },
+  { board: "biped-power-board", title: "Brown out a robot", detail: "Stall two servos and watch the battery rail fall below the controller's limit." },
   { board: "microduck-hat-board", title: "Inspect Microduck's HAT", detail: "Open the documented four-layer Robot HAT and see where it sits in Microduck's head." },
-];
-
-const WHY: string[] = [
-  "A stalled servo drags the battery rail down and resets the controller.",
-  "An LED pin with no current limit burns out a port.",
-  "A sensor input left floating reads random values.",
 ];
 
 export default function IntroPanel(): React.ReactElement | null {
@@ -84,38 +78,20 @@ export default function IntroPanel(): React.ReactElement | null {
             </h1>
           </div>
           <p style={{ margin: "0.7rem 0 0", fontSize: "0.86rem", lineHeight: 1.5, color: tokens.text }}>
-            See inside the board your robot runs on.
+            See what your code does to the board.
           </p>
         </div>
         <Mascot pose="inspect" size={260} style={{ margin: "-1rem -0.4rem -1.2rem 0" }} />
       </div>
 
       <div style={{ padding: "0.4rem 1.3rem 1.1rem", display: "flex", flexDirection: "column", gap: "0.9rem" }}>
-        <section>
-          <h2 style={heading}>What it is</h2>
-          <p style={body}>
-            An x-ray for robot electronics. Load a board, pull it apart layer by layer, and run Arduino-style
-            firmware against a live circuit simulation. Every part shows its voltages and current, and every
-            trace shows which way current flows.
-          </p>
-        </section>
+        <p style={body}>
+          Run a sketch, then inspect the circuit it drives. Click a part for its voltage and current,
+          or open the PCB layers and schematic to follow a connection.
+        </p>
 
         <section>
-          <h2 style={heading}>Why we need it</h2>
-          <p style={body}>
-            When a robot misbehaves, the cause is often hardware the firmware developer never sees, and it looks
-            exactly like a bug in the code:
-          </p>
-          <ul style={{ margin: "0.35rem 0 0", paddingLeft: "1.1rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-            {WHY.map((w) => <li key={w} style={{ ...body, margin: 0 }}>{w}</li>)}
-          </ul>
-          <p style={{ ...body, marginTop: "0.45rem" }}>
-            Circxit makes the board legible, so you can find these before you flash a single chip.
-          </p>
-        </section>
-
-        <section>
-          <h2 style={heading}>Start here</h2>
+          <h2 style={heading}>Pick a board</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
             {STARTS.map((s) => (
               <button
