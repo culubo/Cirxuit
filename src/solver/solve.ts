@@ -28,9 +28,15 @@ const MAX_ITER = 30;
 /** MCU input impedance to ground (keeps the matrix non-singular). */
 const MCU_INPUT_OHMS = 1e6;
 /** "Open circuit" resistance for off diodes / cutoff transistor junctions. */
-const OFF_R = 1e9;
+const OFF_R = 1e12;
 /** LED/diode rated current for overcurrent warnings. */
 const LED_RATED_A = 0.02;
+/** Minimum resistance used when a resistor is specified at (near) zero ohms. */
+const SHORT_OHMS = 1e-3;
+/** Tiny node-to-ground conductance that anchors floating nodes (SPICE gmin).
+ *  Above the Gaussian singular threshold (1e-14) so a floating node has a usable
+ *  pivot, yet below OFF_R's conductance so it never perturbs cutoff/off paths. */
+const GMIN = 1e-13;
 
 // ─── MNA matrix helpers ────────────────────────────────────────────────────────
 
@@ -233,7 +239,11 @@ export function solve(board: Board, mcuState: McuState): SimResult {
 
         case "resistor": {
           const p1 = part.pads[0]; const p2 = part.pads[1];
-          if (p1 && p2) G(mna, ni(p1.netId), ni(p2.netId), 1 / m.ohms);
+          // A zero- (or near-zero-) ohm resistor is a short. Clamp to a small but
+          // finite resistance so the matrix stays non-singular and all currents
+          // remain finite; the short is surfaced as a warning after the solve.
+          const ohms = m.ohms > SHORT_OHMS ? m.ohms : SHORT_OHMS;
+          if (p1 && p2) G(mna, ni(p1.netId), ni(p2.netId), 1 / ohms);
           break;
         }
 
@@ -257,8 +267,13 @@ export function solve(board: Board, mcuState: McuState): SimResult {
 
         case "led":
         case "diode": {
-          const nA = ni(padNet(part, m.anodePad));
-          const nC = ni(padNet(part, m.cathodePad));
+          const anodeNetId = padNet(part, m.anodePad);
+          const cathodeNetId = padNet(part, m.cathodePad);
+          // A pad on no net (null) is physically unconnected — the device cannot
+          // conduct. Stamp nothing so no current flows through it.
+          if (anodeNetId === null || cathodeNetId === null) break;
+          const nA = ni(anodeNetId);
+          const nC = ni(cathodeNetId);
           if (diodeState.get(part.ref) === "on") {
             // Thevenin: conductance 1/rOn + current source Vf/rOn (Norton equivalent of Vf + rOn series).
             G(mna, nA, nC, 1 / m.rOn);
@@ -323,6 +338,13 @@ export function solve(board: Board, mcuState: McuState): SimResult {
       }
     }
 
+    // gmin: a tiny conductance from every node to ground. This anchors otherwise
+    // floating nodes (e.g. the open side of a DC-blocked capacitor) so the matrix
+    // stays non-singular, without materially shifting connected node voltages.
+    for (let node = 0; node < mna.n; node++) {
+      mna.G[node]![node]! += GMIN;
+    }
+
     const newSol = gaussSolve(mna);
     if (!newSol) {
       return {
@@ -344,12 +366,20 @@ export function solve(board: Board, mcuState: McuState): SimResult {
       const m = part.model;
 
       if (m.type === "led" || m.type === "diode") {
-        const vA = nodeV(sol, nodeMap, board.groundNetId, padNet(part, m.anodePad));
-        const vC = nodeV(sol, nodeMap, board.groundNetId, padNet(part, m.cathodePad));
-        const vAC = vA - vC;
+        const anodeNetId = padNet(part, m.anodePad);
+        const cathodeNetId = padNet(part, m.cathodePad);
         const was = diodeState.get(part.ref)!;
-        // Turn on when Vac >= Vf; turn off when Vac < Vf (hysteresis via 0.99).
-        const now: DiodeState = vAC >= m.vf * (was === "off" ? 1.0 : 0.99) ? "on" : "off";
+        let now: DiodeState;
+        if (anodeNetId === null || cathodeNetId === null) {
+          // Unconnected pad: can never conduct.
+          now = "off";
+        } else {
+          const vA = nodeV(sol, nodeMap, board.groundNetId, anodeNetId);
+          const vC = nodeV(sol, nodeMap, board.groundNetId, cathodeNetId);
+          const vAC = vA - vC;
+          // Turn on when Vac >= Vf; turn off when Vac < Vf (hysteresis via 0.99).
+          now = vAC >= m.vf * (was === "off" ? 1.0 : 0.99) ? "on" : "off";
+        }
         if (now !== was) { diodeState.set(part.ref, now); converged = false; }
       }
 
@@ -361,13 +391,35 @@ export function solve(board: Board, mcuState: McuState): SimResult {
         const vCE = vC - vE;
         const was = npnState.get(part.ref)!;
 
+        // Piecewise-linear consistency check of the assumed state:
+        //   cutoff    is valid when the (open) base-emitter voltage stays below Vbe
+        //   active    is valid when Ib > 0 and Vce stays above Vce(sat)
+        //   saturated is valid when Ib > 0 and Vce has collapsed to Vce(sat)
         let now: NpnState;
-        if (vBE < m.vbe * 0.5) {
-          now = "cutoff";
-        } else if (vCE <= m.vceSat * 1.05) {
-          now = "saturated";
+        if (was === "cutoff") {
+          // Base-emitter is open here, so vBE is the natural bias. Turn on only
+          // once it actually reaches the junction drop.
+          now = vBE >= m.vbe ? "active" : "cutoff";
         } else {
-          now = "active";
+          // Base is forward biased (clamped at Vbe). Ib comes from the B-E vsource.
+          const rowBE = vsRows.find((r) => r.ref === part.ref && r.fromPad === m.basePad);
+          const ib = rowBE ? (sol[rowBE.row] ?? 0) : 0;
+          if (ib <= 0) {
+            // No base drive ⇒ fall back to cutoff.
+            now = "cutoff";
+          } else if (was === "active") {
+            // Active overshoots into saturation when the collector can no longer
+            // hold Vce above Vce(sat) (collector would be pulled below the emitter).
+            now = vCE <= m.vceSat ? "saturated" : "active";
+          } else {
+            // Saturation is only valid when the base can actually supply the
+            // collector current it is being asked to sink: Ic <= β·Ib. If the
+            // forced Vce(sat) source demands more collector current than β·Ib,
+            // the transistor is really in the active region (current-limited).
+            const rowCE = vsRows.find((r) => r.ref === part.ref && r.fromPad === m.collectorPad);
+            const ic = rowCE ? (sol[rowCE.row] ?? 0) : 0;
+            now = ic >= -1e-12 && ic <= m.beta * ib + 1e-12 ? "saturated" : "active";
+          }
         }
         if (now !== was) { npnState.set(part.ref, now); converged = false; }
       }
@@ -448,8 +500,9 @@ function buildBranches(
       case "resistor": {
         const p1 = part.pads[0]; const p2 = part.pads[1];
         if (!p1 || !p2) break;
+        const ohms = m.ohms > SHORT_OHMS ? m.ohms : SHORT_OHMS;
         const vd = V(p1.netId) - V(p2.netId);
-        const amps = Math.abs(vd / m.ohms);
+        const amps = Math.abs(vd / ohms);
         const [fp, tp] = vd >= 0 ? [p1.number, p2.number] : [p2.number, p1.number];
         branches.push({ ref: part.ref, fromPad: fp, toPad: tp, amps });
         break;
@@ -581,6 +634,14 @@ function buildWarnings(
     if (!part.model) continue;
     const m = part.model;
 
+    if (m.type === "resistor" && m.ohms <= SHORT_OHMS) {
+      warnings.push({
+        severity: "danger",
+        ref: part.ref,
+        message: `${part.ref} is ${m.ohms} Ω — effectively a short circuit. It will pass unlimited current; add series resistance.`,
+      });
+    }
+
     if (m.type === "led" || m.type === "diode") {
       const vA = V(part.pads.find((p) => p.number === m.anodePad)?.netId ?? null);
       const vC = V(part.pads.find((p) => p.number === m.cathodePad)?.netId ?? null);
@@ -601,7 +662,7 @@ function buildWarnings(
           warnings.push({
             severity: "danger",
             ref: part.ref,
-            message: `${part.ref} is drawing ${(b.amps * 1000).toFixed(1)} mA, which exceeds its 20 mA rating. Reduce the series resistor to avoid damage.`,
+            message: `${part.ref} is drawing ${(b.amps * 1000).toFixed(1)} mA, which exceeds its 20 mA rating. Increase the series resistor (R2) to limit the current.`,
           });
         }
       }
@@ -633,7 +694,7 @@ function buildWarnings(
             severity: "warn",
             ref: part.ref,
             netId: pinNet,
-            message: `U1 pin ${pin.name} (net ${pinNet}) is undriven — floating input. Reading it will give an undefined value.`,
+            message: `${part.ref} pin ${pin.name} (net ${pinNet}) is undriven — floating input. Reading it will give an undefined value.`,
           });
         }
       }
