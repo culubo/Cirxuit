@@ -2,7 +2,7 @@
  * TopBar — app name, board picker, Simulate / Build PCB mode switch, and the
  * guide and help toggles.
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
 import { CUSTOM_BOARD_ID } from "../builder/doc";
 import BoardSwitcher from "../ui/BoardSwitcher";
@@ -11,6 +11,7 @@ import { tokens } from "../ui/tokens";
 import { orbUrl } from "../ui/brand/Mascot";
 import { useIntro } from "../ui/brand/intro";
 import { loadSilkFont, SILK_FONT_FAMILY } from "../scene/art/silkArt";
+import { useLayerSheets } from "../ui/LayerSheets";
 
 const SHORTCUTS: [string, string][] = [
   ["⌘/Ctrl + Enter", "Build and run the sketch"],
@@ -35,6 +36,7 @@ export default function TopBar(): React.ReactElement {
   const setGuideOpen = useStore((s) => s.setGuideOpen);
   const [helpOpen, setHelpOpen] = useState(false);
   const setIntroOpen = useIntro((s) => s.setOpen);
+  const boardBeforeBuild = useRef<string | null>(null);
   // The wordmark is set in ISO 3098 lettering, the same face as the silkscreen.
   useEffect(() => { void loadSilkFont(); }, []);
 
@@ -45,7 +47,15 @@ export default function TopBar(): React.ReactElement {
       data-testid={`mode-${id}`}
       title={title}
       onClick={() => {
-        if (id === "build" && boardId !== CUSTOM_BOARD_ID) setBoardId(CUSTOM_BOARD_ID);
+        if (id === "build") {
+          if (boardId !== CUSTOM_BOARD_ID) {
+            boardBeforeBuild.current = boardId;
+            setBoardId(CUSTOM_BOARD_ID);
+          } else boardBeforeBuild.current = null;
+          useLayerSheets.getState().setOpen(false);
+        } else if (mode === "build" && boardId === CUSTOM_BOARD_ID && boardBeforeBuild.current) {
+          setBoardId(boardBeforeBuild.current);
+        }
         setMode(id);
       }}
       style={{
