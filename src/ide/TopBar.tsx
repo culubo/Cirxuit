@@ -2,12 +2,15 @@
  * TopBar — app name, board picker, Simulate / Build PCB mode switch, and the
  * guide and help toggles.
  */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "../store/useStore";
 import { CUSTOM_BOARD_ID } from "../builder/doc";
 import BoardSwitcher from "../ui/BoardSwitcher";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
+import { orbUrl } from "../ui/brand/Mascot";
+import { useIntro } from "../ui/brand/intro";
+import { loadSilkFont, SILK_FONT_FAMILY } from "../scene/art/silkArt";
 
 const SHORTCUTS: [string, string][] = [
   ["⌘/Ctrl + Enter", "Build and run the sketch"],
@@ -27,6 +30,9 @@ export default function TopBar(): React.ReactElement {
   const guideOpen = useStore((s) => s.guideOpen);
   const setGuideOpen = useStore((s) => s.setGuideOpen);
   const [helpOpen, setHelpOpen] = useState(false);
+  const setIntroOpen = useIntro((s) => s.setOpen);
+  // The wordmark is set in ISO 3098 lettering, the same face as the silkscreen.
+  useEffect(() => { void loadSilkFont(); }, []);
 
   const tab = (id: "simulate" | "build", text: string, title: string): React.ReactElement => (
     <button
@@ -59,8 +65,16 @@ export default function TopBar(): React.ReactElement {
     <header
       style={{ position: "relative", display: "flex", alignItems: "center", gap: "1rem", height: "44px", padding: "0 0.75rem", borderBottom: `1px solid ${tokens.panelBorder}`, background: "#071426" }}
     >
-      <div style={{ ...font, display: "flex", alignItems: "baseline", gap: "0.45rem" }}>
-        <span style={{ color: tokens.phosphor, fontWeight: 700, fontSize: "0.9rem", letterSpacing: "0.02em" }}>Circuit X-Ray</span>
+      <div style={{ ...font, display: "flex", alignItems: "center", gap: "0.45rem" }}>
+        <button
+          data-testid="intro-open"
+          onClick={() => setIntroOpen(true)}
+          title="About Circuit X-Ray"
+          style={{ display: "flex", alignItems: "center", gap: "0.45rem", padding: 0, background: "transparent", border: "none", cursor: "pointer" }}
+        >
+          <img src={orbUrl} alt="" aria-hidden="true" width={26} height={26} style={{ display: "block" }} />
+          <span style={{ fontFamily: SILK_FONT_FAMILY, color: tokens.text, fontSize: "1.02rem", letterSpacing: "0.03em" }}>Circuit X-Ray</span>
+        </button>
         <span style={{ color: tokens.textFaint, fontSize: "0.66rem" }}>robotics hardware workbench</span>
       </div>
 

@@ -11,6 +11,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Board, CopperLayer, ElectricalModel, FunctionBlock, McuPin, Net, Pad, Part, Track, Vec2, Via } from "../src/model/board-model";
+import { placedPins } from "../src/scene/schematic/geometry";
 import { validateBoard } from "./validate-board";
 
 const W = 100, H = 70;
@@ -215,10 +216,15 @@ fanout((i) => `IN${i}`, "F.Cu", SIG, sensX.map((x) => P(x, 50.8)), hdrX.map((x) 
 part({
   ref: "J20", kind: "connector", value: "sensors", footprint: "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical",
   position: P(50, 62), rotationDeg: 0, body: { w: 20.32, h: 2.54, height: 8.5 },
-  pads: hdrX.map((x, k) => pad(String(k + 1), `IN${k}`, P(x, 62), 1.7, 1.7, true)),
+  // Pad order sets the schematic box: IN3..IN0 down the left side, IN4..IN7 down the right.
+  pads: [3, 2, 1, 0, 4, 5, 6, 7].map((k) => pad(String(k + 1), `IN${k}`, P(hdrX[k]!, 62), 1.7, 1.7, true)),
   blurb: "Eight sensor inputs: six analog, two digital.",
 });
 
+// Schematic box order: power, LEDs, A0..A2 down the left; servos, A3..D17 down the right.
+const mcuOrder = ["+5V", "GND", ...Array.from({ length: 8 }, (_, k) => `D${2 + k}`), "A0", "A1", "A2",
+  ...Array.from({ length: 8 }, (_, k) => `S${k}`), "A3", "A4", "A5", "D16", "D17"];
+mcuPads.sort((a, b) => mcuOrder.indexOf(a.netId ?? "") - mcuOrder.indexOf(b.netId ?? ""));
 part({
   ref: "U1", kind: "mcu", value: "ATmega328P", footprint: "Package_QFP:TQFP-32_7x7mm_P0.8mm",
   position: P(CX, CY), rotationDeg: 0, body: { w: 7, h: 7, height: 1.2 },
@@ -243,6 +249,110 @@ const blocks: FunctionBlock[] = [
   { id: "servos", label: "Servo outputs", description: "Eight 3-pin servo plugs.", partRefs: refs(/^J1\d$/), color: "accent-warn" },
   { id: "sensors", label: "Sensor inputs", description: "Series-protected inputs to an 8-pin header.", partRefs: [...refs(/^R2\d$/), "J20"], color: "accent-sensor" },
 ];
+// ── schematic ────────────────────────────────────────────────────────────────
+// Drawn in its own millimetre space (x right, y down). Every wire ends on a pin
+// (from the same symbol geometry the overlay draws) or on another wire of its net.
+const symbols: NonNullable<Board["schematic"]>["symbols"] = [];
+const wires: NonNullable<Board["schematic"]>["wires"] = [];
+const pinAt = new Map<string, Vec2>();
+function sym(ref: string, x: number, y: number, rotationDeg = 0): void {
+  const p = parts.find((q) => q.ref === ref);
+  if (!p) throw new Error(`schematic: no part ${ref}`);
+  symbols.push({ ref, position: P(x, y), rotationDeg });
+  for (const pin of placedPins(p, { x, y }, rotationDeg)) pinAt.set(`${ref}.${pin.pad}`, P(pin.at.x, pin.at.y));
+}
+function pinOf(ref: string, pad: string): Vec2 {
+  const at = pinAt.get(`${ref}.${pad}`);
+  if (!at) throw new Error(`schematic: no pin ${ref}.${pad}`);
+  return at;
+}
+function padOfNet(ref: string, net: string): string {
+  const pad = parts.find((q) => q.ref === ref)?.pads.find((d) => d.netId === net)?.number;
+  if (!pad) throw new Error(`schematic: ${ref} has no pad on ${net}`);
+  return pad;
+}
+function wire(netId: string, ...points: Vec2[]): void {
+  wires.push({ netId, points: points.map((q) => P(q.x, q.y)) });
+}
+
+// Power: XT30, fuse, +5V rail (y 25) and GND rail (y 55) with the capacitors between.
+sym("J1", 20, 40);
+sym("F1", 40, 25);
+sym("C1", 60, 40, 270);
+["C2", "C3", "C4"].forEach((ref, i) => sym(ref, 70 + i * 10, 40, 90));
+const u1 = { x: 130, y: 85 };
+sym("U1", u1.x, u1.y);
+const vcc = pinOf("U1", padOfNet("U1", "+5V")), gnd = pinOf("U1", padOfNet("U1", "GND"));
+wire("VIN", pinOf("J1", "+"), P(20, 25), pinOf("F1", "1"));
+wire("+5V", pinOf("F1", "2"), P(121, 25), P(121, vcc.y), vcc);
+wire("GND", pinOf("J1", "-"), P(20, 55), P(120, 55), P(120, gnd.y), gnd);
+for (const ref of ["C1", "C2", "C3", "C4"]) {
+  const top = pinOf(ref, padOfNet(ref, "+5V")), bottom = pinOf(ref, padOfNet(ref, "GND"));
+  wire("+5V", top, P(top.x, 25));
+  wire("GND", bottom, P(bottom.x, 55));
+}
+
+// LED bank, left: MCU pin → 330 Ω → LED → GND bus at x 55.
+const GND_BUS_X = 55, BOTTOM_Y = 170;
+for (let k = 0; k < 8; k++) {
+  const name = `D${2 + k}`, y = 68 + k * 12, lane = 103 + k * 2;
+  const r = `R${10 + k}`, d = `D${10 + k}`;
+  sym(r, 95, y, 180);
+  sym(d, 75, y, 180);
+  const mcu = pinOf("U1", padOfNet("U1", name));
+  wire(name, mcu, P(lane, mcu.y), P(lane, y), pinOf(r, "1"));
+  wire(`LED${k}`, pinOf(r, "2"), pinOf(d, "A"));
+  wire("GND", pinOf(d, "K"), P(GND_BUS_X, y));
+}
+wire("GND", P(GND_BUS_X, 55), P(GND_BUS_X, BOTTOM_Y));
+
+// Servo plugs, right column: signal from the MCU, VIN bus at x 228, GND bus at x 250.
+const VIN_BUS_X = 268, SERVO_GND_X = 290, VIN_TOP = 8;
+const servoRows = Array.from({ length: 8 }, (_, k) => 15 + k * 11);
+servoRows.forEach((y, k) => sym(`J${10 + k}`, 280, y));
+servoRows.forEach((y, k) => {
+  const name = `S${k}`;
+  const mcu = pinOf("U1", padOfNet("U1", name));
+  const sig = pinOf(`J${10 + k}`, "1");
+  const lane = sig.y < mcu.y ? 150 + k * 2 : 150; // upward runs nest outward; the one downward run reuses the inner lane below them
+  wire(name, mcu, P(lane, mcu.y), P(lane, sig.y), sig);
+  const vin = pinOf(`J${10 + k}`, "2");
+  wire("VIN", vin, P(VIN_BUS_X, vin.y));
+  const g = pinOf(`J${10 + k}`, "3");
+  wire("GND", g, P(SERVO_GND_X, g.y));
+});
+wire("VIN", P(20, 25), P(20, VIN_TOP), P(VIN_BUS_X, VIN_TOP), P(VIN_BUS_X, pinOf("J17", "2").y));
+wire("GND", P(SERVO_GND_X, pinOf("J10", "3").y), P(SERVO_GND_X, BOTTOM_Y), P(GND_BUS_X, BOTTOM_Y));
+
+// Sensor inputs, bottom: MCU pin → 1 kΩ (vertical) → 8-pin header.
+const sensorX = [130, 146, 162, 178, 222, 238, 254, 270];
+sym("J20", 205, 152);
+for (let k = 0; k < 8; k++) {
+  const name = k < 6 ? `A${k}` : `D${10 + k}`;
+  const r = `R${20 + k}`;
+  sym(r, sensorX[k]!, 125, 90);
+  const mcu = pinOf("U1", padOfNet("U1", name));
+  const leftSide = mcu.x < u1.x;
+  const lane = leftSide ? 120.5 - k * 1.2 : 139.5 + (k - 3) * 1.2;
+  const row = 104 + k * 1.8;
+  const top = pinOf(r, "2");
+  wire(name, mcu, P(lane, mcu.y), P(lane, row), P(top.x, row), top);
+  const bottom = pinOf(r, "1");
+  const hdr = pinOf("J20", String(k + 1));
+  wire(`IN${k}`, bottom, P(bottom.x, hdr.y), hdr);
+}
+
+// Every part has a symbol, and every pin with a net is reached by a wire of that net.
+for (const p of parts) {
+  if (!symbols.some((s) => s.ref === p.ref)) throw new Error(`schematic: ${p.ref} has no symbol`);
+  for (const d of p.pads) {
+    if (!d.netId) continue;
+    const at = pinOf(p.ref, d.number);
+    const reached = wires.some((w) => w.netId === d.netId && w.points.some((q) => Math.hypot(q.x - at.x, q.y - at.y) < 1e-6));
+    if (!reached) throw new Error(`schematic: ${p.ref}.${d.number} (${d.netId}) is not wired`);
+  }
+}
+
 const board: Board = {
   id: "robot-controller-board",
   name: "Robot Controller r2",
@@ -251,6 +361,7 @@ const board: Board = {
   copperLayers: ["F.Cu", "B.Cu"],
   parts, nets: [...netMap.values()], tracks, vias, blocks,
   groundNetId: "GND",
+  schematic: { size: { w: 300, h: 180 }, symbols, wires },
 };
 
 const violations = validateBoard(board);

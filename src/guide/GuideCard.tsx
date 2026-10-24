@@ -7,6 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useStore } from "../store/useStore";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
+import Mascot from "../ui/brand/Mascot";
 import { guideFor } from "./guides";
 import type { Problem } from "../build/problems";
 
@@ -113,7 +114,10 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
 
         {!collapsed && (
           <div style={{ padding: "0.5rem 0.6rem 0.6rem" }}>
-            <p style={{ margin: "0 0 0.5rem", fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}>{guide.intro}</p>
+            <div style={{ display: "flex", gap: "0.55rem", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+              <Mascot pose={currentIndex < 0 ? "inspect" : "wave"} size={64} style={{ marginTop: "-0.2rem" }} />
+              <p style={{ margin: 0, fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}>{guide.intro}</p>
+            </div>
             <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.2rem" }}>
               {guide.steps.map((step, i) => {
                 const done = guideDone.includes(step.id);

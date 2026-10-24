@@ -15,6 +15,7 @@ import StatusBar from "./ide/StatusBar";
 import { useProblems } from "./ide/useProblems";
 import { useRunner } from "./ide/useRunner";
 import GuideCard from "./guide/GuideCard";
+import IntroPanel from "./ui/brand/IntroPanel";
 import BuilderView from "./builder/BuilderView";
 import BuilderSidebar from "./builder/BuilderSidebar";
 
@@ -109,6 +110,7 @@ export default function App(): React.ReactElement {
             </>
           )}
           <GuideCard problems={problems.all} placement={mode === "build" ? "bottom" : "top"} />
+          <IntroPanel />
         </section>
 
         {mode === "build" ? <BuilderSidebar boardProblems={problems.board} /> : <InspectorPanel />}

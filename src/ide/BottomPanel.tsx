@@ -8,6 +8,7 @@ import { useStore, type BottomTab } from "../store/useStore";
 import type { TraceEvent } from "../runtime/execute";
 import { font, severityColor, severityGlyph } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
+import Mascot from "../ui/brand/Mascot";
 import type { ProblemSet } from "./useProblems";
 import type { Problem } from "../build/problems";
 
@@ -156,8 +157,9 @@ function ProblemsView({ problems }: Props): React.ReactElement {
 
   if (problems.all.length === 0) {
     return (
-      <div data-testid="problems-empty" style={{ ...font, fontSize: "0.74rem", color: tokens.phosphor }}>
-        ✓ No problems. The sketch builds, the board passes its rules check, and the circuit solves cleanly.
+      <div data-testid="problems-empty" style={{ ...font, display: "flex", alignItems: "center", gap: "0.7rem", fontSize: "0.74rem", color: tokens.phosphor }}>
+        <Mascot pose="inspect" size={72} />
+        <span>✓ No problems. The sketch builds, the board passes its rules check, and the circuit solves cleanly.</span>
       </div>
     );
   }
