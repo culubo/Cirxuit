@@ -35,7 +35,7 @@ Data flow: user action -> store -> solver.solve(board, mcuState) -> SimResult ->
 - Q1 2N3904 (beta 100, vbe 0.7, vceSat 0.2): emitter GND
 - D1 red LED (vf 2.0, rOn 10 ohm) and R2 220 ohm: +5V -> R2 -> D1 -> Q1 collector
 - RV1 10k pot: +5V to GND, wiper -> A0 (user drags a slider in the inspector)
-- C1 100 nF: +5V to GND near U1 (decoupling, teaches placement)
+- C1 100 nF: +5V to GND near U1 (decoupling placed next to the MCU supply pin)
 - Function blocks: Power, Microcontroller, LED driver, Sensor input
 
 Expected values (tests assert these within 5 percent):
@@ -44,9 +44,10 @@ Expected values (tests assert these within 5 percent):
 - RV1 wiper 0.5: A0 about 2.5 V, analogRead about 512
 
 ## Visual language (not "AI-looking")
-Theme: lab instrument at night. Think oscilloscope, not SaaS dashboard.
-- Background near-black blue-gray, not pure black. No purple gradients, no glassmorphism cards, no emoji.
-- One accent for current (phosphor green), one for warnings (amber), one for danger (red).
+Theme: glowing circuit blueprint. A backlit board in a dark room: deep navy ground, a fine dot grid, electric-cyan traces with a soft halo, pads and via rings that glow.
+- Background deep navy (#050b18), not pure black. No purple gradients, no glassmorphism cards, no emoji.
+- One accent for current and selection (electric cyan #4fd8ff), one for warnings (amber), one for danger (red).
+- Parts are dark, near-black bodies so the lit artwork stays the hero; the MCU gets a faint cyan core glow.
 - Numbers in a monospace face (JetBrains Mono or IBM Plex Mono) with real units and sensible precision: 12.2 mA, 4.98 V.
 - UI chrome is thin, dense, and quiet. The 3D scene is the hero.
 - Motion has purpose: explode uses an eased spring, selection dims the rest in 200 ms, particles carry meaning (direction and magnitude).

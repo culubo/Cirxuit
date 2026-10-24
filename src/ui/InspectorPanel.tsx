@@ -95,23 +95,23 @@ const panel: React.CSSProperties = {
   bottom: "1rem",
   width: "23rem",
   overflowY: "auto",
-  background: "#0d1117",
-  border: "1px solid #243224",
+  background: "#0a1424",
+  border: "1px solid #1c3350",
   borderRadius: "3px",
   fontFamily: "monospace",
   fontSize: "0.8rem",
-  color: "#c8d8c8",
+  color: "#cfe3f2",
   display: "flex",
   flexDirection: "column",
 };
 
 const section: React.CSSProperties = {
-  borderBottom: "1px solid #1a2a1a",
+  borderBottom: "1px solid #142640",
   padding: "0.6rem 0.8rem",
 };
 
 const sectionLabel: React.CSSProperties = {
-  color: "#5a7a5a",
+  color: "#5a7a96",
   fontSize: "0.68rem",
   textTransform: "uppercase",
   letterSpacing: "0.08em",
@@ -196,9 +196,9 @@ export default function InspectorPanel(): React.ReactElement {
               title="Restore every parameter to the board default"
               style={{
                 background: "transparent",
-                border: "1px solid #2a4a2a",
+                border: "1px solid #24466e",
                 borderRadius: "2px",
-                color: "#8aa88a",
+                color: "#8aa8c4",
                 fontFamily: "monospace",
                 fontSize: "0.68rem",
                 padding: "0.15rem 0.5rem",
@@ -224,11 +224,11 @@ export default function InspectorPanel(): React.ReactElement {
                     alignItems: "baseline",
                     width: "100%",
                     textAlign: "left",
-                    background: isSelected ? "#12331a" : "transparent",
+                    background: isSelected ? "#0c2a48" : "transparent",
                     border: "1px solid",
-                    borderColor: isSelected ? "#2a6a2a" : "transparent",
+                    borderColor: isSelected ? "#1f6fb2" : "transparent",
                     borderRadius: "2px",
-                    color: isSelected ? "#7ec8a0" : "#aac0aa",
+                    color: isSelected ? "#4fd8ff" : "#aac4dc",
                     fontFamily: "monospace",
                     fontSize: "0.78rem",
                     padding: "0.2rem 0.4rem",
@@ -236,7 +236,7 @@ export default function InspectorPanel(): React.ReactElement {
                   }}
                 >
                   <span style={{ fontWeight: isSelected ? "bold" : "normal" }}>{part.ref}</span>
-                  <span style={{ color: "#6a7a6a" }}>{part.value}</span>
+                  <span style={{ color: "#6a7e94" }}>{part.value}</span>
                 </button>
               );
             })}
@@ -275,11 +275,11 @@ export default function InspectorPanel(): React.ReactElement {
                   opacity: isSelected || !selectedPart ? 1 : 0.45,
                 }}
               >
-                <span style={{ color: isSelected ? "#7ec8a0" : "#5a7a5a" }}>{part.ref}</span>
+                <span style={{ color: isSelected ? "#4fd8ff" : "#5a7a96" }}>{part.ref}</span>
                 <span
                   data-testid={`inspector-current-${part.ref}`}
                   style={{
-                    color: isSelected ? "#7ec8a0" : "#8a9a8a",
+                    color: isSelected ? "#4fd8ff" : "#8a9cb0",
                     fontVariantNumeric: "tabular-nums",
                   }}
                 >
@@ -298,7 +298,7 @@ export default function InspectorPanel(): React.ReactElement {
         <div style={section} data-testid="warning-feed">
           <div style={sectionLabel}>Warnings</div>
           {(simResult?.warnings.length ?? 0) === 0 ? (
-            <div style={{ color: "#5a7a5a", fontSize: "0.75rem" }}>No warnings.</div>
+            <div style={{ color: "#5a7a96", fontSize: "0.75rem" }}>No warnings.</div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
               {simResult!.warnings.map((w, i) => (
@@ -331,10 +331,10 @@ export default function InspectorPanel(): React.ReactElement {
           spellCheck={false}
           style={{
             width: "100%",
-            background: "#08100a",
-            border: "1px solid #1a2a1a",
+            background: "#06101c",
+            border: "1px solid #142640",
             borderRadius: "2px",
-            color: "#c8d8c8",
+            color: "#cfe3f2",
             fontFamily: "monospace",
             fontSize: "0.78rem",
             padding: "0.4rem",
@@ -353,10 +353,10 @@ export default function InspectorPanel(): React.ReactElement {
           disabled={!board || running}
           style={{
             width: "100%",
-            background: board && !running ? "#0e2a0e" : "#0a180a",
-            border: `1px solid ${board && !running ? "#2a6a2a" : "#1a3a1a"}`,
+            background: board && !running ? "#0a2238" : "#08142a",
+            border: `1px solid ${board && !running ? "#1f6fb2" : "#163252"}`,
             borderRadius: "2px",
-            color: board && !running ? "#7ec8a0" : "#3a5a3a",
+            color: board && !running ? "#4fd8ff" : "#3a5a7a",
             fontFamily: "monospace",
             fontSize: "0.8rem",
             padding: "0.35rem 0",
@@ -390,7 +390,7 @@ export default function InspectorPanel(): React.ReactElement {
           <div style={sectionLabel}>Log</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
             {logLines.map((line, i) => (
-              <div key={i} style={{ color: "#8aa88a", whiteSpace: "pre-wrap" }}>
+              <div key={i} style={{ color: "#8aa8c4", whiteSpace: "pre-wrap" }}>
                 {line}
               </div>
             ))}
@@ -432,9 +432,9 @@ function SelectedPartPanel({
   return (
     <div style={section}>
       <div style={sectionLabel}>Selected</div>
-      <div style={{ fontWeight: "bold", color: "#7ec8a0" }}>
+      <div style={{ fontWeight: "bold", color: "#4fd8ff" }}>
         {part.ref}
-        <span style={{ fontWeight: "normal", color: "#8a9a8a", marginLeft: "0.4rem" }}>
+        <span style={{ fontWeight: "normal", color: "#8a9cb0", marginLeft: "0.4rem" }}>
           {part.value}
         </span>
         {deviceState && (
@@ -448,7 +448,7 @@ function SelectedPartPanel({
       </div>
 
       {part.blurb && (
-        <div style={{ color: "#7a8a7a", marginTop: "0.25rem", fontSize: "0.75rem" }}>
+        <div style={{ color: "#7a8ea4", marginTop: "0.25rem", fontSize: "0.75rem" }}>
           {part.blurb}
         </div>
       )}
@@ -458,12 +458,12 @@ function SelectedPartPanel({
         <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.05rem" }}>
           {part.pads.map((pad) => (
             <div key={pad.number} style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6a7a6a" }}>
+              <span style={{ color: "#6a7e94" }}>
                 pad {pad.number}{pad.netId ? ` · ${pad.netId}` : ""}
               </span>
               <span
                 data-testid={`inspector-pad-voltage-${part.ref}-${pad.number}`}
-                style={{ color: "#aac0aa", fontVariantNumeric: "tabular-nums" }}
+                style={{ color: "#aac4dc", fontVariantNumeric: "tabular-nums" }}
               >
                 {pad.netId ? formatQuantity(netVoltages[pad.netId] ?? 0, "V") : "—"}
               </span>
@@ -528,10 +528,10 @@ function SelectedPartPanel({
           style={{
             marginTop: "0.5rem",
             width: "100%",
-            background: model.stalled ? "#3a1410" : "#0e2a0e",
-            border: `1px solid ${model.stalled ? "#a0402a" : "#2a6a2a"}`,
+            background: model.stalled ? "#3a1410" : "#0a2238",
+            border: `1px solid ${model.stalled ? "#a0402a" : "#1f6fb2"}`,
             borderRadius: "2px",
-            color: model.stalled ? "#e0923a" : "#7ec8a0",
+            color: model.stalled ? "#e0923a" : "#4fd8ff",
             fontFamily: "monospace",
             fontSize: "0.78rem",
             padding: "0.35rem 0",

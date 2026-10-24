@@ -12,23 +12,26 @@ interface PartMeshProps {
 }
 
 const SELECTED_COLOR = new THREE.Color(tokens.phosphor);
-const DEFAULT_COLOR = new THREE.Color("#b0a090");
+const DEFAULT_COLOR = new THREE.Color("#10141c");
+/** The MCU gets a faint cyan core glow, like the chip in the reference art. */
+const MCU_GLOW = new THREE.Color("#4fd8ff");
 const DIM_OPACITY = 0.25;
 /** Rated LED current used to normalise glow brightness. */
 const LED_RATED_A = 0.02;
 
+// Dark, near-black parts so the glowing cyan artwork stays the hero.
 function colorForPart(part: Part): THREE.Color {
   switch (part.kind) {
-    case "resistor": return new THREE.Color("#c8a870");
-    case "capacitor": return new THREE.Color("#4a6ea8");
-    case "led": return new THREE.Color("#cc4444");
-    case "diode": return new THREE.Color("#888888");
-    case "npn": return new THREE.Color("#222228");
-    case "mcu": return new THREE.Color("#15151f");
-    case "vsource": return new THREE.Color("#5a3a1a");
-    case "potentiometer": return new THREE.Color("#4a4a2a");
-    case "connector": return new THREE.Color("#2a3a4a");
-    case "servo": return new THREE.Color("#3a2a4a");
+    case "resistor": return new THREE.Color("#10141c");
+    case "capacitor": return new THREE.Color("#1a2a40");
+    case "led": return new THREE.Color("#dfeeff");
+    case "diode": return new THREE.Color("#1a1d24");
+    case "npn": return new THREE.Color("#0e1118");
+    case "mcu": return new THREE.Color("#0b1626");
+    case "vsource": return new THREE.Color("#121a28");
+    case "potentiometer": return new THREE.Color("#1c4a8c");
+    case "connector": return new THREE.Color("#0e1118");
+    case "servo": return new THREE.Color("#121a28");
     default: return DEFAULT_COLOR;
   }
 }
@@ -73,12 +76,21 @@ export default function PartMesh({ part, dimmed }: PartMeshProps): React.ReactEl
     setSelection({ kind: "part", ref: part.ref });
   }
 
+  const isMcu = part.kind === "mcu";
   const emissiveColor = isSelected
     ? SELECTED_COLOR
     : part.model?.type === "led"
       ? baseColor
-      : new THREE.Color(0x000000);
-  const emissiveIntensity = isSelected ? 0.18 : part.model?.type === "led" ? ledGlow : 0;
+      : isMcu
+        ? MCU_GLOW
+        : new THREE.Color(0x000000);
+  const emissiveIntensity = isSelected
+    ? 0.18
+    : part.model?.type === "led"
+      ? ledGlow
+      : isMcu
+        ? 0.12
+        : 0;
 
   return (
     <mesh

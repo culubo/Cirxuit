@@ -47,7 +47,7 @@ const row: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  color: "#8aa88a",
+  color: "#8aa8c4",
   fontSize: "0.75rem",
   display: "flex",
   alignItems: "center",
@@ -56,10 +56,10 @@ const labelStyle: React.CSSProperties = {
 
 const inputStyle: React.CSSProperties = {
   width: "6.5rem",
-  background: "#08100a",
-  border: "1px solid #1a2a1a",
+  background: "#06101c",
+  border: "1px solid #142640",
   borderRadius: "2px",
-  color: "#c8d8c8",
+  color: "#cfe3f2",
   fontFamily: "monospace",
   fontSize: "0.78rem",
   padding: "0.2rem 0.4rem",
@@ -99,7 +99,7 @@ export default function ParamField(props: ParamFieldProps): React.ReactElement {
             onChange={(e) => props.onCommit(Number(e.target.value))}
             style={{ width: "6.5rem" }}
           />
-          <span style={{ color: "#c8d8c8", width: "2.5rem", textAlign: "right" }}>
+          <span style={{ color: "#cfe3f2", width: "2.5rem", textAlign: "right" }}>
             {props.value.toFixed(2)}
           </span>
         </span>

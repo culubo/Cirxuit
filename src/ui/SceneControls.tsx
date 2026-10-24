@@ -69,8 +69,8 @@ export default function SceneControls(): React.ReactElement {
           aria-pressed={showParticles}
           onClick={() => setShowParticles(!showParticles)}
           style={{
-            background: showParticles ? "#0e2a0e" : "transparent",
-            border: `1px solid ${showParticles ? "#2a6a2a" : tokens.hairline}`,
+            background: showParticles ? "#0a2238" : "transparent",
+            border: `1px solid ${showParticles ? "#1f6fb2" : tokens.hairline}`,
             borderRadius: "2px",
             color: showParticles ? tokens.phosphor : tokens.textFaint,
             fontFamily: "monospace",

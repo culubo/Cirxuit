@@ -16,17 +16,17 @@ const wrap: React.CSSProperties = {
   flexDirection: "column",
   gap: "0.35rem",
   fontFamily: "monospace",
-  color: "#8aa88a",
+  color: "#8aa8c4",
   zIndex: 10,
-  background: "#0d1117",
-  border: "1px solid #2a6a2a",
+  background: "#0a1424",
+  border: "1px solid #1f6fb2",
   borderRadius: "4px",
   padding: "0.6rem 0.8rem",
   boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
 };
 
 const label: React.CSSProperties = {
-  color: "#7ec8a0",
+  color: "#4fd8ff",
   fontSize: "0.72rem",
   fontWeight: "bold",
   textTransform: "uppercase",
@@ -46,10 +46,10 @@ export default function BoardSwitcher(): React.ReactElement {
         value={boardId ?? ""}
         onChange={(e) => setBoardId(e.target.value)}
         style={{
-          background: "#08100a",
-          border: "1px solid #2a6a2a",
+          background: "#06101c",
+          border: "1px solid #1f6fb2",
           borderRadius: "2px",
-          color: "#c8d8c8",
+          color: "#cfe3f2",
           fontFamily: "monospace",
           fontSize: "0.85rem",
           padding: "0.4rem 0.6rem",
