@@ -1,9 +1,11 @@
 import { expect, test, type Locator } from "@playwright/test";
 
 function displayedMilliAmps(text: string | null): number {
-  const match = text?.match(/([+-]?\d+(?:\.\d+)?)\s*mA\b/i);
-  if (!match) throw new Error(`Expected a current in mA, received ${text ?? "(empty)"}`);
-  const milliamps = Number(match[1]);
+  const match = text?.match(/^\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?)\s*(m|[µμ]|n|p)?A\s*$/);
+  if (!match) throw new Error(`Expected a current in amps, received ${text ?? "(empty)"}`);
+  const prefix = match[2];
+  const factor = prefix === "m" ? 1 : prefix === "µ" || prefix === "μ" ? 1e-3 : prefix === "n" ? 1e-6 : prefix === "p" ? 1e-9 : 1e3;
+  const milliamps = Number(match[1]) * factor;
   if (!Number.isFinite(milliamps)) throw new Error(`Current is not finite: ${text}`);
   return milliamps;
 }

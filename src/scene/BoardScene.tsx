@@ -21,7 +21,7 @@ export default function BoardScene(): React.ReactElement {
       style={{ width: "100%", height: "100%" }}
       gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       onCreated={({ scene }) => { scene.background = new THREE.Color(tokens.bg); }}
-      shadows
+      shadows="percentage"
     >
       <Lighting />
 
@@ -34,7 +34,7 @@ export default function BoardScene(): React.ReactElement {
       <EffectComposer>
         <Bloom
           intensity={0.9}
-          luminanceThreshold={0.6}
+          luminanceThreshold={0.92}
           luminanceSmoothing={0.2}
           mipmapBlur
         />

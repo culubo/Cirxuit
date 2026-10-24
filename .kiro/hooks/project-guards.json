@@ -1,0 +1,26 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "validate-boards",
+      "description": "Run the board validator tests when a board file changes",
+      "trigger": "PostFileSave",
+      "matcher": "src/model/.*\\.json$",
+      "action": { "type": "command", "command": "npx vitest run src/model/__tests__" }
+    },
+    {
+      "name": "solver-sweep",
+      "description": "Run the 210-case stress sweep when the solver changes",
+      "trigger": "PostFileSave",
+      "matcher": "src/solver/solve\\.ts$",
+      "action": { "type": "command", "command": "npx vitest run src/solver/__tests__/sweep.test.ts" }
+    },
+    {
+      "name": "readme-sync",
+      "description": "Keep README architecture in sync with public APIs",
+      "trigger": "PostFileSave",
+      "matcher": "src/(solver|runtime)/[^/]+\\.ts$",
+      "action": { "type": "agent", "prompt": "If this change altered an exported function signature, update the Architecture section of README.md to match. Otherwise do nothing." }
+    }
+  ]
+}

@@ -27,10 +27,34 @@ const BIPED_SKETCH = [
   "",
 ].join("\n");
 
+const ROBOT_SKETCH = [
+  "// Robot controller r2: power-on self test.",
+  "// D2..D9 drive the eight status LEDs (D10..D17) through 330 ohm resistors.",
+  "const leds = [2, 3, 4, 5, 6, 7, 8, 9];",
+  "for (const pin of leds) pinMode(pin, \"OUTPUT\");",
+  "",
+  "// Lamp test: every LED on, then off.",
+  "for (const pin of leds) digitalWrite(pin, HIGH);",
+  "for (const pin of leds) digitalWrite(pin, LOW);",
+  "",
+  "// Sweep there and back. Light the next LED before turning the last one off,",
+  "// so one is always lit. Set Speed to Fast or Normal to watch it.",
+  "const sweep = [2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3];",
+  "for (let pass = 0; pass < 2; pass++) {",
+  "  for (let i = 0; i < sweep.length; i++) {",
+  "    digitalWrite(sweep[(i + 1) % sweep.length], HIGH);",
+  "    digitalWrite(sweep[i], LOW);",
+  "  }",
+  "}",
+  "log(\"Self test complete:\", leds.length, \"LEDs OK\");",
+  "",
+].join("\n");
+
 export function starterSketch(boardId: string | null): string {
   switch (boardId) {
     case "demo-board": return DEMO_SKETCH;
     case "biped-power-board": return BIPED_SKETCH;
+    case "robot-controller-board": return ROBOT_SKETCH;
     case CUSTOM_BOARD_ID: return BLINK_SKETCH;
     default: return "// Write your sketch here, then press Run.\n";
   }

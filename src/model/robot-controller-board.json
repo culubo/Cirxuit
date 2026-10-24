@@ -1,0 +1,6536 @@
+{
+  "id": "robot-controller-board",
+  "name": "Robot Controller r2",
+  "outline": [
+    {
+      "x": 0,
+      "y": 0
+    },
+    {
+      "x": 100,
+      "y": 0
+    },
+    {
+      "x": 100,
+      "y": 70
+    },
+    {
+      "x": 0,
+      "y": 70
+    }
+  ],
+  "thicknessMm": 1.6,
+  "copperLayers": [
+    "F.Cu",
+    "B.Cu"
+  ],
+  "parts": [
+    {
+      "side": "top",
+      "ref": "J1",
+      "kind": "vsource",
+      "value": "5V",
+      "footprint": "Connector_AMASS:AMASS_XT30U-M_1x02_P5.0mm_Vertical",
+      "position": {
+        "x": 8,
+        "y": 35
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 5,
+        "h": 10,
+        "height": 8
+      },
+      "pads": [
+        {
+          "number": "+",
+          "netId": "VIN",
+          "position": {
+            "x": 8,
+            "y": 32.5
+          },
+          "sizeMm": {
+            "w": 2.5,
+            "h": 2.5
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "-",
+          "netId": "GND",
+          "position": {
+            "x": 8,
+            "y": 37.5
+          },
+          "sizeMm": {
+            "w": 2.5,
+            "h": 2.5
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "vsource",
+        "volts": 5,
+        "posPad": "+",
+        "negPad": "-"
+      },
+      "blurb": "XT30 power entry from the robot's 5 V regulator. Servos take raw VIN; the logic side is fused."
+    },
+    {
+      "side": "top",
+      "ref": "F1",
+      "kind": "resistor",
+      "value": "0.05 Ω fuse",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "position": {
+        "x": 18,
+        "y": 32.5
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 4.5,
+        "h": 3.2,
+        "height": 1.2
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VIN",
+          "position": {
+            "x": 16,
+            "y": 32.5
+          },
+          "sizeMm": {
+            "w": 1.8,
+            "h": 2.8
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "+5V",
+          "position": {
+            "x": 20,
+            "y": 32.5
+          },
+          "sizeMm": {
+            "w": 1.8,
+            "h": 2.8
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 0.05
+      },
+      "blurb": "Resettable fuse protecting the logic rail from a shorted sensor lead."
+    },
+    {
+      "side": "top",
+      "ref": "C1",
+      "kind": "capacitor",
+      "value": "220uF",
+      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P5.00mm",
+      "position": {
+        "x": 28,
+        "y": 35
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 8,
+        "h": 8,
+        "height": 10.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "+5V",
+          "position": {
+            "x": 28,
+            "y": 32.5
+          },
+          "sizeMm": {
+            "w": 1.8,
+            "h": 1.8
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": {
+            "x": 28,
+            "y": 37.5
+          },
+          "sizeMm": {
+            "w": 1.8,
+            "h": 1.8
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 0.00022
+      },
+      "blurb": "Bulk reservoir for the logic rail."
+    },
+    {
+      "side": "top",
+      "ref": "C2",
+      "kind": "capacitor",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+        "x": 33,
+        "y": 35
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "GND",
+          "position": {
+            "x": 33,
+            "y": 35.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "+5V",
+          "position": {
+            "x": 33,
+            "y": 34.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 1e-7
+      },
+      "blurb": "Local decoupling for U1's supply pins."
+    },
+    {
+      "side": "top",
+      "ref": "C3",
+      "kind": "capacitor",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+        "x": 35.5,
+        "y": 35
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "GND",
+          "position": {
+            "x": 35.5,
+            "y": 35.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "+5V",
+          "position": {
+            "x": 35.5,
+            "y": 34.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 1e-7
+      },
+      "blurb": "Local decoupling for U1's supply pins."
+    },
+    {
+      "side": "top",
+      "ref": "C4",
+      "kind": "capacitor",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+        "x": 38,
+        "y": 35
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "GND",
+          "position": {
+            "x": 38,
+            "y": 35.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "+5V",
+          "position": {
+            "x": 38,
+            "y": 34.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 1e-7
+      },
+      "blurb": "Local decoupling for U1's supply pins."
+    },
+    {
+      "side": "top",
+      "ref": "R10",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 12,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D2",
+          "position": {
+            "x": 12,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED0",
+          "position": {
+            "x": 12,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 0."
+    },
+    {
+      "side": "top",
+      "ref": "D10",
+      "kind": "led",
+      "value": "red",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 12,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED0",
+          "position": {
+            "x": 12,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 12,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "red"
+      },
+      "blurb": "Status LED 0, driven straight from D2."
+    },
+    {
+      "side": "top",
+      "ref": "R11",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 21.5,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D3",
+          "position": {
+            "x": 21.5,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED1",
+          "position": {
+            "x": 21.5,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 1."
+    },
+    {
+      "side": "top",
+      "ref": "D11",
+      "kind": "led",
+      "value": "amber",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 21.5,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED1",
+          "position": {
+            "x": 21.5,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 21.5,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "amber"
+      },
+      "blurb": "Status LED 1, driven straight from D3."
+    },
+    {
+      "side": "top",
+      "ref": "R12",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 31,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D4",
+          "position": {
+            "x": 31,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED2",
+          "position": {
+            "x": 31,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 2."
+    },
+    {
+      "side": "top",
+      "ref": "D12",
+      "kind": "led",
+      "value": "yellow",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 31,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED2",
+          "position": {
+            "x": 31,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 31,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "yellow"
+      },
+      "blurb": "Status LED 2, driven straight from D4."
+    },
+    {
+      "side": "top",
+      "ref": "R13",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 40.5,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D5",
+          "position": {
+            "x": 40.5,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED3",
+          "position": {
+            "x": 40.5,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 3."
+    },
+    {
+      "side": "top",
+      "ref": "D13",
+      "kind": "led",
+      "value": "green",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 40.5,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED3",
+          "position": {
+            "x": 40.5,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 40.5,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "green"
+      },
+      "blurb": "Status LED 3, driven straight from D5."
+    },
+    {
+      "side": "top",
+      "ref": "R14",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 50,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D6",
+          "position": {
+            "x": 50,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED4",
+          "position": {
+            "x": 50,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 4."
+    },
+    {
+      "side": "top",
+      "ref": "D14",
+      "kind": "led",
+      "value": "green",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 50,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED4",
+          "position": {
+            "x": 50,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 50,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "green"
+      },
+      "blurb": "Status LED 4, driven straight from D6."
+    },
+    {
+      "side": "top",
+      "ref": "R15",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 59.5,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D7",
+          "position": {
+            "x": 59.5,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED5",
+          "position": {
+            "x": 59.5,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 5."
+    },
+    {
+      "side": "top",
+      "ref": "D15",
+      "kind": "led",
+      "value": "blue",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 59.5,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED5",
+          "position": {
+            "x": 59.5,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 59.5,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 3,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "blue"
+      },
+      "blurb": "Status LED 5, driven straight from D7."
+    },
+    {
+      "side": "top",
+      "ref": "R16",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 69,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D8",
+          "position": {
+            "x": 69,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED6",
+          "position": {
+            "x": 69,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 6."
+    },
+    {
+      "side": "top",
+      "ref": "D16",
+      "kind": "led",
+      "value": "blue",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 69,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED6",
+          "position": {
+            "x": 69,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 69,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 3,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "blue"
+      },
+      "blurb": "Status LED 6, driven straight from D8."
+    },
+    {
+      "side": "top",
+      "ref": "R17",
+      "kind": "resistor",
+      "value": "330",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 78.5,
+        "y": 16
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D9",
+          "position": {
+            "x": 78.5,
+            "y": 16.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "LED7",
+          "position": {
+            "x": 78.5,
+            "y": 15.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 330
+      },
+      "blurb": "Current limit for LED 7."
+    },
+    {
+      "side": "top",
+      "ref": "D17",
+      "kind": "led",
+      "value": "white",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+        "x": 78.5,
+        "y": 11
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 2.4,
+        "h": 1.4,
+        "height": 1.1
+      },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED7",
+          "position": {
+            "x": 78.5,
+            "y": 12
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "K",
+          "netId": "GND",
+          "position": {
+            "x": 78.5,
+            "y": 10
+          },
+          "sizeMm": {
+            "w": 1,
+            "h": 1
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 3,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "white"
+      },
+      "blurb": "Status LED 7, driven straight from D9."
+    },
+    {
+      "side": "top",
+      "ref": "J10",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 8
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S0",
+          "position": {
+            "x": 86,
+            "y": 8
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 8
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 8
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 0 plug: PWM signal from S0, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J11",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 15
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S1",
+          "position": {
+            "x": 86,
+            "y": 15
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 15
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 15
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 1 plug: PWM signal from S1, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J12",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 22
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S2",
+          "position": {
+            "x": 86,
+            "y": 22
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 22
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 22
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 2 plug: PWM signal from S2, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J13",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 29
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S3",
+          "position": {
+            "x": 86,
+            "y": 29
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 29
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 29
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 3 plug: PWM signal from S3, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J14",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 36
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S4",
+          "position": {
+            "x": 86,
+            "y": 36
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 36
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 36
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 4 plug: PWM signal from S4, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J15",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 43
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S5",
+          "position": {
+            "x": 86,
+            "y": 43
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 43
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 43
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 5 plug: PWM signal from S5, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J16",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 50
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S6",
+          "position": {
+            "x": 86,
+            "y": 50
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 50
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 50
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 6 plug: PWM signal from S6, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "J17",
+      "kind": "connector",
+      "value": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+      "position": {
+        "x": 88.54,
+        "y": 57
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7.62,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "S7",
+          "position": {
+            "x": 86,
+            "y": 57
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "VIN",
+          "position": {
+            "x": 88.54,
+            "y": 57
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": {
+            "x": 91.08,
+            "y": 57
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Servo 7 plug: PWM signal from S7, raw VIN, ground."
+    },
+    {
+      "side": "top",
+      "ref": "R20",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 32.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN0",
+          "position": {
+            "x": 32.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A0",
+          "position": {
+            "x": 32.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A0."
+    },
+    {
+      "side": "top",
+      "ref": "R21",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 37.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN1",
+          "position": {
+            "x": 37.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A1",
+          "position": {
+            "x": 37.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A1."
+    },
+    {
+      "side": "top",
+      "ref": "R22",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 42.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN2",
+          "position": {
+            "x": 42.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A2",
+          "position": {
+            "x": 42.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A2."
+    },
+    {
+      "side": "top",
+      "ref": "R23",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 47.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN3",
+          "position": {
+            "x": 47.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A3",
+          "position": {
+            "x": 47.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A3."
+    },
+    {
+      "side": "top",
+      "ref": "R24",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 52.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN4",
+          "position": {
+            "x": 52.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A4",
+          "position": {
+            "x": 52.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A4."
+    },
+    {
+      "side": "top",
+      "ref": "R25",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 57.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN5",
+          "position": {
+            "x": 57.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "A5",
+          "position": {
+            "x": 57.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input A5."
+    },
+    {
+      "side": "top",
+      "ref": "R26",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 62.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN6",
+          "position": {
+            "x": 62.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "D16",
+          "position": {
+            "x": 62.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input D16."
+    },
+    {
+      "side": "top",
+      "ref": "R27",
+      "kind": "resistor",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+        "x": 67.5,
+        "y": 50
+      },
+      "rotationDeg": 90,
+      "body": {
+        "w": 1.6,
+        "h": 1.1700000000000002,
+        "height": 0.6
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN7",
+          "position": {
+            "x": 67.5,
+            "y": 50.8
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "D17",
+          "position": {
+            "x": 67.5,
+            "y": 49.2
+          },
+          "sizeMm": {
+            "w": 0.9,
+            "h": 0.9
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Series protection for sensor input D17."
+    },
+    {
+      "side": "top",
+      "ref": "J20",
+      "kind": "connector",
+      "value": "sensors",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical",
+      "position": {
+        "x": 50,
+        "y": 62
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 20.32,
+        "h": 2.54,
+        "height": 8.5
+      },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "IN0",
+          "position": {
+            "x": 41.11,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "2",
+          "netId": "IN1",
+          "position": {
+            "x": 43.65,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "3",
+          "netId": "IN2",
+          "position": {
+            "x": 46.19,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "4",
+          "netId": "IN3",
+          "position": {
+            "x": 48.73,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "5",
+          "netId": "IN4",
+          "position": {
+            "x": 51.27,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "6",
+          "netId": "IN5",
+          "position": {
+            "x": 53.81,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "7",
+          "netId": "IN6",
+          "position": {
+            "x": 56.35,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        },
+        {
+          "number": "8",
+          "netId": "IN7",
+          "position": {
+            "x": 58.89,
+            "y": 62
+          },
+          "sizeMm": {
+            "w": 1.7,
+            "h": 1.7
+          },
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ]
+        }
+      ],
+      "blurb": "Eight sensor inputs: six analog, two digital."
+    },
+    {
+      "side": "top",
+      "ref": "U1",
+      "kind": "mcu",
+      "value": "ATmega328P",
+      "footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
+      "position": {
+        "x": 50,
+        "y": 35
+      },
+      "rotationDeg": 0,
+      "body": {
+        "w": 7,
+        "h": 7,
+        "height": 1.2
+      },
+      "pads": [
+        {
+          "number": "4",
+          "netId": "+5V",
+          "position": {
+            "x": 45.84,
+            "y": 34.6
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "5",
+          "netId": "GND",
+          "position": {
+            "x": 45.84,
+            "y": 35.4
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "32",
+          "netId": "D2",
+          "position": {
+            "x": 47.2,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "31",
+          "netId": "D3",
+          "position": {
+            "x": 48,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "30",
+          "netId": "D4",
+          "position": {
+            "x": 48.8,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "29",
+          "netId": "D5",
+          "position": {
+            "x": 49.6,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "28",
+          "netId": "D6",
+          "position": {
+            "x": 50.4,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "27",
+          "netId": "D7",
+          "position": {
+            "x": 51.2,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "26",
+          "netId": "D8",
+          "position": {
+            "x": 52,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "25",
+          "netId": "D9",
+          "position": {
+            "x": 52.8,
+            "y": 30.84
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "24",
+          "netId": "S0",
+          "position": {
+            "x": 54.16,
+            "y": 32.2
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "23",
+          "netId": "S1",
+          "position": {
+            "x": 54.16,
+            "y": 33
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "22",
+          "netId": "S2",
+          "position": {
+            "x": 54.16,
+            "y": 33.8
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "21",
+          "netId": "S3",
+          "position": {
+            "x": 54.16,
+            "y": 34.6
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "20",
+          "netId": "S4",
+          "position": {
+            "x": 54.16,
+            "y": 35.4
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "19",
+          "netId": "S5",
+          "position": {
+            "x": 54.16,
+            "y": 36.2
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "18",
+          "netId": "S6",
+          "position": {
+            "x": 54.16,
+            "y": 37
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "17",
+          "netId": "S7",
+          "position": {
+            "x": 54.16,
+            "y": 37.8
+          },
+          "sizeMm": {
+            "w": 1.475,
+            "h": 0.55
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "9",
+          "netId": "A0",
+          "position": {
+            "x": 47.2,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "10",
+          "netId": "A1",
+          "position": {
+            "x": 48,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "11",
+          "netId": "A2",
+          "position": {
+            "x": 48.8,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "12",
+          "netId": "A3",
+          "position": {
+            "x": 49.6,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "13",
+          "netId": "A4",
+          "position": {
+            "x": 50.4,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "14",
+          "netId": "A5",
+          "position": {
+            "x": 51.2,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "15",
+          "netId": "D16",
+          "position": {
+            "x": 52,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        },
+        {
+          "number": "16",
+          "netId": "D17",
+          "position": {
+            "x": 52.8,
+            "y": 39.16
+          },
+          "sizeMm": {
+            "w": 0.55,
+            "h": 1.475
+          },
+          "layers": [
+            "F.Cu"
+          ]
+        }
+      ],
+      "model": {
+        "type": "mcu",
+        "vcc": 5,
+        "gndPad": "5",
+        "vccPad": "4",
+        "pins": [
+          {
+            "name": "D2",
+            "pad": "32",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D3",
+            "pad": "31",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D4",
+            "pad": "30",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D5",
+            "pad": "29",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D6",
+            "pad": "28",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D7",
+            "pad": "27",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D8",
+            "pad": "26",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D9",
+            "pad": "25",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S0",
+            "pad": "24",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S1",
+            "pad": "23",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S2",
+            "pad": "22",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S3",
+            "pad": "21",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S4",
+            "pad": "20",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S5",
+            "pad": "19",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S6",
+            "pad": "18",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "S7",
+            "pad": "17",
+            "capabilities": [
+              "digital",
+              "pwm"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A0",
+            "pad": "9",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A1",
+            "pad": "10",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A2",
+            "pad": "11",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A3",
+            "pad": "12",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A4",
+            "pad": "13",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "A5",
+            "pad": "14",
+            "capabilities": [
+              "digital",
+              "analog_in"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D16",
+            "pad": "15",
+            "capabilities": [
+              "digital"
+            ],
+            "outputOhms": 25
+          },
+          {
+            "name": "D17",
+            "pad": "16",
+            "capabilities": [
+              "digital"
+            ],
+            "outputOhms": 25
+          }
+        ],
+        "adcBits": 10
+      },
+      "blurb": "The robot's controller: eight status LEDs, eight servo PWM outputs, eight sensor inputs."
+    }
+  ],
+  "nets": [
+    {
+      "id": "VIN",
+      "name": "VIN",
+      "pads": [
+        {
+          "ref": "J1",
+          "pad": "+"
+        },
+        {
+          "ref": "F1",
+          "pad": "1"
+        },
+        {
+          "ref": "J10",
+          "pad": "2"
+        },
+        {
+          "ref": "J11",
+          "pad": "2"
+        },
+        {
+          "ref": "J12",
+          "pad": "2"
+        },
+        {
+          "ref": "J13",
+          "pad": "2"
+        },
+        {
+          "ref": "J14",
+          "pad": "2"
+        },
+        {
+          "ref": "J15",
+          "pad": "2"
+        },
+        {
+          "ref": "J16",
+          "pad": "2"
+        },
+        {
+          "ref": "J17",
+          "pad": "2"
+        }
+      ]
+    },
+    {
+      "id": "GND",
+      "name": "GND",
+      "pads": [
+        {
+          "ref": "J1",
+          "pad": "-"
+        },
+        {
+          "ref": "C1",
+          "pad": "2"
+        },
+        {
+          "ref": "C2",
+          "pad": "1"
+        },
+        {
+          "ref": "C3",
+          "pad": "1"
+        },
+        {
+          "ref": "C4",
+          "pad": "1"
+        },
+        {
+          "ref": "D10",
+          "pad": "K"
+        },
+        {
+          "ref": "D11",
+          "pad": "K"
+        },
+        {
+          "ref": "D12",
+          "pad": "K"
+        },
+        {
+          "ref": "D13",
+          "pad": "K"
+        },
+        {
+          "ref": "D14",
+          "pad": "K"
+        },
+        {
+          "ref": "D15",
+          "pad": "K"
+        },
+        {
+          "ref": "D16",
+          "pad": "K"
+        },
+        {
+          "ref": "D17",
+          "pad": "K"
+        },
+        {
+          "ref": "J10",
+          "pad": "3"
+        },
+        {
+          "ref": "J11",
+          "pad": "3"
+        },
+        {
+          "ref": "J12",
+          "pad": "3"
+        },
+        {
+          "ref": "J13",
+          "pad": "3"
+        },
+        {
+          "ref": "J14",
+          "pad": "3"
+        },
+        {
+          "ref": "J15",
+          "pad": "3"
+        },
+        {
+          "ref": "J16",
+          "pad": "3"
+        },
+        {
+          "ref": "J17",
+          "pad": "3"
+        },
+        {
+          "ref": "U1",
+          "pad": "5"
+        }
+      ]
+    },
+    {
+      "id": "+5V",
+      "name": "+5V",
+      "pads": [
+        {
+          "ref": "F1",
+          "pad": "2"
+        },
+        {
+          "ref": "C1",
+          "pad": "1"
+        },
+        {
+          "ref": "C2",
+          "pad": "2"
+        },
+        {
+          "ref": "C3",
+          "pad": "2"
+        },
+        {
+          "ref": "C4",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "4"
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "D2",
+      "pads": [
+        {
+          "ref": "R10",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "32"
+        }
+      ]
+    },
+    {
+      "id": "LED0",
+      "name": "LED0",
+      "pads": [
+        {
+          "ref": "R10",
+          "pad": "2"
+        },
+        {
+          "ref": "D10",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "D3",
+      "pads": [
+        {
+          "ref": "R11",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "31"
+        }
+      ]
+    },
+    {
+      "id": "LED1",
+      "name": "LED1",
+      "pads": [
+        {
+          "ref": "R11",
+          "pad": "2"
+        },
+        {
+          "ref": "D11",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "name": "D4",
+      "pads": [
+        {
+          "ref": "R12",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "30"
+        }
+      ]
+    },
+    {
+      "id": "LED2",
+      "name": "LED2",
+      "pads": [
+        {
+          "ref": "R12",
+          "pad": "2"
+        },
+        {
+          "ref": "D12",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "name": "D5",
+      "pads": [
+        {
+          "ref": "R13",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "29"
+        }
+      ]
+    },
+    {
+      "id": "LED3",
+      "name": "LED3",
+      "pads": [
+        {
+          "ref": "R13",
+          "pad": "2"
+        },
+        {
+          "ref": "D13",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D6",
+      "name": "D6",
+      "pads": [
+        {
+          "ref": "R14",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "28"
+        }
+      ]
+    },
+    {
+      "id": "LED4",
+      "name": "LED4",
+      "pads": [
+        {
+          "ref": "R14",
+          "pad": "2"
+        },
+        {
+          "ref": "D14",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D7",
+      "name": "D7",
+      "pads": [
+        {
+          "ref": "R15",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "27"
+        }
+      ]
+    },
+    {
+      "id": "LED5",
+      "name": "LED5",
+      "pads": [
+        {
+          "ref": "R15",
+          "pad": "2"
+        },
+        {
+          "ref": "D15",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D8",
+      "name": "D8",
+      "pads": [
+        {
+          "ref": "R16",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "26"
+        }
+      ]
+    },
+    {
+      "id": "LED6",
+      "name": "LED6",
+      "pads": [
+        {
+          "ref": "R16",
+          "pad": "2"
+        },
+        {
+          "ref": "D16",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "D9",
+      "name": "D9",
+      "pads": [
+        {
+          "ref": "R17",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "25"
+        }
+      ]
+    },
+    {
+      "id": "LED7",
+      "name": "LED7",
+      "pads": [
+        {
+          "ref": "R17",
+          "pad": "2"
+        },
+        {
+          "ref": "D17",
+          "pad": "A"
+        }
+      ]
+    },
+    {
+      "id": "S0",
+      "name": "S0",
+      "pads": [
+        {
+          "ref": "J10",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "24"
+        }
+      ]
+    },
+    {
+      "id": "S1",
+      "name": "S1",
+      "pads": [
+        {
+          "ref": "J11",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "23"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "S2",
+      "pads": [
+        {
+          "ref": "J12",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "22"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "S3",
+      "pads": [
+        {
+          "ref": "J13",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "21"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "S4",
+      "pads": [
+        {
+          "ref": "J14",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "20"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "S5",
+      "pads": [
+        {
+          "ref": "J15",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "19"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "S6",
+      "pads": [
+        {
+          "ref": "J16",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "18"
+        }
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "S7",
+      "pads": [
+        {
+          "ref": "J17",
+          "pad": "1"
+        },
+        {
+          "ref": "U1",
+          "pad": "17"
+        }
+      ]
+    },
+    {
+      "id": "IN0",
+      "name": "IN0",
+      "pads": [
+        {
+          "ref": "R20",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "1"
+        }
+      ]
+    },
+    {
+      "id": "A0",
+      "name": "A0",
+      "pads": [
+        {
+          "ref": "R20",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "9"
+        }
+      ]
+    },
+    {
+      "id": "IN1",
+      "name": "IN1",
+      "pads": [
+        {
+          "ref": "R21",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "2"
+        }
+      ]
+    },
+    {
+      "id": "A1",
+      "name": "A1",
+      "pads": [
+        {
+          "ref": "R21",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "10"
+        }
+      ]
+    },
+    {
+      "id": "IN2",
+      "name": "IN2",
+      "pads": [
+        {
+          "ref": "R22",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "3"
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "name": "A2",
+      "pads": [
+        {
+          "ref": "R22",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "11"
+        }
+      ]
+    },
+    {
+      "id": "IN3",
+      "name": "IN3",
+      "pads": [
+        {
+          "ref": "R23",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "4"
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "name": "A3",
+      "pads": [
+        {
+          "ref": "R23",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "12"
+        }
+      ]
+    },
+    {
+      "id": "IN4",
+      "name": "IN4",
+      "pads": [
+        {
+          "ref": "R24",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "5"
+        }
+      ]
+    },
+    {
+      "id": "A4",
+      "name": "A4",
+      "pads": [
+        {
+          "ref": "R24",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "13"
+        }
+      ]
+    },
+    {
+      "id": "IN5",
+      "name": "IN5",
+      "pads": [
+        {
+          "ref": "R25",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "6"
+        }
+      ]
+    },
+    {
+      "id": "A5",
+      "name": "A5",
+      "pads": [
+        {
+          "ref": "R25",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "14"
+        }
+      ]
+    },
+    {
+      "id": "IN6",
+      "name": "IN6",
+      "pads": [
+        {
+          "ref": "R26",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "7"
+        }
+      ]
+    },
+    {
+      "id": "D16",
+      "name": "D16",
+      "pads": [
+        {
+          "ref": "R26",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "15"
+        }
+      ]
+    },
+    {
+      "id": "IN7",
+      "name": "IN7",
+      "pads": [
+        {
+          "ref": "R27",
+          "pad": "1"
+        },
+        {
+          "ref": "J20",
+          "pad": "8"
+        }
+      ]
+    },
+    {
+      "id": "D17",
+      "name": "D17",
+      "pads": [
+        {
+          "ref": "R27",
+          "pad": "2"
+        },
+        {
+          "ref": "U1",
+          "pad": "16"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "netId": "VIN",
+      "layer": "F.Cu",
+      "start": {
+        "x": 8,
+        "y": 32.5
+      },
+      "end": {
+        "x": 16,
+        "y": 32.5
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 20,
+        "y": 32.5
+      },
+      "end": {
+        "x": 28,
+        "y": 32.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 28,
+        "y": 32.5
+      },
+      "end": {
+        "x": 33,
+        "y": 32.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 33,
+        "y": 32.5
+      },
+      "end": {
+        "x": 35.5,
+        "y": 32.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 35.5,
+        "y": 32.5
+      },
+      "end": {
+        "x": 38,
+        "y": 32.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 38,
+        "y": 32.5
+      },
+      "end": {
+        "x": 41,
+        "y": 32.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 41,
+        "y": 32.5
+      },
+      "end": {
+        "x": 41,
+        "y": 34.6
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 41,
+        "y": 34.6
+      },
+      "end": {
+        "x": 43.5,
+        "y": 34.6
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 43.5,
+        "y": 34.6
+      },
+      "end": {
+        "x": 45.84,
+        "y": 34.6
+      },
+      "widthMm": 0.3
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 8,
+        "y": 37.5
+      },
+      "end": {
+        "x": 28,
+        "y": 37.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 28,
+        "y": 37.5
+      },
+      "end": {
+        "x": 33,
+        "y": 37.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 33,
+        "y": 37.5
+      },
+      "end": {
+        "x": 35.5,
+        "y": 37.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 35.5,
+        "y": 37.5
+      },
+      "end": {
+        "x": 38,
+        "y": 37.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 38,
+        "y": 37.5
+      },
+      "end": {
+        "x": 40,
+        "y": 37.5
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 40,
+        "y": 37.5
+      },
+      "end": {
+        "x": 40,
+        "y": 35.4
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 40,
+        "y": 35.4
+      },
+      "end": {
+        "x": 43.5,
+        "y": 35.4
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 43.5,
+        "y": 35.4
+      },
+      "end": {
+        "x": 45.84,
+        "y": 35.4
+      },
+      "widthMm": 0.3
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 33,
+        "y": 32.5
+      },
+      "end": {
+        "x": 33,
+        "y": 34.2
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 33,
+        "y": 37.5
+      },
+      "end": {
+        "x": 33,
+        "y": 35.8
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 35.5,
+        "y": 32.5
+      },
+      "end": {
+        "x": 35.5,
+        "y": 34.2
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 35.5,
+        "y": 37.5
+      },
+      "end": {
+        "x": 35.5,
+        "y": 35.8
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": {
+        "x": 38,
+        "y": 32.5
+      },
+      "end": {
+        "x": 38,
+        "y": 34.2
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 38,
+        "y": 37.5
+      },
+      "end": {
+        "x": 38,
+        "y": 35.8
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 12,
+        "y": 15.2
+      },
+      "end": {
+        "x": 12,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 12,
+        "y": 10
+      },
+      "end": {
+        "x": 12,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 12,
+        "y": 7
+      },
+      "end": {
+        "x": 12,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 21.5,
+        "y": 15.2
+      },
+      "end": {
+        "x": 21.5,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 21.5,
+        "y": 10
+      },
+      "end": {
+        "x": 21.5,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 21.5,
+        "y": 7
+      },
+      "end": {
+        "x": 21.5,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 31,
+        "y": 15.2
+      },
+      "end": {
+        "x": 31,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 31,
+        "y": 10
+      },
+      "end": {
+        "x": 31,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 31,
+        "y": 7
+      },
+      "end": {
+        "x": 31,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 40.5,
+        "y": 15.2
+      },
+      "end": {
+        "x": 40.5,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 40.5,
+        "y": 10
+      },
+      "end": {
+        "x": 40.5,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 40.5,
+        "y": 7
+      },
+      "end": {
+        "x": 40.5,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50,
+        "y": 15.2
+      },
+      "end": {
+        "x": 50,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50,
+        "y": 10
+      },
+      "end": {
+        "x": 50,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 50,
+        "y": 7
+      },
+      "end": {
+        "x": 50,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 59.5,
+        "y": 15.2
+      },
+      "end": {
+        "x": 59.5,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 59.5,
+        "y": 10
+      },
+      "end": {
+        "x": 59.5,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 59.5,
+        "y": 7
+      },
+      "end": {
+        "x": 59.5,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 69,
+        "y": 15.2
+      },
+      "end": {
+        "x": 69,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 69,
+        "y": 10
+      },
+      "end": {
+        "x": 69,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 69,
+        "y": 7
+      },
+      "end": {
+        "x": 69,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "LED7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 78.5,
+        "y": 15.2
+      },
+      "end": {
+        "x": 78.5,
+        "y": 12
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": {
+        "x": 78.5,
+        "y": 10
+      },
+      "end": {
+        "x": 78.5,
+        "y": 7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 78.5,
+        "y": 7
+      },
+      "end": {
+        "x": 78.5,
+        "y": 3
+      },
+      "widthMm": 0.6
+    },
+    {
+      "netId": "D2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 30.84
+      },
+      "end": {
+        "x": 47.2,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 29.64
+      },
+      "end": {
+        "x": 47.2,
+        "y": 29.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 29.4
+      },
+      "end": {
+        "x": 12,
+        "y": 29.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 12,
+        "y": 29.4
+      },
+      "end": {
+        "x": 12,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 30.84
+      },
+      "end": {
+        "x": 48,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 29.64
+      },
+      "end": {
+        "x": 48,
+        "y": 28.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 28.5
+      },
+      "end": {
+        "x": 21.5,
+        "y": 28.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 21.5,
+        "y": 28.5
+      },
+      "end": {
+        "x": 21.5,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 30.84
+      },
+      "end": {
+        "x": 48.8,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 29.64
+      },
+      "end": {
+        "x": 48.8,
+        "y": 27.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 27.6
+      },
+      "end": {
+        "x": 31,
+        "y": 27.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 31,
+        "y": 27.6
+      },
+      "end": {
+        "x": 31,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 30.84
+      },
+      "end": {
+        "x": 49.6,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 29.64
+      },
+      "end": {
+        "x": 49.6,
+        "y": 26.7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 26.7
+      },
+      "end": {
+        "x": 40.5,
+        "y": 26.7
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 40.5,
+        "y": 26.7
+      },
+      "end": {
+        "x": 40.5,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 30.84
+      },
+      "end": {
+        "x": 50.4,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 29.64
+      },
+      "end": {
+        "x": 50.4,
+        "y": 25.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 25.8
+      },
+      "end": {
+        "x": 50,
+        "y": 25.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50,
+        "y": 25.8
+      },
+      "end": {
+        "x": 50,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D9",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 30.84
+      },
+      "end": {
+        "x": 52.8,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D9",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 29.64
+      },
+      "end": {
+        "x": 52.8,
+        "y": 29.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D9",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 29.4
+      },
+      "end": {
+        "x": 78.5,
+        "y": 29.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D9",
+      "layer": "F.Cu",
+      "start": {
+        "x": 78.5,
+        "y": 29.4
+      },
+      "end": {
+        "x": 78.5,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D8",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 30.84
+      },
+      "end": {
+        "x": 52,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D8",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 29.64
+      },
+      "end": {
+        "x": 52,
+        "y": 28.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D8",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 28.5
+      },
+      "end": {
+        "x": 69,
+        "y": 28.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D8",
+      "layer": "F.Cu",
+      "start": {
+        "x": 69,
+        "y": 28.5
+      },
+      "end": {
+        "x": 69,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 30.84
+      },
+      "end": {
+        "x": 51.2,
+        "y": 29.64
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 29.64
+      },
+      "end": {
+        "x": 51.2,
+        "y": 27.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 27.6
+      },
+      "end": {
+        "x": 59.5,
+        "y": 27.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 59.5,
+        "y": 27.6
+      },
+      "end": {
+        "x": 59.5,
+        "y": 16.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 8,
+        "y": 37.5
+      },
+      "end": {
+        "x": 4.5,
+        "y": 37.5
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 4.5,
+        "y": 37.5
+      },
+      "end": {
+        "x": 4.5,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 4.5,
+        "y": 3
+      },
+      "end": {
+        "x": 12,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 12,
+        "y": 3
+      },
+      "end": {
+        "x": 21.5,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 21.5,
+        "y": 3
+      },
+      "end": {
+        "x": 31,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 31,
+        "y": 3
+      },
+      "end": {
+        "x": 40.5,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 40.5,
+        "y": 3
+      },
+      "end": {
+        "x": 50,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 50,
+        "y": 3
+      },
+      "end": {
+        "x": 59.5,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 59.5,
+        "y": 3
+      },
+      "end": {
+        "x": 69,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 69,
+        "y": 3
+      },
+      "end": {
+        "x": 78.5,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 78.5,
+        "y": 3
+      },
+      "end": {
+        "x": 91.08,
+        "y": 3
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "S0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 32.2
+      },
+      "end": {
+        "x": 55.86,
+        "y": 32.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 33
+      },
+      "end": {
+        "x": 57.06,
+        "y": 33
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 33.8
+      },
+      "end": {
+        "x": 55.86,
+        "y": 33.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 34.6
+      },
+      "end": {
+        "x": 57.06,
+        "y": 34.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 35.4
+      },
+      "end": {
+        "x": 55.86,
+        "y": 35.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 36.2
+      },
+      "end": {
+        "x": 57.06,
+        "y": 36.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 37
+      },
+      "end": {
+        "x": 55.86,
+        "y": 37
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 54.16,
+        "y": 37.8
+      },
+      "end": {
+        "x": 57.06,
+        "y": 37.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S0",
+      "layer": "B.Cu",
+      "start": {
+        "x": 55.86,
+        "y": 32.2
+      },
+      "end": {
+        "x": 60,
+        "y": 32.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S0",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60,
+        "y": 32.2
+      },
+      "end": {
+        "x": 60,
+        "y": 8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S0",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60,
+        "y": 8
+      },
+      "end": {
+        "x": 86,
+        "y": 8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S1",
+      "layer": "B.Cu",
+      "start": {
+        "x": 57.06,
+        "y": 33
+      },
+      "end": {
+        "x": 60.9,
+        "y": 33
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S1",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60.9,
+        "y": 33
+      },
+      "end": {
+        "x": 60.9,
+        "y": 15
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S1",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60.9,
+        "y": 15
+      },
+      "end": {
+        "x": 86,
+        "y": 15
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S2",
+      "layer": "B.Cu",
+      "start": {
+        "x": 55.86,
+        "y": 33.8
+      },
+      "end": {
+        "x": 61.8,
+        "y": 33.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S2",
+      "layer": "B.Cu",
+      "start": {
+        "x": 61.8,
+        "y": 33.8
+      },
+      "end": {
+        "x": 61.8,
+        "y": 22
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S2",
+      "layer": "B.Cu",
+      "start": {
+        "x": 61.8,
+        "y": 22
+      },
+      "end": {
+        "x": 86,
+        "y": 22
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S3",
+      "layer": "B.Cu",
+      "start": {
+        "x": 57.06,
+        "y": 34.6
+      },
+      "end": {
+        "x": 62.7,
+        "y": 34.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S3",
+      "layer": "B.Cu",
+      "start": {
+        "x": 62.7,
+        "y": 34.6
+      },
+      "end": {
+        "x": 62.7,
+        "y": 29
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S3",
+      "layer": "B.Cu",
+      "start": {
+        "x": 62.7,
+        "y": 29
+      },
+      "end": {
+        "x": 86,
+        "y": 29
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S7",
+      "layer": "B.Cu",
+      "start": {
+        "x": 57.06,
+        "y": 37.8
+      },
+      "end": {
+        "x": 60,
+        "y": 37.8
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S7",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60,
+        "y": 37.8
+      },
+      "end": {
+        "x": 60,
+        "y": 57
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S7",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60,
+        "y": 57
+      },
+      "end": {
+        "x": 86,
+        "y": 57
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S6",
+      "layer": "B.Cu",
+      "start": {
+        "x": 55.86,
+        "y": 37
+      },
+      "end": {
+        "x": 60.9,
+        "y": 37
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S6",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60.9,
+        "y": 37
+      },
+      "end": {
+        "x": 60.9,
+        "y": 50
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S6",
+      "layer": "B.Cu",
+      "start": {
+        "x": 60.9,
+        "y": 50
+      },
+      "end": {
+        "x": 86,
+        "y": 50
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S5",
+      "layer": "B.Cu",
+      "start": {
+        "x": 57.06,
+        "y": 36.2
+      },
+      "end": {
+        "x": 61.8,
+        "y": 36.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S5",
+      "layer": "B.Cu",
+      "start": {
+        "x": 61.8,
+        "y": 36.2
+      },
+      "end": {
+        "x": 61.8,
+        "y": 43
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S5",
+      "layer": "B.Cu",
+      "start": {
+        "x": 61.8,
+        "y": 43
+      },
+      "end": {
+        "x": 86,
+        "y": 43
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S4",
+      "layer": "B.Cu",
+      "start": {
+        "x": 55.86,
+        "y": 35.4
+      },
+      "end": {
+        "x": 62.7,
+        "y": 35.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S4",
+      "layer": "B.Cu",
+      "start": {
+        "x": 62.7,
+        "y": 35.4
+      },
+      "end": {
+        "x": 62.7,
+        "y": 36
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "S4",
+      "layer": "B.Cu",
+      "start": {
+        "x": 62.7,
+        "y": 36
+      },
+      "end": {
+        "x": 86,
+        "y": 36
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 8
+      },
+      "end": {
+        "x": 88.54,
+        "y": 15
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 15
+      },
+      "end": {
+        "x": 88.54,
+        "y": 22
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 22
+      },
+      "end": {
+        "x": 88.54,
+        "y": 29
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 29
+      },
+      "end": {
+        "x": 88.54,
+        "y": 36
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 36
+      },
+      "end": {
+        "x": 88.54,
+        "y": 43
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 43
+      },
+      "end": {
+        "x": 88.54,
+        "y": 50
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 50
+      },
+      "end": {
+        "x": 88.54,
+        "y": 57
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 57
+      },
+      "end": {
+        "x": 88.54,
+        "y": 66
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 88.54,
+        "y": 66
+      },
+      "end": {
+        "x": 13,
+        "y": 66
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 13,
+        "y": 66
+      },
+      "end": {
+        "x": 13,
+        "y": 32.5
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "VIN",
+      "layer": "B.Cu",
+      "start": {
+        "x": 13,
+        "y": 32.5
+      },
+      "end": {
+        "x": 8,
+        "y": 32.5
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 3
+      },
+      "end": {
+        "x": 91.08,
+        "y": 8
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 8
+      },
+      "end": {
+        "x": 91.08,
+        "y": 15
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 15
+      },
+      "end": {
+        "x": 91.08,
+        "y": 22
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 22
+      },
+      "end": {
+        "x": 91.08,
+        "y": 29
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 29
+      },
+      "end": {
+        "x": 91.08,
+        "y": 36
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 36
+      },
+      "end": {
+        "x": 91.08,
+        "y": 43
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 43
+      },
+      "end": {
+        "x": 91.08,
+        "y": 50
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": {
+        "x": 91.08,
+        "y": 50
+      },
+      "end": {
+        "x": 91.08,
+        "y": 57
+      },
+      "widthMm": 1
+    },
+    {
+      "netId": "A0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 39.16
+      },
+      "end": {
+        "x": 47.2,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 40.16
+      },
+      "end": {
+        "x": 47.2,
+        "y": 40.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.2,
+        "y": 40.6
+      },
+      "end": {
+        "x": 32.5,
+        "y": 40.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 32.5,
+        "y": 40.6
+      },
+      "end": {
+        "x": 32.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 39.16
+      },
+      "end": {
+        "x": 48,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 40.16
+      },
+      "end": {
+        "x": 48,
+        "y": 41.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48,
+        "y": 41.5
+      },
+      "end": {
+        "x": 37.5,
+        "y": 41.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 37.5,
+        "y": 41.5
+      },
+      "end": {
+        "x": 37.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 39.16
+      },
+      "end": {
+        "x": 48.8,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 40.16
+      },
+      "end": {
+        "x": 48.8,
+        "y": 42.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.8,
+        "y": 42.4
+      },
+      "end": {
+        "x": 42.5,
+        "y": 42.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 42.5,
+        "y": 42.4
+      },
+      "end": {
+        "x": 42.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 39.16
+      },
+      "end": {
+        "x": 49.6,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 40.16
+      },
+      "end": {
+        "x": 49.6,
+        "y": 43.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 49.6,
+        "y": 43.3
+      },
+      "end": {
+        "x": 47.5,
+        "y": 43.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.5,
+        "y": 43.3
+      },
+      "end": {
+        "x": 47.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D17",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 39.16
+      },
+      "end": {
+        "x": 52.8,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D17",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 40.16
+      },
+      "end": {
+        "x": 52.8,
+        "y": 40.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D17",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.8,
+        "y": 40.6
+      },
+      "end": {
+        "x": 67.5,
+        "y": 40.6
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D17",
+      "layer": "F.Cu",
+      "start": {
+        "x": 67.5,
+        "y": 40.6
+      },
+      "end": {
+        "x": 67.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D16",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 39.16
+      },
+      "end": {
+        "x": 52,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D16",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 40.16
+      },
+      "end": {
+        "x": 52,
+        "y": 41.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D16",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52,
+        "y": 41.5
+      },
+      "end": {
+        "x": 62.5,
+        "y": 41.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "D16",
+      "layer": "F.Cu",
+      "start": {
+        "x": 62.5,
+        "y": 41.5
+      },
+      "end": {
+        "x": 62.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 39.16
+      },
+      "end": {
+        "x": 51.2,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 40.16
+      },
+      "end": {
+        "x": 51.2,
+        "y": 42.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.2,
+        "y": 42.4
+      },
+      "end": {
+        "x": 57.5,
+        "y": 42.4
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 57.5,
+        "y": 42.4
+      },
+      "end": {
+        "x": 57.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 39.16
+      },
+      "end": {
+        "x": 50.4,
+        "y": 40.16
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 40.16
+      },
+      "end": {
+        "x": 50.4,
+        "y": 43.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 50.4,
+        "y": 43.3
+      },
+      "end": {
+        "x": 52.5,
+        "y": 43.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.5,
+        "y": 43.3
+      },
+      "end": {
+        "x": 52.5,
+        "y": 49.2
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 52.5,
+        "y": 52.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 52.5,
+        "y": 52.5
+      },
+      "end": {
+        "x": 51.27,
+        "y": 52.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN4",
+      "layer": "F.Cu",
+      "start": {
+        "x": 51.27,
+        "y": 52.5
+      },
+      "end": {
+        "x": 51.27,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 57.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 57.5,
+        "y": 53.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 57.5,
+        "y": 53.3
+      },
+      "end": {
+        "x": 53.81,
+        "y": 53.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN5",
+      "layer": "F.Cu",
+      "start": {
+        "x": 53.81,
+        "y": 53.3
+      },
+      "end": {
+        "x": 53.81,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 62.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 62.5,
+        "y": 54.1
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 62.5,
+        "y": 54.1
+      },
+      "end": {
+        "x": 56.35,
+        "y": 54.1
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN6",
+      "layer": "F.Cu",
+      "start": {
+        "x": 56.35,
+        "y": 54.1
+      },
+      "end": {
+        "x": 56.35,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 67.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 67.5,
+        "y": 54.9
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 67.5,
+        "y": 54.9
+      },
+      "end": {
+        "x": 58.89,
+        "y": 54.9
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN7",
+      "layer": "F.Cu",
+      "start": {
+        "x": 58.89,
+        "y": 54.9
+      },
+      "end": {
+        "x": 58.89,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 47.5,
+        "y": 52.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 47.5,
+        "y": 52.5
+      },
+      "end": {
+        "x": 48.73,
+        "y": 52.5
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN3",
+      "layer": "F.Cu",
+      "start": {
+        "x": 48.73,
+        "y": 52.5
+      },
+      "end": {
+        "x": 48.73,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 42.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 42.5,
+        "y": 53.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 42.5,
+        "y": 53.3
+      },
+      "end": {
+        "x": 46.19,
+        "y": 53.3
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN2",
+      "layer": "F.Cu",
+      "start": {
+        "x": 46.19,
+        "y": 53.3
+      },
+      "end": {
+        "x": 46.19,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 37.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 37.5,
+        "y": 54.1
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 37.5,
+        "y": 54.1
+      },
+      "end": {
+        "x": 43.65,
+        "y": 54.1
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN1",
+      "layer": "F.Cu",
+      "start": {
+        "x": 43.65,
+        "y": 54.1
+      },
+      "end": {
+        "x": 43.65,
+        "y": 62
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 32.5,
+        "y": 50.8
+      },
+      "end": {
+        "x": 32.5,
+        "y": 54.9
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 32.5,
+        "y": 54.9
+      },
+      "end": {
+        "x": 41.11,
+        "y": 54.9
+      },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "IN0",
+      "layer": "F.Cu",
+      "start": {
+        "x": 41.11,
+        "y": 54.9
+      },
+      "end": {
+        "x": 41.11,
+        "y": 62
+      },
+      "widthMm": 0.25
+    }
+  ],
+  "vias": [
+    {
+      "netId": "GND",
+      "position": {
+        "x": 12,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 21.5,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 31,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 40.5,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 50,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 59.5,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 69,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "GND",
+      "position": {
+        "x": 78.5,
+        "y": 7
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S0",
+      "position": {
+        "x": 55.86,
+        "y": 32.2
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S1",
+      "position": {
+        "x": 57.06,
+        "y": 33
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S2",
+      "position": {
+        "x": 55.86,
+        "y": 33.8
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S3",
+      "position": {
+        "x": 57.06,
+        "y": 34.6
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S4",
+      "position": {
+        "x": 55.86,
+        "y": 35.4
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S5",
+      "position": {
+        "x": 57.06,
+        "y": 36.2
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S6",
+      "position": {
+        "x": 55.86,
+        "y": 37
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    },
+    {
+      "netId": "S7",
+      "position": {
+        "x": 57.06,
+        "y": 37.8
+      },
+      "drillMm": 0.3,
+      "diameterMm": 0.6
+    }
+  ],
+  "blocks": [
+    {
+      "id": "power",
+      "label": "Power entry",
+      "description": "XT30 input, fuse, bulk and decoupling capacitors.",
+      "partRefs": [
+        "J1",
+        "F1",
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "color": "accent-power"
+    },
+    {
+      "id": "mcu",
+      "label": "Controller",
+      "description": "ATmega328P running the robot firmware.",
+      "partRefs": [
+        "U1"
+      ],
+      "color": "accent-mcu"
+    },
+    {
+      "id": "leds",
+      "label": "Status LEDs",
+      "description": "Eight LEDs with series resistors.",
+      "partRefs": [
+        "R10",
+        "D10",
+        "R11",
+        "D11",
+        "R12",
+        "D12",
+        "R13",
+        "D13",
+        "R14",
+        "D14",
+        "R15",
+        "D15",
+        "R16",
+        "D16",
+        "R17",
+        "D17"
+      ],
+      "color": "accent-driver"
+    },
+    {
+      "id": "servos",
+      "label": "Servo outputs",
+      "description": "Eight 3-pin servo plugs.",
+      "partRefs": [
+        "J10",
+        "J11",
+        "J12",
+        "J13",
+        "J14",
+        "J15",
+        "J16",
+        "J17"
+      ],
+      "color": "accent-warn"
+    },
+    {
+      "id": "sensors",
+      "label": "Sensor inputs",
+      "description": "Series-protected inputs to an 8-pin header.",
+      "partRefs": [
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R25",
+        "R26",
+        "R27",
+        "J20"
+      ],
+      "color": "accent-sensor"
+    }
+  ],
+  "groundNetId": "GND"
+}

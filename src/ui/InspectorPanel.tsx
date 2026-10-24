@@ -249,8 +249,29 @@ export default function InspectorPanel(): React.ReactElement {
         </div>
       )}
 
+      {/* A selected net (from a schematic wire or a board trace). */}
+      {board && selection?.kind === "net" && (() => {
+        const net = board.nets.find((n) => n.id === selection.netId);
+        if (!net) return null;
+        const volts = simResult?.netVoltages[net.id];
+        return (
+          <div style={section} data-testid="inspector-net">
+            <div style={sectionLabel}>Net</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span style={{ fontWeight: "bold", color: "#4fd8ff" }}>{net.name}</span>
+              <span data-testid="inspector-net-voltage" style={{ color: "#cfe3f2", fontVariantNumeric: "tabular-nums" }}>
+                {volts !== undefined ? formatQuantity(volts, "V") : "—"}
+              </span>
+            </div>
+            <div style={{ color: "#7a8ea4", fontSize: "0.72rem", marginTop: "0.3rem" }}>
+              Connects {net.pads.map((p) => `${p.ref} ${p.pad}`).join(", ") || "nothing"}.
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Nothing selected: say what the panel is for. */}
-      {board && !selectedPart && (
+      {board && !selectedPart && selection?.kind !== "net" && (
         <div style={{ ...section, color: "#7a8ea4", fontSize: "0.74rem", lineHeight: 1.5 }}>
           Click a part above or on the board to see what it does, the voltage on each pad, and its editable values.
         </div>

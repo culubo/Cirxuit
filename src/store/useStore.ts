@@ -8,8 +8,12 @@ import { starterSketch } from "../ide/starters";
 
 export type Selection =
   | { kind: "part"; ref: string }
+  | { kind: "net"; netId: string }
   | { kind: "block"; id: string }
   | null;
+
+/** What the pointer is over, in either the board or the schematic. */
+export type Hover = { kind: "part"; ref: string } | { kind: "net"; netId: string } | null;
 
 export type Mode = "simulate" | "build";
 export type BottomTab = "console" | "problems" | "trace";
@@ -69,6 +73,9 @@ interface AppState {
   explode: number;        // 0..1 layer separation target
   showParticles: boolean;
   electronFlow: boolean;  // false = conventional current direction
+  hover: Hover;
+  showSchematic: boolean;
+  schematicOpacity: number;
 
   // IDE
   mode: Mode;
@@ -106,6 +113,11 @@ interface AppState {
   setExplode: (explode: number) => void;
   setShowParticles: (showParticles: boolean) => void;
   setElectronFlow: (electronFlow: boolean) => void;
+  setHover: (hover: Hover) => void;
+  /** Clear the hover only if it is still `hover` (pointer-out from one item after entering another). */
+  clearHover: (hover: NonNullable<Hover>) => void;
+  setShowSchematic: (show: boolean) => void;
+  setSchematicOpacity: (opacity: number) => void;
   /** Reset per-board transient state (selection, mcuState, logs, error, playback). */
   resetRuntimeState: () => void;
   /** Flip a servo part's stalled flag and re-solve the board. */
@@ -204,6 +216,9 @@ export const useStore = create<AppState>((set, get) => ({
   explode: 0,
   showParticles: true,
   electronFlow: false,
+  hover: null,
+  showSchematic: true,
+  schematicOpacity: 0.9,
 
   mode: "simulate",
   codes: initialCodes(),
@@ -235,10 +250,27 @@ export const useStore = create<AppState>((set, get) => ({
   setExplode: (explode) => set({ explode }),
   setShowParticles: (showParticles) => set({ showParticles }),
   setElectronFlow: (electronFlow) => set({ electronFlow }),
+  setHover: (hover) =>
+    set((state) => {
+      const same = state.hover === hover || (state.hover !== null && hover !== null
+        && state.hover.kind === hover.kind
+        && (hover.kind === "part" ? (state.hover as { ref: string }).ref === hover.ref : (state.hover as { netId: string }).netId === hover.netId));
+      return same ? {} : { hover };
+    }),
+  clearHover: (hover) =>
+    set((state) => {
+      const h = state.hover;
+      if (!h || h.kind !== hover.kind) return {};
+      const match = hover.kind === "part" ? (h as { ref: string }).ref === hover.ref : (h as { netId: string }).netId === hover.netId;
+      return match ? { hover: null } : {};
+    }),
+  setShowSchematic: (showSchematic) => set({ showSchematic }),
+  setSchematicOpacity: (schematicOpacity) => set({ schematicOpacity: Math.max(0, Math.min(1, schematicOpacity)) }),
   resetRuntimeState: () =>
     set({
       mcuState: { modes: {}, outputs: {} },
       selection: null,
+      hover: null,
       logs: [],
       runError: null,
       running: false,

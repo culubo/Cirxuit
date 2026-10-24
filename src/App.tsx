@@ -6,6 +6,7 @@ import { CUSTOM_BOARD_ID, docToBoard, type BuilderDoc } from "./builder/doc";
 import BoardScene from "./scene/BoardScene";
 import InspectorPanel from "./ui/InspectorPanel";
 import SceneControls from "./ui/SceneControls";
+import SchematicMirror from "./ui/SchematicMirror";
 import SceneErrorBoundary from "./ui/SceneErrorBoundary";
 import { tokens } from "./ui/tokens";
 import TopBar from "./ide/TopBar";
@@ -104,6 +105,7 @@ export default function App(): React.ReactElement {
                 <BoardScene />
               </SceneErrorBoundary>
               <SceneControls />
+              <SchematicMirror />
             </>
           )}
           <GuideCard problems={problems.all} placement={mode === "build" ? "bottom" : "top"} />

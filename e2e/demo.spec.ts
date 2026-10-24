@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 
 function milliAmps(text: string | null): number {
-  const match = text?.match(/([+-]?\d+(?:\.\d+)?)\s*mA\b/i);
-  if (!match) throw new Error(`D1 current is not displayed in mA: ${text ?? "(empty)"}`);
-  const value = Number(match[1]);
+  const match = text?.match(/^\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?)\s*(m|[µμ]|n|p)?A\s*$/);
+  if (!match) throw new Error(`D1 current is not displayed in amps: ${text ?? "(empty)"}`);
+  const prefix = match[2];
+  const factor = prefix === "m" ? 1 : prefix === "µ" || prefix === "μ" ? 1e-3 : prefix === "n" ? 1e-6 : prefix === "p" ? 1e-9 : 1e3;
+  const value = Number(match[1]) * factor;
   if (!Number.isFinite(value)) throw new Error(`D1 current is not a finite number: ${text}`);
   return value;
 }

@@ -21,6 +21,13 @@ export interface Board {
   blocks: FunctionBlock[];    // the "function layer" floating above the board
   groundNetId: string;        // reference node for the solver
   railLimits?: { netId: string; minVolts: number; message: string }[];
+  // Optional schematic view of the same circuit. Symbols reference parts by ref;
+  // wires are polylines in schematic space (mm, same axes as board space).
+  schematic?: {
+    symbols: { ref: string; position: Vec2; rotationDeg: number }[];
+    wires: { netId: string; points: Vec2[] }[];   // polylines in schematic space, mm
+    size: { w: number; h: number };
+  };
 }
 
 export type PartKind =

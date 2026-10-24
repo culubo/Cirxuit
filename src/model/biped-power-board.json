@@ -117,7 +117,7 @@
       "ref": "C1",
       "value": "470uF",
       "kind": "capacitor",
-      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P5.00mm",
       "position": { "x": 32, "y": 17.5 },
       "rotationDeg": 90,
       "side": "top",
@@ -152,19 +152,19 @@
       "position": { "x": 38, "y": 17.5 },
       "rotationDeg": 0,
       "side": "top",
-      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "body": { "w": 2.54, "h": 5.08, "height": 8.5 },
       "pads": [
         {
           "number": "1",
           "netId": "VBAT",
-          "position": { "x": 38, "y": 15 },
+          "position": { "x": 38, "y": 16.23 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         },
         {
           "number": "2",
           "netId": "GND",
-          "position": { "x": 38, "y": 20 },
+          "position": { "x": 38, "y": 18.77 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         }
@@ -187,19 +187,19 @@
       "position": { "x": 43, "y": 17.5 },
       "rotationDeg": 0,
       "side": "top",
-      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "body": { "w": 2.54, "h": 5.08, "height": 8.5 },
       "pads": [
         {
           "number": "1",
           "netId": "VBAT",
-          "position": { "x": 43, "y": 15 },
+          "position": { "x": 43, "y": 16.23 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         },
         {
           "number": "2",
           "netId": "GND",
-          "position": { "x": 43, "y": 20 },
+          "position": { "x": 43, "y": 18.77 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         }
@@ -222,19 +222,19 @@
       "position": { "x": 48, "y": 17.5 },
       "rotationDeg": 0,
       "side": "top",
-      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "body": { "w": 2.54, "h": 5.08, "height": 8.5 },
       "pads": [
         {
           "number": "1",
           "netId": "VBAT",
-          "position": { "x": 48, "y": 15 },
+          "position": { "x": 48, "y": 16.23 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         },
         {
           "number": "2",
           "netId": "GND",
-          "position": { "x": 48, "y": 20 },
+          "position": { "x": 48, "y": 18.77 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         }
@@ -257,19 +257,19 @@
       "position": { "x": 53, "y": 17.5 },
       "rotationDeg": 0,
       "side": "top",
-      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "body": { "w": 2.54, "h": 5.08, "height": 8.5 },
       "pads": [
         {
           "number": "1",
           "netId": "VBAT",
-          "position": { "x": 53, "y": 15 },
+          "position": { "x": 53, "y": 16.23 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         },
         {
           "number": "2",
           "netId": "GND",
-          "position": { "x": 53, "y": 20 },
+          "position": { "x": 53, "y": 18.77 },
           "sizeMm": { "w": 1.8, "h": 1.8 },
           "layers": ["F.Cu", "B.Cu"]
         }
@@ -289,7 +289,7 @@
       "value": "50 Ω controller",
       "kind": "mcu",
       "footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
-      "position": { "x": 26, "y": 30 },
+      "position": { "x": 26.4, "y": 30 },
       "rotationDeg": 0,
       "side": "top",
       "body": { "w": 7, "h": 7, "height": 1.2 },
@@ -297,15 +297,15 @@
         {
           "number": "VCC",
           "netId": "VBAT",
-          "position": { "x": 26, "y": 26.5 },
-          "sizeMm": { "w": 1.2, "h": 1.2 },
+          "position": { "x": 26, "y": 25.84 },
+          "sizeMm": { "w": 0.55, "h": 1.475 },
           "layers": ["F.Cu"]
         },
         {
           "number": "GND",
           "netId": "GND",
-          "position": { "x": 26, "y": 33.5 },
-          "sizeMm": { "w": 1.2, "h": 1.2 },
+          "position": { "x": 26, "y": 34.16 },
+          "sizeMm": { "w": 0.55, "h": 1.475 },
           "layers": ["F.Cu"]
         }
       ],
@@ -363,7 +363,7 @@
   "vias": [
     {
       "netId": "GND",
-      "position": { "x": 32, "y": 33.5 },
+      "position": { "x": 32, "y": 36 },
       "drillMm": 0.6,
       "diameterMm": 1.2
     }
@@ -422,8 +422,15 @@
       "netId": "VBAT",
       "layer": "F.Cu",
       "start": { "x": 26, "y": 15 },
-      "end": { "x": 26, "y": 26.5 },
+      "end": { "x": 26, "y": 24 },
       "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 24 },
+      "end": { "x": 26, "y": 25.84 },
+      "widthMm": 0.3
     },
     {
       "netId": "GND",
@@ -464,14 +471,77 @@
       "netId": "GND",
       "layer": "B.Cu",
       "start": { "x": 32, "y": 20 },
-      "end": { "x": 32, "y": 33.5 },
+      "end": { "x": 32, "y": 36 },
       "widthMm": 1.5
     },
     {
       "netId": "GND",
       "layer": "F.Cu",
-      "start": { "x": 26, "y": 33.5 },
-      "end": { "x": 32, "y": 33.5 },
+      "start": { "x": 26, "y": 34.16 },
+      "end": { "x": 26, "y": 36 },
+      "widthMm": 0.3
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 36 },
+      "end": { "x": 32, "y": 36 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 38, "y": 15 },
+      "end": { "x": 38, "y": 16.23 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 38, "y": 20 },
+      "end": { "x": 38, "y": 18.77 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 43, "y": 15 },
+      "end": { "x": 43, "y": 16.23 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 43, "y": 20 },
+      "end": { "x": 43, "y": 18.77 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 48, "y": 15 },
+      "end": { "x": 48, "y": 16.23 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 48, "y": 20 },
+      "end": { "x": 48, "y": 18.77 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 53, "y": 15 },
+      "end": { "x": 53, "y": 16.23 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 53, "y": 20 },
+      "end": { "x": 53, "y": 18.77 },
       "widthMm": 1.5
     }
   ],
@@ -504,5 +574,143 @@
       "partRefs": ["U1"],
       "color": "accent-mcu"
     }
-  ]
+  ],
+  "schematic": {
+    "size": { "w": 180, "h": 80 },
+    "symbols": [
+      { "ref": "BT1", "position": { "x": 15, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "RINT", "position": { "x": 30, "y": 15 }, "rotationDeg": 0 },
+      { "ref": "F1", "position": { "x": 50, "y": 15 }, "rotationDeg": 0 },
+      { "ref": "C1", "position": { "x": 70, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "J2", "position": { "x": 90, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "J3", "position": { "x": 110, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "J4", "position": { "x": 130, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "J5", "position": { "x": 150, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "U1", "position": { "x": 170, "y": 40 }, "rotationDeg": 0 }
+    ],
+    "wires": [
+      {
+        "netId": "BAT+",
+        "points": [
+          { "x": 15, "y": 35 },
+          { "x": 15, "y": 15 },
+          { "x": 25, "y": 15 }
+        ]
+      },
+      {
+        "netId": "BAT_CELL",
+        "points": [
+          { "x": 35, "y": 15 },
+          { "x": 45, "y": 15 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 55, "y": 15 },
+          { "x": 65, "y": 15 },
+          { "x": 65, "y": 40 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 65, "y": 40 },
+          { "x": 65, "y": 15 },
+          { "x": 86, "y": 15 },
+          { "x": 86, "y": 40 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 86, "y": 40 },
+          { "x": 86, "y": 15 },
+          { "x": 106, "y": 15 },
+          { "x": 106, "y": 40 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 106, "y": 40 },
+          { "x": 106, "y": 15 },
+          { "x": 126, "y": 15 },
+          { "x": 126, "y": 40 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 126, "y": 40 },
+          { "x": 126, "y": 15 },
+          { "x": 146, "y": 15 },
+          { "x": 146, "y": 40 }
+        ]
+      },
+      {
+        "netId": "VBAT",
+        "points": [
+          { "x": 146, "y": 40 },
+          { "x": 146, "y": 15 },
+          { "x": 164, "y": 15 },
+          { "x": 164, "y": 38.73 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 15, "y": 45 },
+          { "x": 15, "y": 65 },
+          { "x": 75, "y": 65 },
+          { "x": 75, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 75, "y": 40 },
+          { "x": 75, "y": 65 },
+          { "x": 94, "y": 65 },
+          { "x": 94, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 94, "y": 40 },
+          { "x": 94, "y": 65 },
+          { "x": 114, "y": 65 },
+          { "x": 114, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 114, "y": 40 },
+          { "x": 114, "y": 65 },
+          { "x": 134, "y": 65 },
+          { "x": 134, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 134, "y": 40 },
+          { "x": 134, "y": 65 },
+          { "x": 154, "y": 65 },
+          { "x": 154, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 154, "y": 40 },
+          { "x": 154, "y": 65 },
+          { "x": 164, "y": 65 },
+          { "x": 164, "y": 41.27 }
+        ]
+      }
+    ]
+  }
 }

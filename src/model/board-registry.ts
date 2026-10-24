@@ -23,6 +23,11 @@ export const BOARD_REGISTRY: BoardEntry[] = [
     label: "Biped power (concept)",
     load: async () => (await import("./biped-power-board.json")).default as Board,
   },
+  {
+    id: "robot-controller-board",
+    label: "Robot controller (assembly demo)",
+    load: async () => (await import("./robot-controller-board.json")).default as Board,
+  },
 ];
 
 export const DEFAULT_BOARD_ID = "demo-board";

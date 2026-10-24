@@ -151,13 +151,46 @@ export function validateBoard(board: Board): string[] {
     }
   }
 
+  // A track end must land on a same-net pad or via, or join another same-net
+  // track end on the same layer (a bend or T). Every joined run of tracks must
+  // still reach at least one pad or via, so no copper island floats.
+  const near = (a: Vec2, b: Vec2): boolean => distance(a, b) <= TRACK_TOLERANCE_MM + 1e-9;
+  const groupOf = board.tracks.map((_, index) => index);
+  const root = (index: number): number => {
+    while (groupOf[index] !== index) index = groupOf[index] ?? index;
+    return index;
+  };
+  const anchoredGroups = new Set<number>();
+  const anchoredTracks: boolean[] = [];
+
   for (const [index, track] of board.tracks.entries()) {
     const anchors = anchorsByNet.get(track.netId) ?? [];
     for (const [end, position] of [["start", track.start], ["end", track.end]] as const) {
-      if (!anchors.some((anchor) => distance(anchor, position) <= TRACK_TOLERANCE_MM + 1e-9)) {
-        violations.push(`Track ${index} ${end} at (${position.x}, ${position.y}) on net ${track.netId} is more than 0.05 mm from any same-net pad or via`);
+      const onAnchor = anchors.some((anchor) => near(anchor, position));
+      if (onAnchor) anchoredTracks[index] = true;
+      let joined = false;
+      for (const [other, otherTrack] of board.tracks.entries()) {
+        if (other === index || otherTrack.netId !== track.netId || otherTrack.layer !== track.layer) continue;
+        if (near(otherTrack.start, position) || near(otherTrack.end, position)) {
+          joined = true;
+          groupOf[root(other)] = root(index);
+        }
+      }
+      if (!onAnchor && !joined) {
+        violations.push(`Track ${index} ${end} at (${position.x}, ${position.y}) on net ${track.netId} is more than 0.05 mm from any same-net pad, via, or track end`);
       }
     }
+  }
+  for (const [index] of board.tracks.entries()) if (anchoredTracks[index]) anchoredGroups.add(root(index));
+  const islands = new Map<number, number[]>();
+  for (const [index] of board.tracks.entries()) {
+    const group = root(index);
+    if (anchoredGroups.has(group)) continue;
+    islands.set(group, [...(islands.get(group) ?? []), index]);
+  }
+  for (const members of islands.values()) {
+    const net = board.tracks[members[0] ?? 0]?.netId ?? "?";
+    violations.push(`Tracks ${members.join(", ")} on net ${net} form an island that reaches no pad or via`);
   }
 
   for (const block of board.blocks) {

@@ -45,6 +45,11 @@ export default function SceneControls(): React.ReactElement {
   const setShowParticles = useStore((s) => s.setShowParticles);
   const electronFlow = useStore((s) => s.electronFlow);
   const setElectronFlow = useStore((s) => s.setElectronFlow);
+  const hasSchematic = useStore((s) => Boolean(s.board?.schematic));
+  const showSchematic = useStore((s) => s.showSchematic);
+  const setShowSchematic = useStore((s) => s.setShowSchematic);
+  const schematicOpacity = useStore((s) => s.schematicOpacity);
+  const setSchematicOpacity = useStore((s) => s.setSchematicOpacity);
 
   return (
     <div style={wrap}>
@@ -103,6 +108,52 @@ export default function SceneControls(): React.ReactElement {
           {electronFlow ? "Electron" : "Conventional"}
         </button>
       </div>
+
+      {hasSchematic && (
+        <>
+          <div style={toggleRow}>
+            <span style={label}>Schematic</span>
+            <button
+              data-testid="schematic-toggle"
+              aria-pressed={showSchematic}
+              onClick={() => setShowSchematic(!showSchematic)}
+              title="Show the schematic over the exploded board"
+              style={{
+                background: showSchematic ? "#0a2238" : "transparent",
+                border: `1px solid ${showSchematic ? "#1f6fb2" : tokens.hairline}`,
+                borderRadius: "2px",
+                color: showSchematic ? tokens.phosphor : tokens.textFaint,
+                fontFamily: "monospace",
+                fontSize: "0.72rem",
+                padding: "0.2rem 0.5rem",
+                cursor: "pointer",
+              }}
+            >
+              {showSchematic ? "On" : "Off"}
+            </button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", opacity: showSchematic ? 1 : 0.45 }}>
+            <span style={label}>Schematic opacity</span>
+            <input
+              type="range"
+              data-testid="schematic-opacity"
+              aria-label="Schematic opacity"
+              min={0}
+              max={1}
+              step={0.05}
+              value={schematicOpacity}
+              disabled={!showSchematic}
+              onChange={(e) => setSchematicOpacity(Number(e.target.value))}
+              style={{ width: "100%", accentColor: tokens.phosphor }}
+            />
+          </div>
+          {showSchematic && explode <= 0.6 && (
+            <span data-testid="schematic-hint" style={{ color: tokens.textFaint, fontSize: "0.66rem", lineHeight: 1.4 }}>
+              Explode past 60% to see the schematic over the board.
+            </span>
+          )}
+        </>
+      )}
     </div>
   );
 }

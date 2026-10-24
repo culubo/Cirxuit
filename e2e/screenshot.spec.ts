@@ -100,3 +100,60 @@ test.describe("ide", () => {
     await page.screenshot({ path: "test-results/shots/builder-simulated.png" });
   });
 });
+
+
+// ── Schematic overlay ───────────────────────────────────────────────────────
+// Uses the hand-authored schematic data shipped in each board JSON.
+async function openExploded(
+  page: import("@playwright/test").Page,
+  boardId: string,
+  code: string,
+  explode = "1",
+): Promise<void> {
+  await page.goto("/");
+  if (boardId !== "demo-board") {
+    await page.getByTestId("board-switcher").selectOption(boardId);
+  }
+  // Keep the guide card from covering the viewport in the shots.
+  if (await page.getByTestId("guide-panel").isVisible()) {
+    await page.getByTestId("guide-toggle").click();
+  }
+  await page.getByTestId("code-editor").fill(code);
+  await page.getByTestId("run-button").click();
+  await page.getByTestId("explode-slider").fill(explode);
+  await page.waitForTimeout(1500);
+}
+
+test.describe("schematic", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("shot: schematic-exploded", async ({ page }) => {
+    await openExploded(page, "demo-board", "digitalWrite(8, HIGH)");
+    await page.screenshot({ path: "test-results/shots/schematic-exploded.png" });
+  });
+
+  test("shot: schematic-hover-symbol", async ({ page }) => {
+    await openExploded(page, "demo-board", "digitalWrite(8, HIGH)");
+    await page.getByTestId("schematic-symbol-R2").hover();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: "test-results/shots/schematic-hover-symbol.png" });
+  });
+
+  test("shot: schematic-select-net", async ({ page }) => {
+    await openExploded(page, "demo-board", "digitalWrite(8, HIGH)");
+    await page.getByTestId("schematic-wire-LED_A").click();
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: "test-results/shots/schematic-select-net.png" });
+  });
+
+  test("shot: schematic-fading", async ({ page }) => {
+    await openExploded(page, "demo-board", "digitalWrite(8, HIGH)", "0.75");
+    await page.screenshot({ path: "test-results/shots/schematic-fading.png" });
+  });
+
+  test("shot: schematic-biped", async ({ page }) => {
+    await openExploded(page, "biped-power-board", "");
+    await page.screenshot({ path: "test-results/shots/schematic-biped.png" });
+  });
+});

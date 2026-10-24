@@ -1,319 +1,582 @@
 /**
- * bakeBoard — render a board's fab artwork into 2D canvases, one per layer.
+ * bakeBoard — render a board's fab artwork into canvases.
  *
- * Far more realistic (and far cheaper) than extruding hundreds of 3D strips: we
- * draw traces, pads, vias, mask and silkscreen into canvases at ~80 px/mm, then
- * map them onto thin planes in the scene.
+ * Two products:
+ *   • bakeSurfaces: the finished top and bottom faces as a real fab ships them
+ *     (green LPI mask over copper, ENIG pads in the mask openings, tented vias,
+ *     white silkscreen clipped off the pads), each with a colour map, an ORM map
+ *     (G = roughness, B = metalness) and a height map for bump shading.
+ *   • bakeLayers: the individual layers for the exploded x-ray view (bare
+ *     copper per side, the mask sheet with its openings, the silk film, and the
+ *     FR-4 core).
  *
- * Board space is mm, origin top-left, +x right, +y down. The canvases share that
- * orientation; the scene flips Y when it maps them.
+ * Board space is mm, origin top-left, +x right, +y down; the canvases share
+ * that orientation (row 0 = board top edge).
  */
-import type { Board, CopperLayer, Part, Vec2 } from "../../model/board-model";
+import type { Board, CopperLayer, Pad, Part, Vec2 } from "../../model/board-model";
+import { mountingHoles, outlineBounds, type MountingHole } from "../boardFeatures";
+import {
+  chipSize,
+  drillFor,
+  isThroughHole,
+  landPattern,
+  packageFamily,
+  qfpGeometry,
+  toBoard,
+} from "../footprint";
+import { SILK_FONT_FAMILY } from "../art/silkArt";
+import { pcb } from "../palette";
 
-export interface BakedLayers {
-  widthMm: number;
-  heightMm: number;
+export interface BoardFrame {
   minX: number;
   minY: number;
+  widthMm: number;
+  heightMm: number;
   pxPerMm: number;
-  substrate: HTMLCanvasElement;
+}
+
+export interface SurfaceMaps {
+  color: HTMLCanvasElement;
+  orm: HTMLCanvasElement;
+  height: HTMLCanvasElement;
+}
+
+export interface BakedSurfaces {
+  frame: BoardFrame;
+  holes: MountingHole[];
+  top: SurfaceMaps;
+  bottom: SurfaceMaps;
+}
+
+export interface BakedLayers {
   copperTop: HTMLCanvasElement;
   copperBottom: HTMLCanvasElement;
   mask: HTMLCanvasElement;
   silk: HTMLCanvasElement;
-  roughness: HTMLCanvasElement;
+  core: HTMLCanvasElement;
 }
 
-const MAX_PX = 4096;
-const TARGET_PX_PER_MM = 80;
+/** ~32 px/mm keeps 0.25 mm traces 8 px wide; capped so textures stay small. */
+const TARGET_PX_PER_MM = 32;
+const MAX_PX = 2048;
+/** Mask opening grows past the pad by this much (typical fab expansion). */
+const MASK_EXPANSION = 0.05;
+/** Silk is kept this far off any mask opening. */
+const SILK_CLEARANCE = 0.12;
+const SILK_LINE = 0.15;
+const SILK_TEXT = 1.0;
+/** ISO 3098 lettering, like a fab's silkscreen font. */
+const SILK_FONT = `{px}px ${SILK_FONT_FAMILY}`;
 
-// Palette: "glowing circuit blueprint" — navy ground, electric-cyan copper.
-const FR4 = "#071630";        // deep navy substrate
-const FR4_DOT = "#3a6ea8";    // dot-grid points
-const COPPER = "#3fb6f0";     // cyan traces
-const COPPER_GLOW = "#4fd8ff";
-const HASL = "#bff0ff";       // pads: near-white cyan
-const MASK_GREEN = "#0a1f3d"; // (name kept) navy solder mask
-const SILK = "#d8f2ff";
-
-function bounds(outline: Vec2[]): { minX: number; minY: number; w: number; h: number } {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const p of outline) {
-    minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
-    maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
-  }
-  if (!Number.isFinite(minX)) { minX = 0; minY = 0; maxX = 50; maxY = 35; }
-  return { minX, minY, w: maxX - minX, h: maxY - minY };
+export function boardFrame(board: Board): BoardFrame {
+  const b = outlineBounds(board.outline);
+  const maxDim = Math.max(b.width, b.height, 1);
+  return {
+    minX: b.minX,
+    minY: b.minY,
+    widthMm: b.width,
+    heightMm: b.height,
+    pxPerMm: Math.min(TARGET_PX_PER_MM, MAX_PX / maxDim),
+  };
 }
 
-function makeCanvas(wPx: number, hPx: number): HTMLCanvasElement {
+// ─── canvas plumbing ─────────────────────────────────────────────────────────
+
+type Ctx = CanvasRenderingContext2D;
+
+function makeCanvas(frame: BoardFrame): HTMLCanvasElement {
   const c = document.createElement("canvas");
-  c.width = Math.max(1, Math.round(wPx));
-  c.height = Math.max(1, Math.round(hPx));
+  c.width = Math.max(1, Math.round(frame.widthMm * frame.pxPerMm));
+  c.height = Math.max(1, Math.round(frame.heightMm * frame.pxPerMm));
   return c;
 }
 
-/** Trace outline path (board-space mm → px) as a rounded polyline for one net/layer. */
-function strokeTracks(
-  ctx: CanvasRenderingContext2D,
-  board: Board,
-  layer: CopperLayer,
-  pxPerMm: number,
-  minX: number,
-  minY: number,
-  color: string,
-): void {
-  ctx.strokeStyle = color;
+/** A 2D context whose user space is board millimetres. */
+function mmContext(canvas: HTMLCanvasElement, frame: BoardFrame): Ctx {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas 2D is unavailable, so the board artwork cannot be drawn.");
+  ctx.setTransform(frame.pxPerMm, 0, 0, frame.pxPerMm, -frame.minX * frame.pxPerMm, -frame.minY * frame.pxPerMm);
+  return ctx;
+}
+
+function fillAll(ctx: Ctx, frame: BoardFrame, style: string): void {
+  ctx.fillStyle = style;
+  ctx.fillRect(frame.minX, frame.minY, frame.widthMm, frame.heightMm);
+}
+
+/** Path for a pad's copper, grown by `grow` mm on every side. */
+function padPath(ctx: Ctx, pad: Pad, grow: number, square: boolean): void {
+  const w = pad.sizeMm.w + 2 * grow;
+  const h = pad.sizeMm.h + 2 * grow;
+  const x = pad.position.x - w / 2;
+  const y = pad.position.y - h / 2;
+  ctx.beginPath();
+  if (isThroughHole(pad) && !square) {
+    if (Math.abs(w - h) < 1e-6) ctx.arc(pad.position.x, pad.position.y, w / 2, 0, Math.PI * 2);
+    else ctx.roundRect(x, y, w, h, Math.min(w, h) / 2);
+  } else {
+    // KiCad's default round-rect ratio for SMD lands is 25 % of the short side.
+    ctx.roundRect(x, y, w, h, square ? 0 : Math.min(w, h) * 0.25);
+  }
+}
+
+interface Land {
+  pad: Pad;
+  square: boolean;
+}
+
+/** Every copper land on the board, flagged square for pin-1 of through-hole parts. */
+function allLands(board: Board): Land[] {
+  const lands: Land[] = [];
+  for (const part of board.parts) {
+    const pattern = landPattern(part);
+    const first = pattern.find((p) => p.number === "1" || p.number === "+") ?? null;
+    for (const pad of pattern) {
+      lands.push({ pad, square: isThroughHole(pad) && pad === first && pattern.length > 1 });
+    }
+  }
+  return lands;
+}
+
+function drawTracks(ctx: Ctx, board: Board, layer: CopperLayer, style: string, grow = 0): void {
+  ctx.strokeStyle = style;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  // Soft cyan halo so traces read as lit, like a backlit blueprint.
-  ctx.shadowColor = COPPER_GLOW;
-  ctx.shadowBlur = Math.max(4, 0.6 * pxPerMm);
   for (const t of board.tracks) {
     if (t.layer !== layer) continue;
-    ctx.lineWidth = Math.max(1, t.widthMm * pxPerMm);
+    ctx.lineWidth = t.widthMm + 2 * grow;
     ctx.beginPath();
-    ctx.moveTo((t.start.x - minX) * pxPerMm, (t.start.y - minY) * pxPerMm);
-    ctx.lineTo((t.end.x - minX) * pxPerMm, (t.end.y - minY) * pxPerMm);
+    ctx.moveTo(t.start.x, t.start.y);
+    ctx.lineTo(t.end.x, t.end.y);
     ctx.stroke();
   }
-  ctx.shadowBlur = 0;
 }
 
-/** Is this pad through-hole (on both sides) — draw it round — or SMD (rounded rect)? */
-function isThrough(pad: { layers: CopperLayer[] }): boolean {
-  return pad.layers.includes("F.Cu") && pad.layers.includes("B.Cu");
-}
-
-function drawPad(
-  ctx: CanvasRenderingContext2D,
-  pad: Part["pads"][number],
-  pxPerMm: number,
-  minX: number,
-  minY: number,
-  fill: string | CanvasGradient,
-): void {
-  const cx = (pad.position.x - minX) * pxPerMm;
-  const cy = (pad.position.y - minY) * pxPerMm;
-  const w = pad.sizeMm.w * pxPerMm;
-  const h = pad.sizeMm.h * pxPerMm;
-  ctx.fillStyle = fill;
+function circle(ctx: Ctx, at: Vec2, r: number, style: string): void {
+  ctx.fillStyle = style;
   ctx.beginPath();
-  if (isThrough(pad)) {
-    const r = Math.max(w, h) / 2;
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  } else {
-    const r = Math.min(w, h) * 0.28;
-    roundRect(ctx, cx - w / 2, cy - h / 2, w, h, r);
-  }
+  ctx.arc(at.x, at.y, r, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
-  const rr = Math.min(r, w / 2, h / 2);
-  ctx.moveTo(x + rr, y);
-  ctx.arcTo(x + w, y, x + w, y + h, rr);
-  ctx.arcTo(x + w, y + h, x, y + h, rr);
-  ctx.arcTo(x, y + h, x, y, rr);
-  ctx.arcTo(x, y, x + w, y, rr);
+/** Faint glass-weave texture that reads through the semi-gloss mask. */
+function weave(ctx: Ctx, frame: BoardFrame, style: string, alpha: number): void {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = style;
+  ctx.lineWidth = 0.08;
+  const pitch = 0.42;
+  ctx.beginPath();
+  for (let x = frame.minX; x <= frame.minX + frame.widthMm; x += pitch) {
+    ctx.moveTo(x, frame.minY);
+    ctx.lineTo(x, frame.minY + frame.heightMm);
+  }
+  for (let y = frame.minY; y <= frame.minY + frame.heightMm; y += pitch) {
+    ctx.moveTo(frame.minX, y);
+    ctx.lineTo(frame.minX + frame.widthMm, y);
+  }
+  ctx.stroke();
+  ctx.restore();
 }
 
-function copperLayer(board: Board, layer: CopperLayer, pxPerMm: number, minX: number, minY: number): HTMLCanvasElement {
-  const b = bounds(board.outline);
-  const c = makeCanvas(b.w * pxPerMm, b.h * pxPerMm);
-  const ctx = c.getContext("2d");
-  if (!ctx) return c;
+// ─── silkscreen ──────────────────────────────────────────────────────────────
 
-  // Traces.
-  strokeTracks(ctx, board, layer, pxPerMm, minX, minY, COPPER);
+/** Run `draw` in a part's package frame (board orientation, mm). */
+function inPartFrame(ctx: Ctx, part: Part, draw: () => void): void {
+  ctx.save();
+  ctx.translate(part.position.x, part.position.y);
+  ctx.rotate((-part.rotationDeg * Math.PI) / 180);
+  draw();
+  ctx.restore();
+}
 
-  // Pads on this layer — silver HASL with a soft specular gradient.
-  for (const part of board.parts) {
-    for (const pad of part.pads) {
-      if (!pad.layers.includes(layer)) continue;
-      const cx = (pad.position.x - minX) * pxPerMm;
-      const cy = (pad.position.y - minY) * pxPerMm;
-      const rad = Math.max(pad.sizeMm.w, pad.sizeMm.h) * pxPerMm;
-      const g = ctx.createRadialGradient(cx, cy, rad * 0.05, cx, cy, rad * 0.8);
-      g.addColorStop(0, "#ffffff");
-      g.addColorStop(1, HASL);
-      ctx.shadowColor = COPPER_GLOW;
-      ctx.shadowBlur = Math.max(6, 0.8 * pxPerMm);
-      drawPad(ctx, pad, pxPerMm, minX, minY, g);
-      ctx.shadowBlur = 0;
+/** Axis-aligned board-space box around everything a part's silk covers. */
+interface Box { minX: number; minY: number; maxX: number; maxY: number }
+
+function grow(box: Box, p: Vec2, r = 0): void {
+  box.minX = Math.min(box.minX, p.x - r); box.minY = Math.min(box.minY, p.y - r);
+  box.maxX = Math.max(box.maxX, p.x + r); box.maxY = Math.max(box.maxY, p.y + r);
+}
+
+function strokeRectLocal(ctx: Ctx, part: Part, box: Box, w: number, h: number): void {
+  inPartFrame(ctx, part, () => ctx.strokeRect(-w / 2, -h / 2, w, h));
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) grow(box, toBoard(part, { x: (sx * w) / 2, y: (sy * h) / 2 }));
+}
+
+/** Draws one part's silk outline and returns the board-space box it covers. */
+function drawPartSilk(ctx: Ctx, part: Part): Box {
+  const box: Box = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  const family = packageFamily(part);
+  const pads = part.pads;
+  for (const pad of landPattern(part)) grow(box, pad.position, Math.max(pad.sizeMm.w, pad.sizeMm.h) / 2);
+
+  const twoTerminal = family === "chip-resistor" || family === "chip-capacitor" || family === "chip-fuse" || family === "chip-led";
+  if (twoTerminal && pads.length === 2) {
+    const [a, b] = pads as [Pad, Pad];
+    const len = Math.hypot(b.position.x - a.position.x, b.position.y - a.position.y);
+    const ux = (b.position.x - a.position.x) / len, uy = (b.position.y - a.position.y) / len;
+    const nx = -uy, ny = ux;
+    const across = Math.max(chipSize(part).width, Math.min(a.sizeMm.w, a.sizeMm.h)) / 2 + 0.25;
+    const cx = (a.position.x + b.position.x) / 2, cy = (a.position.y + b.position.y) / 2;
+    const half = len / 2 + Math.max(a.sizeMm.w, a.sizeMm.h) / 2 + 0.25;
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(cx - ux * half + nx * across * s, cy - uy * half + ny * across * s);
+      ctx.lineTo(cx + ux * half + nx * across * s, cy + uy * half + ny * across * s);
+      ctx.stroke();
+      grow(box, { x: cx + nx * across * s, y: cy + ny * across * s });
     }
+    // LED: close the bracket on the cathode end, as KiCad's LED footprints do.
+    if (part.model?.type === "led" || part.model?.type === "diode") {
+      const k = part.model.cathodePad === b.number ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(cx + ux * half * k + nx * across, cy + uy * half * k + ny * across);
+      ctx.lineTo(cx + ux * half * k - nx * across, cy + uy * half * k - ny * across);
+      ctx.stroke();
+    }
+    return box;
   }
 
-  // Vias: glowing cyan ring with a dark drilled centre (the blueprint "eyelet").
-  for (const via of board.vias) {
-    const cx = (via.position.x - minX) * pxPerMm;
-    const cy = (via.position.y - minY) * pxPerMm;
-    const outer = (via.diameterMm / 2) * pxPerMm;
-    ctx.shadowColor = COPPER_GLOW;
-    ctx.shadowBlur = Math.max(4, 0.5 * pxPerMm);
-    ctx.strokeStyle = COPPER_GLOW;
-    ctx.lineWidth = Math.max(1.5, outer * 0.45);
-    ctx.beginPath();
-    ctx.arc(cx, cy, outer * 0.78, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = "#030812";
-    ctx.beginPath();
-    ctx.arc(cx, cy, (via.drillMm / 2) * pxPerMm, 0, Math.PI * 2);
+  switch (family) {
+    case "sot23": {
+      const xs = pads.map((p) => Math.abs(p.position.x - part.position.x));
+      const ys = pads.map((p) => Math.abs(p.position.y - part.position.y));
+      const leadsOnX = Math.max(...xs) > Math.max(...ys);
+      strokeRectLocal(ctx, part, box, leadsOnX ? 1.5 : 3.1, leadsOnX ? 3.1 : 1.5);
+      break;
+    }
+    case "qfp": {
+      const g = qfpGeometry(part);
+      const c = g.body / 2 + 0.11;
+      const arm = c - ((g.pinsPerSide - 1) * g.pitch) / 2 - g.land.short / 2 - SILK_CLEARANCE - SILK_LINE;
+      inPartFrame(ctx, part, () => {
+        ctx.beginPath();
+        for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]] as const) {
+          ctx.moveTo(sx * c, sy * (c - arm));
+          ctx.lineTo(sx * c, sy * c);
+          ctx.lineTo(sx * (c - arm), sy * c);
+        }
+        ctx.stroke();
+        // Pin-1 marker just outside the first land.
+        ctx.beginPath();
+        ctx.arc(-g.landCenter - g.land.long / 2 - 0.45, -((g.pinsPerSide - 1) * g.pitch) / 2, 0.22, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      for (const sx of [-1, 1]) for (const sy of [-1, 1]) grow(box, toBoard(part, { x: sx * c, y: sy * c }));
+      break;
+    }
+    case "radial-cap": {
+      const diameter = Number(/_D(\d+(?:\.\d+)?)mm/.exec(part.footprint)?.[1] ?? part.body.w);
+      const r = diameter / 2 + 0.12;
+      ctx.beginPath();
+      ctx.arc(part.position.x, part.position.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      grow(box, part.position, r);
+      const plus = pads.find((p) => p.number === "1") ?? pads[0];
+      if (plus) {
+        const d = Math.hypot(plus.position.x - part.position.x, plus.position.y - part.position.y) || 1;
+        const ux = (plus.position.x - part.position.x) / d, uy = (plus.position.y - part.position.y) / d;
+        // "+" sits beside the positive pin, inside the outline, off the pad.
+        const at = { x: part.position.x + ux * (r - 1.2) - uy * 2.1, y: part.position.y + uy * (r - 1.2) + ux * 2.1 };
+        plusSign(ctx, at, 0.9);
+      }
+      break;
+    }
+    case "xt30": {
+      const w = part.body.w, h = part.body.h, k = 1.2;
+      inPartFrame(ctx, part, () => {
+        ctx.beginPath();
+        // Bevelled end marks the negative contact, matching the housing key.
+        ctx.moveTo(-w / 2, -h / 2);
+        ctx.lineTo(w / 2, -h / 2);
+        ctx.lineTo(w / 2, h / 2 - k);
+        ctx.lineTo(w / 2 - k, h / 2);
+        ctx.lineTo(-w / 2 + k, h / 2);
+        ctx.lineTo(-w / 2, h / 2 - k);
+        ctx.closePath();
+        ctx.stroke();
+      });
+      for (const sx of [-1, 1]) for (const sy of [-1, 1]) grow(box, toBoard(part, { x: (sx * w) / 2, y: (sy * h) / 2 }));
+      break;
+    }
+    case "pin-header": {
+      const span = pads.length > 1
+        ? Math.hypot(pads[pads.length - 1]!.position.x - pads[0]!.position.x, pads[pads.length - 1]!.position.y - pads[0]!.position.y)
+        : 0;
+      const vertical = pads.length > 1 && Math.abs(pads[1]!.position.y - pads[0]!.position.y) > Math.abs(pads[1]!.position.x - pads[0]!.position.x);
+      const long = span + 2.54 + 0.22, short = 2.54 + 0.22;
+      strokeRectLocal(ctx, part, box, vertical ? short : long, vertical ? long : short);
+      break;
+    }
+    default:
+      strokeRectLocal(ctx, part, box, part.body.w + 0.3, part.body.h + 0.3);
+  }
+
+  // Polarity labels beside "+"/"-" pads (power inputs and batteries).
+  const outlineLeft = box.minX;
+  for (const pad of pads) {
+    if (pad.number !== "+" && pad.number !== "-") continue;
+    const at = { x: outlineLeft - 0.8, y: pad.position.y };
+    if (pad.number === "+") plusSign(ctx, at, 0.8);
+    else minusSign(ctx, at, 0.8);
+    grow(box, at, 0.5);
+  }
+  return box;
+}
+
+function plusSign(ctx: Ctx, at: Vec2, size: number): void {
+  ctx.beginPath();
+  ctx.moveTo(at.x - size / 2, at.y); ctx.lineTo(at.x + size / 2, at.y);
+  ctx.moveTo(at.x, at.y - size / 2); ctx.lineTo(at.x, at.y + size / 2);
+  ctx.stroke();
+}
+
+function minusSign(ctx: Ctx, at: Vec2, size: number): void {
+  ctx.beginPath();
+  ctx.moveTo(at.x - size / 2, at.y); ctx.lineTo(at.x + size / 2, at.y);
+  ctx.stroke();
+}
+
+function setFont(ctx: Ctx, heightMm: number): void {
+  // Canvas fonts are sized in user units, which here are millimetres.
+  ctx.font = SILK_FONT.replace("{px}", String(heightMm * 1.25));
+}
+
+/** The full top silkscreen film, already clipped off every mask opening. */
+function silkFilm(board: Board, frame: BoardFrame, lands: Land[], holes: MountingHole[]): HTMLCanvasElement {
+  const canvas = makeCanvas(frame);
+  const ctx = mmContext(canvas, frame);
+  ctx.strokeStyle = pcb.silk;
+  ctx.fillStyle = pcb.silk;
+  ctx.lineWidth = SILK_LINE;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  const boxes: Box[] = [];
+  for (const part of board.parts) {
+    if (part.side !== "top") continue;
+    boxes.push(drawPartSilk(ctx, part));
+  }
+
+  // Reference designators above each part (below it when that leaves the board).
+  setFont(ctx, SILK_TEXT);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  board.parts.forEach((part, i) => {
+    const box = boxes[i];
+    if (!box || part.side !== "top") return;
+    const cx = (box.minX + box.maxX) / 2;
+    let y = box.minY - 0.35 - SILK_TEXT / 2;
+    if (y - SILK_TEXT / 2 < frame.minY + 0.5) y = box.maxY + 0.35 + SILK_TEXT / 2;
+    ctx.fillText(part.ref, cx, y);
+  });
+
+  // Board name along the bottom edge.
+  setFont(ctx, 1.2);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  const baseline = frame.minY + frame.heightMm - 1.3;
+  const nameX = frame.minX + (holes.some((h) => h.position.x < frame.minX + 6 && h.position.y > frame.minY + frame.heightMm - 6) ? 6 : 1.6);
+  ctx.fillText(board.name, nameX, baseline);
+
+  // Silk never prints on a mask opening.
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.fillStyle = "#000";
+  for (const { pad, square } of lands) {
+    if (!pad.layers.includes("F.Cu")) continue;
+    padPath(ctx, pad, MASK_EXPANSION + SILK_CLEARANCE, square);
     ctx.fill();
   }
-
-  return c;
+  for (const h of holes) circle(ctx, h.position, h.drillMm / 2 + 0.6, "#000");
+  ctx.globalCompositeOperation = "source-over";
+  return canvas;
 }
 
-export function bakeBoard(board: Board): BakedLayers | null {
+// ─── finished surfaces ───────────────────────────────────────────────────────
+
+type Pass = "color" | "orm" | "height";
+
+/** Fill styles per pass. ORM packs roughness in G and metalness in B. */
+function styles(pass: Pass): Record<"mask" | "maskCopper" | "pad" | "drill" | "laminate", string> {
+  const orm = (rough: number, metal: number) => `rgb(0, ${Math.round(rough * 255)}, ${Math.round(metal * 255)})`;
+  const gray = (v: number) => `rgb(${v}, ${v}, ${v})`;
+  switch (pass) {
+    case "color": return { mask: pcb.mask, maskCopper: pcb.maskOverCopper, pad: pcb.enig, drill: pcb.drill, laminate: pcb.laminate };
+    case "orm": return { mask: orm(pcb.maskGloss, 0), maskCopper: orm(pcb.maskGloss, 0), pad: orm(0.22, 1), drill: orm(1, 0), laminate: orm(0.75, 0) };
+    case "height": return { mask: gray(60), maskCopper: gray(170), pad: gray(135), drill: gray(0), laminate: gray(30) };
+  }
+}
+
+function paintSurface(
+  canvas: HTMLCanvasElement,
+  frame: BoardFrame,
+  board: Board,
+  layer: CopperLayer,
+  lands: Land[],
+  holes: MountingHole[],
+  pass: Pass,
+  silk: HTMLCanvasElement | null,
+): void {
+  const ctx = mmContext(canvas, frame);
+  const s = styles(pass);
+  fillAll(ctx, frame, s.mask);
+  if (pass === "color") weave(ctx, frame, "#000", 0.022);
+
+  // Copper under the mask: traces, land shoulders, via annuli.
+  drawTracks(ctx, board, layer, s.maskCopper);
+  for (const { pad, square } of lands) {
+    if (!pad.layers.includes(layer)) continue;
+    padPath(ctx, pad, 0, square);
+    ctx.fillStyle = s.maskCopper;
+    ctx.fill();
+  }
+  for (const via of board.vias) circle(ctx, via.position, via.diameterMm / 2, s.maskCopper);
+
+  // Mask openings: ENIG lands, with a soft sheen across the gold.
+  for (const { pad, square } of lands) {
+    if (!pad.layers.includes(layer)) continue;
+    padPath(ctx, pad, 0, square);
+    if (pass === "color") {
+      const g = ctx.createLinearGradient(
+        pad.position.x - pad.sizeMm.w / 2, pad.position.y - pad.sizeMm.h / 2,
+        pad.position.x + pad.sizeMm.w / 2, pad.position.y + pad.sizeMm.h / 2,
+      );
+      g.addColorStop(0, pcb.enig);
+      g.addColorStop(1, pcb.enigShadow);
+      ctx.fillStyle = g;
+    } else {
+      ctx.fillStyle = s.pad;
+    }
+    ctx.fill();
+    if (isThroughHole(pad)) circle(ctx, pad.position, drillFor(pad) / 2, s.drill);
+  }
+
+  // Tented vias still show their drill as a dimple.
+  for (const via of board.vias) circle(ctx, via.position, via.drillMm / 2, s.drill);
+
+  // Mask pulled back around mounting holes shows bare laminate.
+  for (const h of holes) {
+    circle(ctx, h.position, h.drillMm / 2 + 0.5, s.laminate);
+    circle(ctx, h.position, h.drillMm / 2, s.drill);
+  }
+
+  if (silk) {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (pass === "color") {
+      ctx.drawImage(silk, 0, 0);
+    } else {
+      // Tint the silk film into this pass's value.
+      const tinted = document.createElement("canvas");
+      tinted.width = silk.width; tinted.height = silk.height;
+      const t = tinted.getContext("2d");
+      if (t) {
+        t.drawImage(silk, 0, 0);
+        t.globalCompositeOperation = "source-in";
+        t.fillStyle = pass === "orm" ? "rgb(0, 210, 0)" : "rgb(215, 215, 215)";
+        t.fillRect(0, 0, tinted.width, tinted.height);
+        ctx.drawImage(tinted, 0, 0);
+      }
+    }
+    ctx.restore();
+  }
+
+  if (pass === "height") {
+    // Soften edges so the bump shading reads as a coated surface, not stairs.
+    const copy = document.createElement("canvas");
+    copy.width = canvas.width; copy.height = canvas.height;
+    const c = copy.getContext("2d");
+    if (c) {
+      c.drawImage(canvas, 0, 0);
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.filter = `blur(${Math.max(0.6, frame.pxPerMm * 0.03)}px)`;
+      ctx.drawImage(copy, 0, 0);
+      ctx.restore();
+    }
+  }
+}
+
+function surfaceMaps(board: Board, frame: BoardFrame, layer: CopperLayer, lands: Land[], holes: MountingHole[], silk: HTMLCanvasElement | null): SurfaceMaps {
+  const maps = { color: makeCanvas(frame), orm: makeCanvas(frame), height: makeCanvas(frame) };
+  paintSurface(maps.color, frame, board, layer, lands, holes, "color", silk);
+  paintSurface(maps.orm, frame, board, layer, lands, holes, "orm", silk);
+  paintSurface(maps.height, frame, board, layer, lands, holes, "height", silk);
+  return maps;
+}
+
+/** The finished top and bottom faces. Returns null outside a browser. */
+export function bakeSurfaces(board: Board): BakedSurfaces | null {
   if (typeof document === "undefined") return null;
-  const b = bounds(board.outline);
-  const maxDim = Math.max(b.w, b.h, 1);
-  const pxPerMm = Math.min(TARGET_PX_PER_MM, MAX_PX / maxDim);
-  const wPx = b.w * pxPerMm;
-  const hPx = b.h * pxPerMm;
-  const { minX, minY } = b;
+  const frame = boardFrame(board);
+  const holes = mountingHoles(board);
+  const lands = allLands(board);
+  const silk = silkFilm(board, frame, lands, holes);
+  return {
+    frame,
+    holes,
+    top: surfaceMaps(board, frame, "F.Cu", lands, holes, silk),
+    bottom: surfaceMaps(board, frame, "B.Cu", lands, holes, null),
+  };
+}
 
-  // ── Substrate: deep navy with a radial glow and a fine dot grid ─────────────
-  const substrate = makeCanvas(wPx, hPx);
+// ─── exploded layers ─────────────────────────────────────────────────────────
+
+function copperSheet(board: Board, frame: BoardFrame, layer: CopperLayer, lands: Land[]): HTMLCanvasElement {
+  const canvas = makeCanvas(frame);
+  const ctx = mmContext(canvas, frame);
+  drawTracks(ctx, board, layer, pcb.bareCopper);
+  ctx.fillStyle = pcb.bareCopper;
+  for (const { pad, square } of lands) {
+    if (!pad.layers.includes(layer)) continue;
+    padPath(ctx, pad, 0, square);
+    ctx.fill();
+  }
+  for (const via of board.vias) circle(ctx, via.position, via.diameterMm / 2, pcb.bareCopper);
+  // Drilled holes go straight through the copper.
+  ctx.globalCompositeOperation = "destination-out";
+  for (const { pad } of lands) if (pad.layers.includes(layer) && isThroughHole(pad)) circle(ctx, pad.position, drillFor(pad) / 2, "#000");
+  for (const via of board.vias) circle(ctx, via.position, via.drillMm / 2, "#000");
+  ctx.globalCompositeOperation = "source-over";
+  return canvas;
+}
+
+/** Layer films for the exploded view. Returns null outside a browser. */
+export function bakeLayers(board: Board): BakedLayers | null {
+  if (typeof document === "undefined") return null;
+  const frame = boardFrame(board);
+  const holes = mountingHoles(board);
+  const lands = allLands(board);
+
+  const mask = makeCanvas(frame);
   {
-    const ctx = substrate.getContext("2d");
-    if (ctx) {
-      const sw = substrate.width, sh = substrate.height;
-      const bg = ctx.createRadialGradient(sw * 0.45, sh * 0.55, 0, sw * 0.45, sh * 0.55, Math.max(sw, sh) * 0.75);
-      bg.addColorStop(0, "#0f2c5c");
-      bg.addColorStop(1, FR4);
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, sw, sh);
-      // Dot grid at 1.27 mm pitch (half of 2.54 mm), like the reference artwork.
-      ctx.fillStyle = FR4_DOT;
-      ctx.globalAlpha = 0.55;
-      const step = 1.27 * pxPerMm;
-      const r = Math.max(0.8, 0.07 * pxPerMm);
-      for (let y = step / 2; y < sh; y += step) {
-        for (let x = step / 2; x < sw; x += step) {
-          ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-        }
-      }
-      ctx.globalAlpha = 1;
+    const ctx = mmContext(mask, frame);
+    fillAll(ctx, frame, pcb.mask);
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = "#000";
+    for (const { pad, square } of lands) {
+      if (!pad.layers.includes("F.Cu")) continue;
+      padPath(ctx, pad, MASK_EXPANSION, square);
+      ctx.fill();
     }
+    for (const via of board.vias) circle(ctx, via.position, via.drillMm / 2, "#000");
+    for (const h of holes) circle(ctx, h.position, h.drillMm / 2 + 0.5, "#000");
   }
 
-  const copperTop = copperLayer(board, "F.Cu", pxPerMm, minX, minY);
-  const copperBottom = copperLayer(board, "B.Cu", pxPerMm, minX, minY);
-
-  // ── Mask: dark glossy green, openings over pads ─────────────────────────────
-  const mask = makeCanvas(wPx, hPx);
+  const core = makeCanvas(frame);
   {
-    const ctx = mask.getContext("2d");
-    if (ctx) {
-      ctx.fillStyle = MASK_GREEN;
-      // Light tint only: the glowing copper must read through the mask.
-      ctx.globalAlpha = 0.25;
-      ctx.fillRect(0, 0, mask.width, mask.height);
-      ctx.globalAlpha = 1;
-      // Punch openings over every top pad.
-      ctx.globalCompositeOperation = "destination-out";
-      for (const part of board.parts) {
-        for (const pad of part.pads) {
-          if (!pad.layers.includes("F.Cu")) continue;
-          const grown = {
-            ...pad,
-            sizeMm: { w: pad.sizeMm.w + 0.15, h: pad.sizeMm.h + 0.15 },
-          };
-          drawPad(ctx, grown, pxPerMm, minX, minY, "#000");
-        }
-      }
-      ctx.globalCompositeOperation = "source-over";
-    }
+    const ctx = mmContext(core, frame);
+    fillAll(ctx, frame, pcb.core);
+    weave(ctx, frame, pcb.coreWeave, 0.07);
+    for (const { pad } of lands) if (isThroughHole(pad)) circle(ctx, pad.position, drillFor(pad) / 2, pcb.drill);
+    for (const via of board.vias) circle(ctx, via.position, via.drillMm / 2, pcb.drill);
   }
 
-  // ── Silk: outlines, refs, polarity, name, mounting holes ────────────────────
-  const silk = makeCanvas(wPx, hPx);
-  {
-    const ctx = silk.getContext("2d");
-    if (ctx) {
-      ctx.strokeStyle = SILK;
-      ctx.fillStyle = SILK;
-      ctx.lineWidth = Math.max(1, 0.15 * pxPerMm);
-      const fontPx = Math.max(8, 1.0 * pxPerMm);
-      ctx.font = `${fontPx}px monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      for (const part of board.parts) {
-        const cx = (part.position.x - minX) * pxPerMm;
-        const cy = (part.position.y - minY) * pxPerMm;
-        const w = part.body.w * pxPerMm;
-        const h = part.body.h * pxPerMm;
-        // Courtyard outline.
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate((part.rotationDeg * Math.PI) / 180);
-        ctx.globalAlpha = 0.8;
-        ctx.strokeRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
-        ctx.globalAlpha = 1;
-        // Ref designator just above the part.
-        ctx.fillText(part.ref, 0, -h / 2 - fontPx * 0.9);
-        ctx.restore();
-
-        // Pin-1 dot near the first pad.
-        const p1 = part.pads.find((p) => p.number === "1") ?? part.pads[0];
-        if (p1) {
-          ctx.beginPath();
-          ctx.arc((p1.position.x - minX) * pxPerMm, (p1.position.y - minY) * pxPerMm,
-            Math.max(1.5, 0.25 * pxPerMm), 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Polarity bar for LED / diode (stripe at the cathode side).
-        if (part.model && (part.model.type === "led" || part.model.type === "diode")) {
-          const cathodePad = part.model.cathodePad;
-          const cath = part.pads.find((p) => p.number === cathodePad);
-          if (cath) {
-            ctx.save();
-            ctx.globalAlpha = 0.9;
-            ctx.fillRect((cath.position.x - minX) * pxPerMm - 1,
-              (cath.position.y - minY) * pxPerMm - h / 2, 2, h);
-            ctx.restore();
-          }
-        }
-      }
-
-      // Board name along the bottom edge.
-      ctx.globalAlpha = 0.7;
-      ctx.font = `${Math.max(8, 1.4 * pxPerMm)}px monospace`;
-      ctx.textAlign = "left";
-      ctx.fillText(board.name, 2 * pxPerMm, hPx - 1.5 * pxPerMm);
-      ctx.globalAlpha = 1;
-
-      // Four corner mounting holes.
-      const m = 2.5 * pxPerMm;
-      for (const [hx, hy] of [[m, m], [wPx - m, m], [m, hPx - m], [wPx - m, hPx - m]] as const) {
-        ctx.beginPath();
-        ctx.arc(hx, hy, 1.6 * pxPerMm, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-    }
-  }
-
-  // ── Roughness map: pads shiny (dark), mask mid, silk rough (light) ──────────
-  const roughness = makeCanvas(wPx, hPx);
-  {
-    const ctx = roughness.getContext("2d");
-    if (ctx) {
-      ctx.fillStyle = "#999";          // mask ~0.6 roughness
-      ctx.fillRect(0, 0, roughness.width, roughness.height);
-      // Pads shinier.
-      for (const part of board.parts) {
-        for (const pad of part.pads) {
-          if (!pad.layers.includes("F.Cu")) continue;
-          drawPad(ctx, pad, pxPerMm, minX, minY, "#333");
-        }
-      }
-    }
-  }
-
-  return { widthMm: b.w, heightMm: b.h, minX, minY, pxPerMm, substrate, copperTop, copperBottom, mask, silk, roughness };
+  return {
+    copperTop: copperSheet(board, frame, "F.Cu", lands),
+    copperBottom: copperSheet(board, frame, "B.Cu", lands),
+    mask,
+    silk: silkFilm(board, frame, lands, holes),
+    core,
+  };
 }

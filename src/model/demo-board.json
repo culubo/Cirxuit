@@ -24,14 +24,14 @@
         {
           "number": "+",
           "netId": "+5V",
-          "position": { "x": 4, "y": 16 },
+          "position": { "x": 4, "y": 16.23 },
           "sizeMm": { "w": 1.7, "h": 1.7 },
           "layers": ["F.Cu", "B.Cu"]
         },
         {
           "number": "-",
           "netId": "GND",
-          "position": { "x": 4, "y": 19 },
+          "position": { "x": 4, "y": 18.77 },
           "sizeMm": { "w": 1.7, "h": 1.7 },
           "layers": ["F.Cu", "B.Cu"]
         }
@@ -49,7 +49,7 @@
       "value": "ATmega328P",
       "kind": "mcu",
       "footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
-      "position": { "x": 24, "y": 17.5 },
+      "position": { "x": 24, "y": 17.8 },
       "rotationDeg": 0,
       "side": "top",
       "body": { "w": 7, "h": 7, "height": 1.2 },
@@ -57,29 +57,29 @@
         {
           "number": "VCC",
           "netId": "+5V",
-          "position": { "x": 20.5, "y": 15 },
-          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "position": { "x": 19.84, "y": 15 },
+          "sizeMm": { "w": 1.475, "h": 0.55 },
           "layers": ["F.Cu"]
         },
         {
           "number": "GND",
           "netId": "GND",
-          "position": { "x": 20.5, "y": 19.5 },
-          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "position": { "x": 19.84, "y": 19.8 },
+          "sizeMm": { "w": 1.475, "h": 0.55 },
           "layers": ["F.Cu"]
         },
         {
           "number": "D8",
           "netId": "D8",
-          "position": { "x": 27.5, "y": 15 },
-          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "position": { "x": 28.16, "y": 15 },
+          "sizeMm": { "w": 1.475, "h": 0.55 },
           "layers": ["F.Cu"]
         },
         {
           "number": "A0",
           "netId": "A0",
-          "position": { "x": 26, "y": 21 },
-          "sizeMm": { "w": 0.5, "h": 1.2 },
+          "position": { "x": 26, "y": 21.96 },
+          "sizeMm": { "w": 0.55, "h": 1.475 },
           "layers": ["F.Cu"]
         }
       ],
@@ -181,22 +181,22 @@
         {
           "number": "B",
           "netId": "Q1_B",
-          "position": { "x": 40.8, "y": 15 },
-          "sizeMm": { "w": 1, "h": 0.8 },
+          "position": { "x": 40.86, "y": 14.05 },
+          "sizeMm": { "w": 1.325, "h": 0.6 },
           "layers": ["F.Cu"]
         },
         {
           "number": "C",
           "netId": "Q1_C",
-          "position": { "x": 43.2, "y": 13.8 },
-          "sizeMm": { "w": 1, "h": 0.8 },
+          "position": { "x": 43.14, "y": 15 },
+          "sizeMm": { "w": 1.325, "h": 0.6 },
           "layers": ["F.Cu"]
         },
         {
           "number": "E",
           "netId": "GND",
-          "position": { "x": 43.2, "y": 16.2 },
-          "sizeMm": { "w": 1, "h": 0.8 },
+          "position": { "x": 40.86, "y": 15.95 },
+          "sizeMm": { "w": 1.325, "h": 0.6 },
           "layers": ["F.Cu"]
         }
       ],
@@ -387,7 +387,7 @@
   "vias": [
     {
       "netId": "GND",
-      "position": { "x": 6, "y": 19 },
+      "position": { "x": 6, "y": 18.77 },
       "drillMm": 0.4,
       "diameterMm": 0.8
     },
@@ -399,7 +399,7 @@
     },
     {
       "netId": "GND",
-      "position": { "x": 18.5, "y": 19.5 },
+      "position": { "x": 18.5, "y": 19.8 },
       "drillMm": 0.4,
       "diameterMm": 0.8
     },
@@ -411,67 +411,7 @@
     },
     {
       "netId": "GND",
-      "position": { "x": 43.2, "y": 18 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 15, "y": 16 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 16, "y": 15 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 18.5, "y": 11 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 20.5, "y": 9 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 15, "y": 28 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "+5V",
-      "position": { "x": 17, "y": 30 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "GND",
-      "position": { "x": 17.5, "y": 19 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "GND",
-      "position": { "x": 18.5, "y": 24 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "GND",
-      "position": { "x": 25.2, "y": 24 },
-      "drillMm": 0.4,
-      "diameterMm": 0.8
-    },
-    {
-      "netId": "Q1_C",
-      "position": { "x": 44, "y": 13 },
+      "position": { "x": 40.86, "y": 20.34 },
       "drillMm": 0.4,
       "diameterMm": 0.8
     }
@@ -480,21 +420,21 @@
     {
       "netId": "+5V",
       "layer": "F.Cu",
-      "start": { "x": 4, "y": 16 },
-      "end": { "x": 15, "y": 16 },
+      "start": { "x": 4, "y": 16.23 },
+      "end": { "x": 15, "y": 16.23 },
       "widthMm": 0.5
     },
     {
       "netId": "+5V",
       "layer": "F.Cu",
-      "start": { "x": 15, "y": 16 },
-      "end": { "x": 16, "y": 15 },
+      "start": { "x": 15, "y": 16.23 },
+      "end": { "x": 16.23, "y": 15 },
       "widthMm": 0.5
     },
     {
       "netId": "+5V",
       "layer": "F.Cu",
-      "start": { "x": 16, "y": 15 },
+      "start": { "x": 16.23, "y": 15 },
       "end": { "x": 18.5, "y": 15 },
       "widthMm": 0.5
     },
@@ -502,7 +442,7 @@
       "netId": "+5V",
       "layer": "F.Cu",
       "start": { "x": 18.5, "y": 15 },
-      "end": { "x": 20.5, "y": 15 },
+      "end": { "x": 19.84, "y": 15 },
       "widthMm": 0.5
     },
     {
@@ -529,7 +469,7 @@
     {
       "netId": "+5V",
       "layer": "F.Cu",
-      "start": { "x": 15, "y": 16 },
+      "start": { "x": 15, "y": 16.23 },
       "end": { "x": 15, "y": 28 },
       "widthMm": 0.5
     },
@@ -550,8 +490,8 @@
     {
       "netId": "GND",
       "layer": "F.Cu",
-      "start": { "x": 4, "y": 19 },
-      "end": { "x": 6, "y": 19 },
+      "start": { "x": 4, "y": 18.77 },
+      "end": { "x": 6, "y": 18.77 },
       "widthMm": 0.5
     },
     {
@@ -564,8 +504,8 @@
     {
       "netId": "GND",
       "layer": "F.Cu",
-      "start": { "x": 20.5, "y": 19.5 },
-      "end": { "x": 18.5, "y": 19.5 },
+      "start": { "x": 19.84, "y": 19.8 },
+      "end": { "x": 18.5, "y": 19.8 },
       "widthMm": 0.5
     },
     {
@@ -578,21 +518,21 @@
     {
       "netId": "GND",
       "layer": "F.Cu",
-      "start": { "x": 43.2, "y": 16.2 },
-      "end": { "x": 43.2, "y": 18 },
+      "start": { "x": 40.86, "y": 15.95 },
+      "end": { "x": 40.86, "y": 20.34 },
       "widthMm": 0.5
     },
     {
       "netId": "GND",
       "layer": "B.Cu",
-      "start": { "x": 6, "y": 19 },
-      "end": { "x": 17.5, "y": 19 },
+      "start": { "x": 6, "y": 18.77 },
+      "end": { "x": 17.5, "y": 18.77 },
       "widthMm": 0.5
     },
     {
       "netId": "GND",
       "layer": "B.Cu",
-      "start": { "x": 17.5, "y": 19 },
+      "start": { "x": 17.5, "y": 18.77 },
       "end": { "x": 18.5, "y": 18 },
       "widthMm": 0.5
     },
@@ -600,13 +540,13 @@
       "netId": "GND",
       "layer": "B.Cu",
       "start": { "x": 18.5, "y": 18 },
-      "end": { "x": 18.5, "y": 19.5 },
+      "end": { "x": 18.5, "y": 19.8 },
       "widthMm": 0.5
     },
     {
       "netId": "GND",
       "layer": "B.Cu",
-      "start": { "x": 18.5, "y": 19.5 },
+      "start": { "x": 18.5, "y": 19.8 },
       "end": { "x": 18.5, "y": 24 },
       "widthMm": 0.5
     },
@@ -628,13 +568,13 @@
       "netId": "GND",
       "layer": "B.Cu",
       "start": { "x": 31.2, "y": 30 },
-      "end": { "x": 43.2, "y": 18 },
+      "end": { "x": 40.86, "y": 20.34 },
       "widthMm": 0.5
     },
     {
       "netId": "D8",
       "layer": "F.Cu",
-      "start": { "x": 27.5, "y": 15 },
+      "start": { "x": 28.16, "y": 15 },
       "end": { "x": 35, "y": 15 },
       "widthMm": 0.25
     },
@@ -642,7 +582,14 @@
       "netId": "Q1_B",
       "layer": "F.Cu",
       "start": { "x": 37, "y": 15 },
-      "end": { "x": 40.8, "y": 15 },
+      "end": { "x": 39.91, "y": 15 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "Q1_B",
+      "layer": "F.Cu",
+      "start": { "x": 39.91, "y": 15 },
+      "end": { "x": 40.86, "y": 14.05 },
       "widthMm": 0.25
     },
     {
@@ -656,20 +603,20 @@
       "netId": "Q1_C",
       "layer": "F.Cu",
       "start": { "x": 44, "y": 9 },
-      "end": { "x": 44, "y": 13 },
+      "end": { "x": 44, "y": 14.14 },
       "widthMm": 0.25
     },
     {
       "netId": "Q1_C",
       "layer": "F.Cu",
-      "start": { "x": 44, "y": 13 },
-      "end": { "x": 43.2, "y": 13.8 },
+      "start": { "x": 44, "y": 14.14 },
+      "end": { "x": 43.14, "y": 15 },
       "widthMm": 0.25
     },
     {
       "netId": "A0",
       "layer": "F.Cu",
-      "start": { "x": 26, "y": 21 },
+      "start": { "x": 26, "y": 21.96 },
       "end": { "x": 26, "y": 28.5 },
       "widthMm": 0.25
     }
@@ -703,5 +650,129 @@
       "partRefs": ["RV1"],
       "color": "accent-sensor"
     }
-  ]
+  ],
+  "schematic": {
+    "size": { "w": 150, "h": 80 },
+    "symbols": [
+      { "ref": "J1", "position": { "x": 15, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "C1", "position": { "x": 35, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "RV1", "position": { "x": 55, "y": 55 }, "rotationDeg": 0 },
+      { "ref": "U1", "position": { "x": 80, "y": 40 }, "rotationDeg": 0 },
+      { "ref": "R1", "position": { "x": 105, "y": 38.73 }, "rotationDeg": 0 },
+      { "ref": "Q1", "position": { "x": 126, "y": 38.73 }, "rotationDeg": 0 },
+      { "ref": "R2", "position": { "x": 100, "y": 20 }, "rotationDeg": 0 },
+      { "ref": "D1", "position": { "x": 120, "y": 20 }, "rotationDeg": 0 }
+    ],
+    "wires": [
+      {
+        "netId": "+5V",
+        "points": [
+          { "x": 15, "y": 35 },
+          { "x": 15, "y": 10 },
+          { "x": 30, "y": 10 },
+          { "x": 30, "y": 40 }
+        ]
+      },
+      {
+        "netId": "+5V",
+        "points": [
+          { "x": 30, "y": 40 },
+          { "x": 30, "y": 10 },
+          { "x": 50, "y": 10 },
+          { "x": 50, "y": 55 }
+        ]
+      },
+      {
+        "netId": "+5V",
+        "points": [
+          { "x": 50, "y": 55 },
+          { "x": 50, "y": 10 },
+          { "x": 74, "y": 10 },
+          { "x": 74, "y": 38.73 }
+        ]
+      },
+      {
+        "netId": "+5V",
+        "points": [
+          { "x": 74, "y": 38.73 },
+          { "x": 74, "y": 10 },
+          { "x": 95, "y": 10 },
+          { "x": 95, "y": 20 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 15, "y": 45 },
+          { "x": 15, "y": 70 },
+          { "x": 40, "y": 70 },
+          { "x": 40, "y": 40 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 40, "y": 40 },
+          { "x": 40, "y": 70 },
+          { "x": 60, "y": 70 },
+          { "x": 60, "y": 55 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 60, "y": 55 },
+          { "x": 60, "y": 70 },
+          { "x": 86, "y": 70 },
+          { "x": 86, "y": 41.27 }
+        ]
+      },
+      {
+        "netId": "GND",
+        "points": [
+          { "x": 86, "y": 41.27 },
+          { "x": 86, "y": 70 },
+          { "x": 128, "y": 70 },
+          { "x": 128, "y": 43.73 }
+        ]
+      },
+      {
+        "netId": "A0",
+        "points": [
+          { "x": 55, "y": 51 },
+          { "x": 55, "y": 41.27 },
+          { "x": 74, "y": 41.27 }
+        ]
+      },
+      {
+        "netId": "D8",
+        "points": [
+          { "x": 86, "y": 38.73 },
+          { "x": 100, "y": 38.73 }
+        ]
+      },
+      {
+        "netId": "Q1_B",
+        "points": [
+          { "x": 110, "y": 38.73 },
+          { "x": 122, "y": 38.73 }
+        ]
+      },
+      {
+        "netId": "LED_A",
+        "points": [
+          { "x": 105, "y": 20 },
+          { "x": 115, "y": 20 }
+        ]
+      },
+      {
+        "netId": "Q1_C",
+        "points": [
+          { "x": 125, "y": 20 },
+          { "x": 128, "y": 20 },
+          { "x": 128, "y": 33.73 }
+        ]
+      }
+    ]
+  }
 }
