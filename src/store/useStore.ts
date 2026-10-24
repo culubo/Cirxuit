@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { Board, McuState, SimResult } from "../model/board-model";
+import { solve } from "../solver/solve";
 
 export type Selection =
   | { kind: "part"; ref: string }
@@ -30,6 +31,8 @@ interface AppState {
   setRunning: (running: boolean) => void;
   /** Reset per-board transient state (selection, mcuState, logs, error). */
   resetRuntimeState: () => void;
+  /** Flip a servo part's stalled flag and re-solve the board. */
+  toggleServoStall: (ref: string) => void;
 }
 
 const defaultMcuState: McuState = {
@@ -63,5 +66,18 @@ export const useStore = create<AppState>((set) => ({
       logs: [],
       runError: null,
       running: false,
+    }),
+  toggleServoStall: (ref) =>
+    set((state) => {
+      if (!state.board) return {};
+      // Rebuild the board immutably with the target servo's `stalled` flipped.
+      const board: Board = {
+        ...state.board,
+        parts: state.board.parts.map((part) => {
+          if (part.ref !== ref || part.model?.type !== "servo") return part;
+          return { ...part, model: { ...part.model, stalled: !part.model.stalled } };
+        }),
+      };
+      return { board, simResult: solve(board, state.mcuState) };
     }),
 }));

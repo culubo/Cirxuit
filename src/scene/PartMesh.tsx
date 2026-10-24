@@ -22,6 +22,7 @@ function colorForPart(part: Part): THREE.Color {
     case "vsource": return new THREE.Color("#5a3a1a");
     case "potentiometer": return new THREE.Color("#4a4a2a");
     case "connector": return new THREE.Color("#2a3a4a");
+    case "servo": return new THREE.Color("#3a2a4a");
     default: return DEFAULT_COLOR;
   }
 }

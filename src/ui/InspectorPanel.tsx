@@ -76,6 +76,7 @@ export default function InspectorPanel(): React.ReactElement {
   const setLogs = useStore((s) => s.setLogs);
   const setRunError = useStore((s) => s.setRunError);
   const setRunning = useStore((s) => s.setRunning);
+  const toggleServoStall = useStore((s) => s.toggleServoStall);
 
   const [code, setCode] = useState("// Arduino-style code\ndigitalWrite(8, HIGH);");
 
@@ -171,6 +172,29 @@ export default function InspectorPanel(): React.ReactElement {
             <div style={{ color: "#7a8a7a", marginTop: "0.25rem", fontSize: "0.75rem" }}>
               {selectedPart.blurb}
             </div>
+          )}
+
+          {/* One-click Stall toggle for servo parts. */}
+          {selectedPart.model?.type === "servo" && (
+            <button
+              data-testid={`stall-toggle-${selectedPart.ref}`}
+              aria-pressed={selectedPart.model.stalled}
+              onClick={() => toggleServoStall(selectedPart.ref)}
+              style={{
+                marginTop: "0.5rem",
+                width: "100%",
+                background: selectedPart.model.stalled ? "#3a1410" : "#0e2a0e",
+                border: `1px solid ${selectedPart.model.stalled ? "#a0402a" : "#2a6a2a"}`,
+                borderRadius: "2px",
+                color: selectedPart.model.stalled ? "#e0923a" : "#7ec8a0",
+                fontFamily: "monospace",
+                fontSize: "0.78rem",
+                padding: "0.35rem 0",
+                cursor: "pointer",
+              }}
+            >
+              {selectedPart.model.stalled ? "● Stalled — click to release" : "○ Running — click to stall"}
+            </button>
           )}
         </div>
       )}

@@ -58,6 +58,11 @@ function modelPadNames(model: ElectricalModel): { field: string; name: string }[
         { field: "vccPad", name: model.vccPad },
         ...model.pins.map((pin) => ({ field: `pins.${pin.name}.pad`, name: pin.pad })),
       ];
+    case "servo":
+      return [
+        { field: "posPad", name: model.posPad },
+        { field: "negPad", name: model.negPad },
+      ];
     default: {
       const exhaustive: never = model;
       return exhaustive;
@@ -87,6 +92,11 @@ export function validateBoard(board: Board): string[] {
 
   if (!netIds.has(board.groundNetId)) {
     violations.push(`Ground net ${JSON.stringify(board.groundNetId)} does not exist in board.nets`);
+  }
+  for (const limit of board.railLimits ?? []) {
+    if (!netIds.has(limit.netId)) {
+      violations.push(`Rail limit references missing net ${JSON.stringify(limit.netId)}`);
+    }
   }
 
   for (const part of board.parts) {

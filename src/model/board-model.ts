@@ -20,6 +20,7 @@ export interface Board {
   vias: Via[];
   blocks: FunctionBlock[];    // the "function layer" floating above the board
   groundNetId: string;        // reference node for the solver
+  railLimits?: { netId: string; minVolts: number; message: string }[];
 }
 
 export type PartKind =
@@ -31,6 +32,7 @@ export type PartKind =
   | "npn"
   | "mcu"
   | "vsource"
+  | "servo"
   | "connector"
   | "unknown";
 
@@ -95,7 +97,10 @@ export type ElectricalModel =
   | { type: "led"; vf: number; rOn: number; anodePad: string; cathodePad: string; color: string }
   | { type: "diode"; vf: number; rOn: number; anodePad: string; cathodePad: string }
   | { type: "npn"; beta: number; vbe: number; vceSat: number; basePad: string; collectorPad: string; emitterPad: string }
-  | { type: "mcu"; vcc: number; gndPad: string; vccPad: string; pins: McuPin[]; adcBits: number };
+  | { type: "mcu"; vcc: number; gndPad: string; vccPad: string; pins: McuPin[]; adcBits: number }
+  // A servo is modelled as a DC resistive load: runOhms when turning freely,
+  // stallOhms (much lower) when mechanically stalled and drawing stall current.
+  | { type: "servo"; runOhms: number; stallOhms: number; stalled: boolean; posPad: string; negPad: string };
 
 export type PinCapability = "digital" | "analog_in" | "pwm";
 

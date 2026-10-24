@@ -1,0 +1,508 @@
+{
+  "id": "biped-power-board",
+  "name": "Biped Power (concept)",
+  "outline": [
+    { "x": 0, "y": 0 },
+    { "x": 60, "y": 0 },
+    { "x": 60, "y": 40 },
+    { "x": 0, "y": 40 }
+  ],
+  "thicknessMm": 1.6,
+  "copperLayers": ["F.Cu", "B.Cu"],
+  "groundNetId": "GND",
+  "railLimits": [
+    {
+      "netId": "VBAT",
+      "minVolts": 6.0,
+      "message": "VBAT rail dropped below 6.0 V under load, risking 5 V regulator dropout and controller brownout."
+    }
+  ],
+  "parts": [
+    {
+      "ref": "BT1",
+      "value": "7.4V",
+      "kind": "vsource",
+      "footprint": "Connector_AMASS:AMASS_XT30U-M_1x02_P5.0mm_Vertical",
+      "position": { "x": 6, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 5, "h": 10, "height": 9.5 },
+      "pads": [
+        {
+          "number": "+",
+          "netId": "BAT+",
+          "position": { "x": 6, "y": 15 },
+          "sizeMm": { "w": 2.5, "h": 2.5 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "-",
+          "netId": "GND",
+          "position": { "x": 6, "y": 20 },
+          "sizeMm": { "w": 2.5, "h": 2.5 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "vsource",
+        "volts": 7.4,
+        "posPad": "+",
+        "negPad": "-"
+      },
+      "blurb": "2S LiPo battery input supplying nominal 7.4 V power to the robot. All servo and controller current returns to its negative terminal."
+    },
+    {
+      "ref": "RINT",
+      "value": "battery internal resistance (0.3 Ω)",
+      "kind": "resistor",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "position": { "x": 15, "y": 15 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 3.6, "h": 1.8, "height": 0.7 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "BAT+",
+          "position": { "x": 13.5, "y": 15 },
+          "sizeMm": { "w": 1.6, "h": 1.8 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "BAT_CELL",
+          "position": { "x": 16.5, "y": 15 },
+          "sizeMm": { "w": 1.6, "h": 1.8 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 0.3
+      },
+      "blurb": "Represents the 0.3 ohm battery internal resistance of the 2S LiPo cells. Heavy servo stall currents drop voltage across this resistance and pull the main bus down."
+    },
+    {
+      "ref": "F1",
+      "value": "0.05 Ω fuse",
+      "kind": "resistor",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "position": { "x": 24, "y": 15 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 4.5, "h": 3.2, "height": 1.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "BAT_CELL",
+          "position": { "x": 22, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 2.8 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "VBAT",
+          "position": { "x": 26, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 2.8 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 0.05
+      },
+      "blurb": "Inline resettable fuse modeled as a 0.05 ohm series resistor. It protects the battery wiring from short circuits with minimal voltage loss during normal walking."
+    },
+    {
+      "ref": "C1",
+      "value": "470uF",
+      "kind": "capacitor",
+      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+      "position": { "x": 32, "y": 17.5 },
+      "rotationDeg": 90,
+      "side": "top",
+      "body": { "w": 8, "h": 8, "height": 11.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VBAT",
+          "position": { "x": 32, "y": 15 },
+          "sizeMm": { "w": 2, "h": 2 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 32, "y": 20 },
+          "sizeMm": { "w": 2, "h": 2 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 0.00047
+      },
+      "blurb": "Bulk 470 uF capacitor placed next to the servo headers to smooth brief current spikes. At steady-state DC it behaves as an open circuit."
+    },
+    {
+      "ref": "J2",
+      "value": "servo (run 25 Ω / stall 3 Ω)",
+      "kind": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+      "position": { "x": 38, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VBAT",
+          "position": { "x": 38, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 38, "y": 20 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "servo",
+        "runOhms": 25,
+        "stallOhms": 3,
+        "stalled": false,
+        "posPad": "1",
+        "negPad": "2"
+      },
+      "blurb": "Left hip servo modeled as a 25 ohm DC load during a normal walking gait. When mechanically stalled it collapses to about 3 ohms and draws a large stall current that pulls the battery rail down."
+    },
+    {
+      "ref": "J3",
+      "value": "servo (run 25 Ω / stall 3 Ω)",
+      "kind": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+      "position": { "x": 43, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VBAT",
+          "position": { "x": 43, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 43, "y": 20 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "servo",
+        "runOhms": 25,
+        "stallOhms": 3,
+        "stalled": false,
+        "posPad": "1",
+        "negPad": "2"
+      },
+      "blurb": "Left ankle servo on the shared servo bus, modeled as a 25 ohm running load. A stall drops it to about 3 ohms, adding to the current drawn through the battery's internal resistance."
+    },
+    {
+      "ref": "J4",
+      "value": "servo (run 25 Ω / stall 3 Ω)",
+      "kind": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+      "position": { "x": 48, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VBAT",
+          "position": { "x": 48, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 48, "y": 20 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "servo",
+        "runOhms": 25,
+        "stallOhms": 3,
+        "stalled": false,
+        "posPad": "1",
+        "negPad": "2"
+      },
+      "blurb": "Right hip servo across VBAT and GND, modeled as a 25 ohm running load. Stalling it drops the resistance to about 3 ohms; combined stalls dominate total battery current."
+    },
+    {
+      "ref": "J5",
+      "value": "servo (run 25 Ω / stall 3 Ω)",
+      "kind": "servo",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+      "position": { "x": 53, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.54, "h": 7.5, "height": 8.5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "VBAT",
+          "position": { "x": 53, "y": 15 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 53, "y": 20 },
+          "sizeMm": { "w": 1.8, "h": 1.8 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "servo",
+        "runOhms": 25,
+        "stallOhms": 3,
+        "stalled": false,
+        "posPad": "1",
+        "negPad": "2"
+      },
+      "blurb": "Right ankle servo at the far end of the servo bus, modeled as a 25 ohm running load. It collapses to about 3 ohms when stalled; simultaneous stalls brown out the rail."
+    },
+    {
+      "ref": "U1",
+      "value": "50 Ω controller",
+      "kind": "mcu",
+      "footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
+      "position": { "x": 26, "y": 30 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 7, "h": 7, "height": 1.2 },
+      "pads": [
+        {
+          "number": "VCC",
+          "netId": "VBAT",
+          "position": { "x": 26, "y": 26.5 },
+          "sizeMm": { "w": 1.2, "h": 1.2 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "GND",
+          "netId": "GND",
+          "position": { "x": 26, "y": 33.5 },
+          "sizeMm": { "w": 1.2, "h": 1.2 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 50
+      },
+      "blurb": "Main gait controller and regulator stage modeled as a 50 ohm DC load on VBAT. If servo stalls pull VBAT below 6.0 V, its 5 V regulator drops out and resets the controller."
+    }
+  ],
+  "nets": [
+    {
+      "id": "BAT+",
+      "name": "BAT+",
+      "pads": [
+        { "ref": "BT1", "pad": "+" },
+        { "ref": "RINT", "pad": "1" }
+      ]
+    },
+    {
+      "id": "BAT_CELL",
+      "name": "BAT_CELL",
+      "pads": [
+        { "ref": "RINT", "pad": "2" },
+        { "ref": "F1", "pad": "1" }
+      ]
+    },
+    {
+      "id": "VBAT",
+      "name": "VBAT",
+      "pads": [
+        { "ref": "F1", "pad": "2" },
+        { "ref": "C1", "pad": "1" },
+        { "ref": "J2", "pad": "1" },
+        { "ref": "J3", "pad": "1" },
+        { "ref": "J4", "pad": "1" },
+        { "ref": "J5", "pad": "1" },
+        { "ref": "U1", "pad": "VCC" }
+      ]
+    },
+    {
+      "id": "GND",
+      "name": "GND",
+      "pads": [
+        { "ref": "BT1", "pad": "-" },
+        { "ref": "C1", "pad": "2" },
+        { "ref": "J2", "pad": "2" },
+        { "ref": "J3", "pad": "2" },
+        { "ref": "J4", "pad": "2" },
+        { "ref": "J5", "pad": "2" },
+        { "ref": "U1", "pad": "GND" }
+      ]
+    }
+  ],
+  "vias": [
+    {
+      "netId": "GND",
+      "position": { "x": 32, "y": 33.5 },
+      "drillMm": 0.6,
+      "diameterMm": 1.2
+    }
+  ],
+  "tracks": [
+    {
+      "netId": "BAT+",
+      "layer": "F.Cu",
+      "start": { "x": 6, "y": 15 },
+      "end": { "x": 13.5, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "BAT_CELL",
+      "layer": "F.Cu",
+      "start": { "x": 16.5, "y": 15 },
+      "end": { "x": 22, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 15 },
+      "end": { "x": 32, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 32, "y": 15 },
+      "end": { "x": 38, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 38, "y": 15 },
+      "end": { "x": 43, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 43, "y": 15 },
+      "end": { "x": 48, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 48, "y": 15 },
+      "end": { "x": 53, "y": 15 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "VBAT",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 15 },
+      "end": { "x": 26, "y": 26.5 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 6, "y": 20 },
+      "end": { "x": 32, "y": 20 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 32, "y": 20 },
+      "end": { "x": 38, "y": 20 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 38, "y": 20 },
+      "end": { "x": 43, "y": 20 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 43, "y": 20 },
+      "end": { "x": 48, "y": 20 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 48, "y": 20 },
+      "end": { "x": 53, "y": 20 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 32, "y": 20 },
+      "end": { "x": 32, "y": 33.5 },
+      "widthMm": 1.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 33.5 },
+      "end": { "x": 32, "y": 33.5 },
+      "widthMm": 1.5
+    }
+  ],
+  "blocks": [
+    {
+      "id": "battery",
+      "label": "Battery",
+      "description": "Supplies 7.4 V from a 2S LiPo battery pack through its 0.3 ohm internal cell resistance.",
+      "partRefs": ["BT1", "RINT"],
+      "color": "accent-power"
+    },
+    {
+      "id": "protection",
+      "label": "Protection",
+      "description": "Protects the battery pack against overcurrent faults using a 0.05 ohm series fuse.",
+      "partRefs": ["F1"],
+      "color": "accent-warn"
+    },
+    {
+      "id": "servo-bus",
+      "label": "Servo bus",
+      "description": "Delivers high-current power to four leg servos with a 470 uF bulk capacitor to buffer gait transients.",
+      "partRefs": ["C1", "J2", "J3", "J4", "J5"],
+      "color": "accent-driver"
+    },
+    {
+      "id": "controller",
+      "label": "Controller",
+      "description": "Powers the robot's main controller load from the shared battery rail.",
+      "partRefs": ["U1"],
+      "color": "accent-mcu"
+    }
+  ]
+}

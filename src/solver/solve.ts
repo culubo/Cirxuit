@@ -259,6 +259,16 @@ export function solve(board: Board, mcuState: McuState): SimResult {
         case "capacitor":
           break; // open circuit at DC
 
+        case "servo": {
+          // A servo presents a resistive DC load: low stall resistance when
+          // mechanically stalled (large stall current), higher run resistance
+          // otherwise. Stamped exactly like a resistor between its two pads.
+          const ohms = m.stalled ? m.stallOhms : m.runOhms;
+          const safe = ohms > SHORT_OHMS ? ohms : SHORT_OHMS;
+          G(mna, ni(padNet(part, m.posPad)), ni(padNet(part, m.negPad)), 1 / safe);
+          break;
+        }
+
         case "vsource": {
           const row = VS(mna, ni(padNet(part, m.posPad)), ni(padNet(part, m.negPad)), m.volts);
           vsRows.push({ ref: part.ref, row, fromPad: m.posPad, toPad: m.negPad });
@@ -605,6 +615,18 @@ function buildBranches(
             }
           }
         }
+        break;
+      }
+
+      case "servo": {
+        const ohms = m.stalled ? m.stallOhms : m.runOhms;
+        const safe = ohms > SHORT_OHMS ? ohms : SHORT_OHMS;
+        const nPos = part.pads.find((p) => p.number === m.posPad)?.netId ?? null;
+        const nNeg = part.pads.find((p) => p.number === m.negPad)?.netId ?? null;
+        const vd = V(nPos) - V(nNeg);
+        const amps = Math.abs(vd / safe);
+        const [fp, tp] = vd >= 0 ? [m.posPad, m.negPad] : [m.negPad, m.posPad];
+        branches.push({ ref: part.ref, fromPad: fp, toPad: tp, amps });
         break;
       }
 

@@ -14,18 +14,23 @@ const wrap: React.CSSProperties = {
   left: "1rem",
   display: "flex",
   flexDirection: "column",
-  gap: "0.3rem",
+  gap: "0.35rem",
   fontFamily: "monospace",
-  fontSize: "0.75rem",
   color: "#8aa88a",
   zIndex: 10,
+  background: "#0d1117",
+  border: "1px solid #2a6a2a",
+  borderRadius: "4px",
+  padding: "0.6rem 0.8rem",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
 };
 
 const label: React.CSSProperties = {
-  color: "#5a7a5a",
-  fontSize: "0.68rem",
+  color: "#7ec8a0",
+  fontSize: "0.72rem",
+  fontWeight: "bold",
   textTransform: "uppercase",
-  letterSpacing: "0.08em",
+  letterSpacing: "0.1em",
 };
 
 export default function BoardSwitcher(): React.ReactElement {
@@ -41,15 +46,15 @@ export default function BoardSwitcher(): React.ReactElement {
         value={boardId ?? ""}
         onChange={(e) => setBoardId(e.target.value)}
         style={{
-          background: "#0d1117",
-          border: "1px solid #2a3a2a",
+          background: "#08100a",
+          border: "1px solid #2a6a2a",
           borderRadius: "2px",
           color: "#c8d8c8",
           fontFamily: "monospace",
-          fontSize: "0.78rem",
-          padding: "0.3rem 0.5rem",
+          fontSize: "0.85rem",
+          padding: "0.4rem 0.6rem",
           cursor: "pointer",
-          minWidth: "12rem",
+          minWidth: "14rem",
         }}
       >
         {BOARD_REGISTRY.map((entry) => (
