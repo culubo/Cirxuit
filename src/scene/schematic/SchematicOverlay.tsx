@@ -17,6 +17,7 @@ import * as THREE from "three";
 import type { Board, Part, Vec2 } from "../../model/board-model";
 import { useStore } from "../../store/useStore";
 import { tokens } from "../../ui/tokens";
+import { netColor } from "../../ui/semanticColors";
 import { formatQuantity } from "../../ui/format";
 import LabelSprite from "../LabelSprite";
 import { EXPLODE_MM } from "../layers";
@@ -39,8 +40,6 @@ export function schematicFade(explode: number): number {
 
 const MAX_PARTICLES = 400;
 const DIM = 0.2;
-const WIRE_LOW = new THREE.Color("#23456e");
-const WIRE_HIGH = new THREE.Color("#dcf6ff");
 const HILITE = new THREE.Color(tokens.phosphor);
 const WHITE = new THREE.Color("#ffffff");
 
@@ -89,9 +88,10 @@ function buildSymbols(board: Board, fit: SchematicFit): SymbolItem[] {
   return out;
 }
 
-function wireColor(volts: number, vmax: number): string {
-  const t = vmax > 1e-9 ? Math.min(1, Math.max(0, volts / vmax)) : 0;
-  return `#${WIRE_LOW.clone().lerp(WIRE_HIGH, 0.15 + 0.85 * t).getHexString()}`;
+function wireColor(board: Board, netId: string, volts: number, vmax: number): string {
+  const strength = vmax > 1e-9 ? Math.min(1, Math.max(0, Math.abs(volts) / vmax)) : 0;
+  const base = new THREE.Color(netColor(board, netId));
+  return `#${base.multiplyScalar(0.58 + strength * 0.42).getHexString()}`;
 }
 
 export default function SchematicOverlay({ board, focus }: { board: Board; focus: Focus }): React.ReactElement | null {
@@ -309,7 +309,7 @@ export default function SchematicOverlay({ board, focus }: { board: Board; focus
               <Line
                 ref={(l) => { wireLines.current[i] = l as unknown as { material: THREE.Material & { opacity: number } } | null; }}
                 points={w.points.map((p) => three(p, 0.02))}
-                color={primary ? tokens.phosphor : wireColor(v, vmax)}
+                color={primary ? tokens.phosphor : wireColor(board, w.netId, v, vmax)}
                 lineWidth={primary ? 2.8 : 1.6}
                 transparent
                 opacity={0}

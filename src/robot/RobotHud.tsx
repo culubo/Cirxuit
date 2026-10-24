@@ -17,8 +17,8 @@ const LABEL: Record<RobotState, string> = {
 };
 
 const COLOR: Record<RobotState, string> = {
-  walking: tokens.phosphor,
-  limping: "#e0a84a",
+  walking: tokens.healthy,
+  limping: tokens.thermal,
   brownout: tokens.danger,
 };
 

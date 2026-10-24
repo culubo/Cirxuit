@@ -44,11 +44,11 @@ Expected values (tests assert these within 5 percent):
 - RV1 wiper 0.5: A0 about 2.5 V, analogRead about 512
 
 ## Visual language (not "AI-looking")
-Theme: glowing circuit blueprint. A backlit board in a dark room: deep navy ground, a fine dot grid, electric-cyan traces with a soft halo, pads and via rings that glow.
-- Background deep navy (#050b18), not pure black. No purple gradients, no glassmorphism cards, no emoji.
-- One accent for current and selection (electric cyan #4fd8ff), one for warnings (amber), one for danger (red).
-- Parts are dark, near-black bodies so the lit artwork stays the hero; the MCU gets a faint cyan core glow.
-- Numbers in a monospace face (JetBrains Mono or IBM Plex Mono) with real units and sensible precision: 12.2 mA, 4.98 V.
+- Theme: mint field instrument. Forest-black matte housings frame a softly illuminated green center stage with restrained printed grain; bright mint is reserved for current, hover, and selection.
+- Background is forest-black (#050a07), not pure black. No purple gradients, glassmorphism, emoji, or decorative neon.
+- Semantic color is consistent across exploded copper, schematics, function blocks, and telemetry: lime power, aqua signals, green sensors/healthy states, orange drivers/high load, amber warnings, and coral danger.
+- Parts retain physically plausible materials so semantic color explains the circuit without repainting the finished PCB.
+- ISO 3098 (`osifont`) is the default interface, diagram, and numeric face, with system sans-serif fallbacks; values retain real units and sensible precision: 12.2 mA, 4.98 V.
 - UI chrome is thin, dense, and quiet. The 3D scene is the hero.
 - Motion has purpose: explode uses an eased spring, selection dims the rest in 200 ms, particles carry meaning (direction and magnitude).
 - Copy is short, specific, and human. Every blurb is written for the demo board by hand.

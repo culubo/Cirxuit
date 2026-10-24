@@ -1,7 +1,7 @@
 # Requirements: Visual Polish
 
 Track: Robotics. Realise the "Visual language" and "Scene details" sections of
-`.kiro/specs/circuit-xray/design.md`. The 3D scene is the hero; the chrome stays thin and
+`.kiro/specs/circxit/design.md`. The 3D scene is the hero; the chrome stays thin and
 quiet. Every change must preserve the existing data-testid selectors and keep all e2e and
 unit tests green, and hold 60 fps on the demo board.
 

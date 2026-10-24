@@ -53,6 +53,7 @@ export default function SceneControls(): React.ReactElement {
   const setShowSchematic = useStore((s) => s.setShowSchematic);
   const schematicOpacity = useStore((s) => s.schematicOpacity);
   const setSchematicOpacity = useStore((s) => s.setSchematicOpacity);
+  const schematicVisible = showSchematic && explode > 0.6;
   const robotBoard = useStore((s) => isRobotBoard(s.board));
   const robotView = useRobotStore((s) => s.robotView);
   const setRobotView = useRobotStore((s) => s.setRobotView);
@@ -87,8 +88,8 @@ export default function SceneControls(): React.ReactElement {
           aria-pressed={showParticles}
           onClick={() => setShowParticles(!showParticles)}
           style={{
-            background: showParticles ? "#0a2238" : "transparent",
-            border: `1px solid ${showParticles ? "#1f6fb2" : tokens.hairline}`,
+            background: showParticles ? tokens.controlActiveSoft : "transparent",
+            border: `1px solid ${showParticles ? tokens.controlBorder : tokens.hairline}`,
             borderRadius: "2px",
             color: showParticles ? tokens.phosphor : tokens.textFaint,
             fontFamily: tokens.fontMono,
@@ -154,8 +155,8 @@ export default function SceneControls(): React.ReactElement {
             onClick={() => setRobotView(!robotView)}
             title="Show the robot this board powers"
             style={{
-              background: robotView ? "#0a2238" : "transparent",
-              border: `1px solid ${robotView ? "#1f6fb2" : tokens.hairline}`,
+              background: robotView ? tokens.controlActiveSoft : "transparent",
+              border: `1px solid ${robotView ? tokens.controlBorder : tokens.hairline}`,
               borderRadius: "2px",
               color: robotView ? tokens.phosphor : tokens.textFaint,
               fontFamily: tokens.fontMono,
@@ -197,25 +198,28 @@ export default function SceneControls(): React.ReactElement {
             <span style={label}>Schematic</span>
             <button
               data-testid="schematic-toggle"
-              aria-pressed={showSchematic}
+              aria-pressed={schematicVisible}
               onClick={() => {
-                const next = !showSchematic;
-                setShowSchematic(next);
-                if (next && explode < 1) setExplode(1);
+                if (!schematicVisible) {
+                  setShowSchematic(true);
+                  setExplode(1);
+                } else {
+                  setShowSchematic(false);
+                }
               }}
               title="Show the schematic and fully explode the board"
               style={{
-                background: showSchematic ? "#0a2238" : "transparent",
-                border: `1px solid ${showSchematic ? "#1f6fb2" : tokens.hairline}`,
+                background: schematicVisible ? tokens.controlActiveSoft : "transparent",
+                border: `1px solid ${schematicVisible ? tokens.controlBorder : tokens.hairline}`,
                 borderRadius: "2px",
-                color: showSchematic ? tokens.phosphor : tokens.textFaint,
+                color: schematicVisible ? tokens.phosphor : tokens.textFaint,
                 fontFamily: tokens.fontMono,
                 fontSize: "0.72rem",
                 padding: "0.2rem 0.5rem",
                 cursor: "pointer",
               }}
             >
-              {showSchematic ? "On" : "Off"}
+              {schematicVisible ? "Hide" : "Reveal"}
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", opacity: showSchematic ? 1 : 0.45 }}>
@@ -233,9 +237,9 @@ export default function SceneControls(): React.ReactElement {
               style={{ width: "100%", accentColor: tokens.phosphor }}
             />
           </div>
-          {showSchematic && explode <= 0.6 && (
+          {showSchematic && !schematicVisible && (
             <span data-testid="schematic-hint" style={{ color: tokens.textFaint, fontSize: "0.66rem", lineHeight: 1.4 }}>
-              Explode past 60% to see the schematic over the board.
+              Reveal moves the board to its fully exploded schematic view.
             </span>
           )}
         </>

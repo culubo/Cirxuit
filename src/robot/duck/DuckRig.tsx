@@ -341,14 +341,14 @@ export default function DuckRig({ board, active, boardGroup }: {
       {scene.bodies.map((b, i) => (i === 0 ? null : <primitive key={i} object={b} />))}
       {/* A floor to walk on, wide enough for the duck's circuit. */}
       <gridHelper
-        args={[3000, 60, "#1f6fb2", "#0e2a44"]}
+        args={[3000, 60, tokens.controlBorder, tokens.hairline]}
         rotation={[Math.PI / 2, 0, 0]}
         position={[origin.x, origin.y, FLOOR_Z - 0.2]}
         raycast={() => null}
       />
       <mesh position={[origin.x, origin.y, FLOOR_Z - 0.4]} receiveShadow raycast={() => {}}>
         <circleGeometry args={[1500, 64]} />
-        <meshStandardMaterial color="#071a2c" roughness={0.95} />
+        <meshStandardMaterial color={tokens.bg} roughness={0.95} />
       </mesh>
     </group>
   );

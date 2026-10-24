@@ -25,6 +25,7 @@ import {
   toBoard,
 } from "../footprint";
 import { SILK_FONT_FAMILY } from "../art/silkArt";
+import { netColor } from "../../ui/semanticColors";
 import { pcb } from "../palette";
 
 export interface BoardFrame {
@@ -138,12 +139,18 @@ function allLands(board: Board): Land[] {
   return lands;
 }
 
-function drawTracks(ctx: Ctx, board: Board, layer: CopperLayer, style: string, grow = 0): void {
-  ctx.strokeStyle = style;
+function drawTracks(
+  ctx: Ctx,
+  board: Board,
+  layer: CopperLayer,
+  style: string | ((netId: string) => string),
+  grow = 0,
+): void {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   for (const t of board.tracks) {
     if (t.layer !== layer) continue;
+    ctx.strokeStyle = typeof style === "function" ? style(t.netId) : style;
     ctx.lineWidth = t.widthMm + 2 * grow;
     ctx.beginPath();
     ctx.moveTo(t.start.x, t.start.y);
@@ -525,14 +532,14 @@ export function bakeSurfaces(board: Board): BakedSurfaces | null {
 function copperSheet(board: Board, frame: BoardFrame, layer: CopperLayer, lands: Land[]): HTMLCanvasElement {
   const canvas = makeCanvas(frame);
   const ctx = mmContext(canvas, frame);
-  drawTracks(ctx, board, layer, pcb.bareCopper);
-  ctx.fillStyle = pcb.bareCopper;
+  drawTracks(ctx, board, layer, (netId) => netColor(board, netId));
   for (const { pad, square } of lands) {
     if (!pad.layers.includes(layer)) continue;
+    ctx.fillStyle = pad.netId ? netColor(board, pad.netId) : pcb.bareCopper;
     padPath(ctx, pad, 0, square);
     ctx.fill();
   }
-  for (const via of board.vias) circle(ctx, via.position, via.diameterMm / 2, pcb.bareCopper);
+  for (const via of board.vias) circle(ctx, via.position, via.diameterMm / 2, netColor(board, via.netId));
   // Drilled holes go straight through the copper.
   ctx.globalCompositeOperation = "destination-out";
   for (const { pad } of lands) if (pad.layers.includes(layer) && isThroughHole(pad)) circle(ctx, pad.position, drillFor(pad) / 2, "#000");

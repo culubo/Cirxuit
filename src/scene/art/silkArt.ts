@@ -7,8 +7,8 @@
  */
 import osifontUrl from "./osifont-lgpl3fe.woff";
 
-/** CSS font stack for silkscreen lettering. */
-export const SILK_FONT_FAMILY = '"osifont", "Helvetica Neue", Arial, sans-serif';
+/** CSS font stack for ISO 3098 product and silkscreen lettering. */
+export const SILK_FONT_FAMILY = '"osifont", "Helvetica Neue", Arial, system-ui, sans-serif';
 
 let pending: Promise<void> | null = null;
 

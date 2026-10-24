@@ -1,7 +1,7 @@
 /**
  * IntroPanel — what Circxit is and why it exists, with the logo and
- * mascot. Floats over the 3D view (never over the editor or inspector) on a
- * first visit; the logo in the top bar reopens it.
+ * mascot. Opens from the logo over the 3D view, never over the editor or
+ * inspector.
  */
 import React, { useEffect, useRef } from "react";
 import { useStore } from "../../store/useStore";

@@ -14,4 +14,4 @@ Track: Robotics.
 - A servo is modelled as a DC resistive load (low stall resistance, higher run resistance); stalling actuators is how a developer stress-tests a power budget here.
 - A KiCad board importer is a stretch capability. Boards without electrical models can still be viewed, but should not imply simulated behavior for those parts.
 
-Use `.kiro/specs/circuit-xray/requirements.md` for the product requirements. Follow `quality.md` for the current quality bar and demo safety rules.
+Use `.kiro/specs/circxit/requirements.md` for the product requirements. Follow `quality.md` for the current quality bar and demo safety rules.

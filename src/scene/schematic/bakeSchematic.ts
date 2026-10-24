@@ -1,5 +1,6 @@
 import type { Board } from "../../model/board-model";
 import { tokens } from "../../ui/tokens";
+import { netColor } from "../../ui/semanticColors";
 import { shortValue } from "./geometry";
 import { drawSymbol } from "./symbolArt";
 
@@ -23,12 +24,12 @@ export function bakeSchematic(board: Board): HTMLCanvasElement | null {
   ctx.fillStyle = tokens.bg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = tokens.copper;
   ctx.lineWidth = Math.max(2, scale * 0.22);
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   for (const wire of schematic.wires) {
     if (wire.points.length < 2) continue;
+    ctx.strokeStyle = netColor(board, wire.netId);
     ctx.beginPath();
     wire.points.forEach((point, index) => {
       if (index === 0) ctx.moveTo(at(point.x), at(point.y));

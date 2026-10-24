@@ -100,7 +100,7 @@ export default function App(): React.ReactElement {
   const runner = useRunner();
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: tokens.bg, color: tokens.text }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: tokens.bg, color: tokens.text, fontFamily: tokens.fontMono }}>
       <BoardLoader />
       <TopBar />
 

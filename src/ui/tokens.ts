@@ -1,46 +1,59 @@
 /**
- * Design tokens — a dark lab-instrument palette with cyan electrical accents.
- * Shared by DOM styles and three.js materials.
+ * Design tokens — a mint field-instrument palette: forest-black housings,
+ * phosphor-mint interaction, and warm electrical warning colors.
  */
 
 export const tokens = {
-  // Surfaces — neutral blue-black, never purple.
-  bg: "#050a10",
-  viewportCenter: "#0e1824",
-  viewportEdge: "#050a10",
-  panel: "#0a1420",
-  panelBorder: "#1c3350",
-  hairline: "#142640",
+  // Matte housings and the softly illuminated center stage.
+  bg: "#050a07",
+  viewportCenter: "#183126",
+  viewportEdge: "#050a07",
+  panel: "#0c1712",
+  panelRaised: "#13221a",
+  panelBorder: "#294437",
+  hairline: "#1b3025",
+  controlActive: "#b6f5d7",
+  controlActiveSoft: "#123025",
+  controlBorder: "#3f9f7d",
+  selectionInk: "#06120c",
 
-  // Text
-  text: "#cfe3f2",
-  textDim: "#7a8ea4",
-  textFaint: "#5a7a96",
-  fontMono: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+  // Cool paper-like lettering.
+  text: "#e5ece7",
+  textDim: "#899b90",
+  textFaint: "#5f7568",
+  // ISO 3098 technical lettering is the product face. The legacy property name
+  // remains so existing canvas and editor consumers inherit it automatically.
+  fontMono: '"osifont", "Helvetica Neue", Arial, system-ui, sans-serif',
 
-  // Accents (meaning-carrying)
-  phosphor: "#4fd8ff",    // current / selection — electric cyan (name kept for callers)
-  amber: "#e0a84a",       // warnings
-  danger: "#d9463b",      // danger
+  // Semantic accents. Cyan is reserved for current, hover, and selection.
+  phosphor: "#75f0c1",
+  power: "#c8e86b",
+  sensor: "#6ed6b0",
+  signal: "#72cad1",
+  driver: "#ee9a61",
+  healthy: "#7be495",
+  thermal: "#e8b656",
+  amber: "#e8b656",
+  danger: "#e7655d",
 
-  // Board artwork
-  silk: "#d8f2ff",        // pale cyan silkscreen
-  solderMask: "#0a1f3d",  // deep navy solder mask
-  copper: "#3fb6f0",      // glowing cyan traces
-  copperBack: "#2a7fc0",  // back copper, dimmer blue
-  fr4: "#0c1a30",         // substrate edge
+  // Board artwork used by diagrams; physical materials live in scene/palette.
+  silk: "#e8f3eb",
+  solderMask: "#123323",
+  copper: "#66d9b0",
+  copperBack: "#4a9e88",
+  fr4: "#273c2f",
 
   // Function-block accent tokens (match board JSON `color` fields)
-  "accent-power": "#ffc857",
-  "accent-mcu": "#4fd8ff",
-  "accent-driver": "#7ab8ff",
-  "accent-sensor": "#56c7a4",
-  "accent-warn": "#e0a84a",
+  "accent-power": "#c8e86b",
+  "accent-mcu": "#72cad1",
+  "accent-driver": "#ee9a61",
+  "accent-sensor": "#6ed6b0",
+  "accent-warn": "#e8b656",
 } as const;
 
 export type TokenName = keyof typeof tokens;
 
-const NEUTRAL_BLOCK = "#8a9a8a";
+const NEUTRAL_BLOCK = "#819287";
 
 /**
  * Resolve a FunctionBlock.color token (e.g. "accent-power") to a hex string.

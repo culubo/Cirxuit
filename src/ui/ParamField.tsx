@@ -48,7 +48,7 @@ const row: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  color: "#8aa8c4",
+  color: tokens.textDim,
   fontSize: "0.75rem",
   display: "flex",
   alignItems: "center",
@@ -57,10 +57,10 @@ const labelStyle: React.CSSProperties = {
 
 const inputStyle: React.CSSProperties = {
   width: "6.5rem",
-  background: "#06101c",
-  border: "1px solid #142640",
+  background: tokens.bg,
+  border: `1px solid ${tokens.hairline}`,
   borderRadius: "2px",
-  color: "#cfe3f2",
+  color: tokens.text,
   fontFamily: tokens.fontMono,
   fontSize: "0.78rem",
   padding: "0.2rem 0.4rem",
@@ -74,7 +74,7 @@ function ModifiedMarker({ paramKey }: { paramKey: string }): React.ReactElement 
       data-testid={`param-modified-${paramKey}`}
       title="Modified from board default"
       aria-label="modified"
-      style={{ color: "#e0c04a", fontSize: "0.7rem", lineHeight: 1 }}
+      style={{ color: tokens.power, fontSize: "0.7rem", lineHeight: 1 }}
     >
       ●
     </span>
@@ -100,7 +100,7 @@ export default function ParamField(props: ParamFieldProps): React.ReactElement {
             onChange={(e) => props.onCommit(Number(e.target.value))}
             style={{ width: "6.5rem" }}
           />
-          <span style={{ color: "#cfe3f2", width: "2.5rem", textAlign: "right" }}>
+          <span style={{ color: tokens.text, width: "2.5rem", textAlign: "right" }}>
             {props.value.toFixed(2)}
           </span>
         </span>

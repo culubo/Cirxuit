@@ -74,13 +74,13 @@ export default function BuilderSidebar({ boardProblems }: { boardProblems: Probl
                   lineHeight: 1.3,
                   borderRadius: "3px",
                   cursor: "pointer",
-                  color: active ? "#04121f" : tokens.text,
-                  background: active ? tokens.phosphor : "#0d1b30",
+                  color: active ? tokens.selectionInk : tokens.text,
+                  background: active ? tokens.phosphor : tokens.panelRaised,
                   border: `1px solid ${active ? tokens.phosphor : tokens.panelBorder}`,
                 }}
               >
                 <div style={{ fontWeight: 600 }}>{tpl.label}</div>
-                <div style={{ fontSize: "0.62rem", color: active ? "#04121f" : tokens.textFaint }}>{tpl.refPrefix} · {tpl.footprint.split(":")[1]?.split("_").slice(0, 2).join(" ")}</div>
+                <div style={{ fontSize: "0.62rem", color: active ? tokens.selectionInk : tokens.textFaint }}>{tpl.refPrefix} · {tpl.footprint.split(":")[1]?.split("_").slice(0, 2).join(" ")}</div>
               </button>
             );
           })}
@@ -145,7 +145,7 @@ export default function BuilderSidebar({ boardProblems }: { boardProblems: Probl
       <div style={section} data-testid="builder-checks">
         <div style={{ ...label, marginBottom: "0.4rem" }}>Board checks</div>
         {boardProblems.length === 0 ? (
-          <div style={{ color: tokens.phosphor, fontSize: "0.72rem" }}>✓ The board passes its electrical rules check.</div>
+          <div style={{ color: tokens.healthy, fontSize: "0.72rem" }}>✓ The board passes its electrical rules check.</div>
         ) : (
           <>
             <div style={{ fontSize: "0.7rem", color: errors ? tokens.danger : tokens.amber, marginBottom: "0.3rem" }}>
@@ -178,7 +178,7 @@ export default function BuilderSidebar({ boardProblems }: { boardProblems: Probl
             value={doc.name}
             maxLength={40}
             onChange={(e) => setDoc({ ...doc, name: e.target.value })}
-            style={{ ...font, width: "11rem", background: "#06101c", border: `1px solid ${tokens.hairline}`, color: tokens.text, fontSize: "0.74rem", padding: "0.2rem 0.4rem", borderRadius: "2px" }}
+            style={{ ...font, width: "11rem", background: tokens.bg, border: `1px solid ${tokens.hairline}`, color: tokens.text, fontSize: "0.74rem", padding: "0.2rem 0.4rem", borderRadius: "2px" }}
           />
         </label>
         {(["widthMm", "heightMm"] as const).map((k) => (

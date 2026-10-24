@@ -66,7 +66,7 @@ export default function TopBar(): React.ReactElement {
         border: "none",
         borderRadius: "3px",
         cursor: "pointer",
-        background: mode === id ? "#12335a" : "transparent",
+        background: mode === id ? tokens.controlActiveSoft : "transparent",
         color: mode === id ? tokens.text : tokens.textDim,
         boxShadow: mode === id ? `inset 0 -2px 0 ${tokens.phosphor}` : "none",
       }}
@@ -77,7 +77,7 @@ export default function TopBar(): React.ReactElement {
 
   return (
     <header
-      style={{ position: "relative", display: "flex", alignItems: "center", gap: "1rem", height: "44px", padding: "0 0.75rem", borderBottom: `1px solid ${tokens.panelBorder}`, background: "#071426" }}
+      style={{ position: "relative", display: "flex", alignItems: "center", gap: "1rem", height: "44px", padding: "0 0.75rem", borderBottom: `1px solid ${tokens.panelBorder}`, background: tokens.panel }}
     >
       <div style={{ ...font, display: "flex", alignItems: "center", gap: "0.45rem" }}>
         <button
@@ -104,7 +104,7 @@ export default function TopBar(): React.ReactElement {
           placeholder="Name your board"
           onChange={(e) => setBuilderDoc({ ...builderDoc, name: e.target.value })}
           title="Name your board. It prints on the silkscreen and the exported file."
-          style={{ ...font, width: "13rem", height: "26px", padding: "0 0.5rem", fontSize: "0.76rem", color: tokens.text, background: "#06101c", border: `1px solid ${tokens.hairline}`, borderRadius: "3px" }}
+          style={{ ...font, width: "13rem", height: "26px", padding: "0 0.5rem", fontSize: "0.76rem", color: tokens.text, background: tokens.bg, border: `1px solid ${tokens.hairline}`, borderRadius: "3px" }}
         />
       ) : (
         <span

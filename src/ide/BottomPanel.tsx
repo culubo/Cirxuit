@@ -272,10 +272,10 @@ function TraceView(): React.ReactElement {
                   lineHeight: 1.55,
                   textAlign: "left",
                   padding: "0 0.3rem",
-                  background: active ? "rgba(79,216,255,0.14)" : "transparent",
+                  background: active ? "rgba(117,240,193,0.14)" : "transparent",
                   border: "none",
                   borderLeft: `2px solid ${active ? tokens.phosphor : "transparent"}`,
-                  color: active ? tokens.text : done ? tokens.textDim : "#4f6a88",
+                  color: active ? tokens.text : done ? tokens.textDim : tokens.textFaint,
                   cursor: "pointer",
                 }}
               >

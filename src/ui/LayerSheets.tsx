@@ -1,7 +1,6 @@
 /**
- * LayerSheets — every physical layer of the board laid out flat, side by side,
- * in stack order (top to bottom), like a fab drawing. It reuses the same baked
- * artwork the 3D stack is textured with, so the sheets match the board exactly.
+ * LayerSheets — physical board layers plus the logical circuit schematic laid
+ * out flat, side by side like a fabrication and design review drawing.
  * Everything is drawn as seen from the top, so bottom-side layers are not mirrored.
  */
 import React, { useEffect, useRef, useState } from "react";
@@ -101,7 +100,7 @@ export default function LayerSheets(): React.ReactElement | null {
     <div
       data-testid="layer-sheets"
       role="region"
-      aria-label="Board layers side by side"
+      aria-label="Board layers and circuit schematic"
       style={{
         position: "absolute",
         inset: 0,
@@ -116,7 +115,7 @@ export default function LayerSheets(): React.ReactElement | null {
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 0.9rem", borderBottom: `1px solid ${tokens.panelBorder}` }}>
         <span style={{ fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: tokens.textFaint }}>Layers</span>
         <span style={{ fontSize: "0.75rem", color: tokens.textDim }}>
-          {focused ? "Click the sheet or press Esc to see all layers." : "Top to bottom, as a fab stacks them. Click a sheet to enlarge it."}
+          {focused ? "Click the sheet or press Esc to see all views." : "Physical stack top to bottom, followed by the logical circuit schematic. Click any view to enlarge it."}
         </span>
         <span style={{ flex: 1 }} />
         <button
@@ -161,7 +160,7 @@ export default function LayerSheets(): React.ReactElement | null {
                 >
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "baseline", marginBottom: "0.4rem" }}>
                     <span style={{ color: tokens.textFaint, fontSize: "0.68rem" }}>{focused ? "" : `${i + 1}.`}</span>
-                    <span style={{ color: tokens.phosphor, fontSize: "0.78rem" }}>{s.title}</span>
+                    <span style={{ color: s.key === "schematic" ? tokens.signal : tokens.text, fontSize: "0.78rem" }}>{s.title}</span>
                     <span style={{ color: tokens.textFaint, fontSize: "0.68rem" }}>{s.detail}</span>
                   </div>
                   {/* Dark backdrop so transparent films (silk, copper) read clearly. */}

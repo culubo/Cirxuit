@@ -75,6 +75,8 @@ interface AssemblyState {
   /** Board id that has finished building and been powered on (drives the LED chase). */
   poweredBoardId: string | null;
   start: (board: Board) => void;
+  /** Stop an in-progress build because its board was replaced. */
+  cancel: () => void;
   finish: () => void;
   powerOn: (boardId: string) => void;
 }
@@ -89,6 +91,7 @@ export const useAssembly = create<AssemblyState>((set) => ({
     const { placements, duration } = schedule(board.parts);
     set({ boardId: board.id, startedAt: performance.now() / 1000, placements, duration, poweredBoardId: null });
   },
+  cancel: () => set({ boardId: null, startedAt: null, placements: new Map(), duration: 0, poweredBoardId: null }),
   finish: () => set({ startedAt: null }),
   powerOn: (boardId) => set({ poweredBoardId: boardId }),
 }));

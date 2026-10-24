@@ -22,6 +22,17 @@ function backdropTexture(): THREE.CanvasTexture {
     g.addColorStop(1, tokens.viewportEdge);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 0.055;
+    ctx.fillStyle = tokens.textDim;
+    let seed = 3098;
+    for (let i = 0; i < 9000; i++) {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      const x = seed % canvas.width;
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      const y = seed % canvas.height;
+      ctx.fillRect(x, y, 1, 1);
+    }
+    ctx.globalAlpha = 1;
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

@@ -30,21 +30,21 @@ import { tokens } from "../ui/tokens";
 
 const theme = EditorView.theme(
   {
-    // Transparent so the workspace gradient shows behind the code.
+    // The editor inherits the matte instrument housing from its pane.
     "&": { height: "100%", backgroundColor: "transparent", color: tokens.text, fontSize: "13px" },
     ".cm-scroller": { fontFamily: tokens.fontMono, lineHeight: "1.55" },
     ".cm-content": { caretColor: tokens.phosphor, padding: "8px 0" },
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: tokens.phosphor },
-    "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection": { backgroundColor: "#1a3c66 !important" },
-    ".cm-gutters": { backgroundColor: "transparent", color: "#3d5878", border: "none", borderRight: `1px solid ${tokens.hairline}` },
-    ".cm-activeLineGutter": { backgroundColor: "transparent", color: "#8aa8c4" },
-    ".cm-activeLine": { backgroundColor: "rgba(79,216,255,0.04)" },
-    ".cm-matchingBracket": { backgroundColor: "rgba(79,216,255,0.18)", outline: "none" },
-    ".cm-trace-line": { backgroundColor: "rgba(79,216,255,0.16)", boxShadow: `inset 3px 0 0 ${tokens.phosphor}` },
+    "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection": { backgroundColor: "rgba(117,240,193,0.18) !important" },
+    ".cm-gutters": { backgroundColor: "transparent", color: tokens.textFaint, border: "none", borderRight: `1px solid ${tokens.hairline}` },
+    ".cm-activeLineGutter": { backgroundColor: "transparent", color: tokens.textDim },
+    ".cm-activeLine": { backgroundColor: "rgba(117,240,193,0.04)" },
+    ".cm-matchingBracket": { backgroundColor: "rgba(117,240,193,0.18)", outline: "none" },
+    ".cm-trace-line": { backgroundColor: "rgba(117,240,193,0.14)", boxShadow: `inset 3px 0 0 ${tokens.phosphor}` },
     ".cm-trace-gutter": { width: "14px" },
     ".cm-trace-marker": { color: tokens.phosphor, fontSize: "10px", paddingLeft: "3px" },
     ".cm-tooltip": { backgroundColor: tokens.panel, border: `1px solid ${tokens.panelBorder}`, color: tokens.text },
-    ".cm-tooltip-autocomplete ul li[aria-selected]": { backgroundColor: "#12335a", color: tokens.text },
+    ".cm-tooltip-autocomplete ul li[aria-selected]": { backgroundColor: tokens.controlActiveSoft, color: tokens.text },
     ".cm-completionDetail": { color: tokens.textDim, fontStyle: "normal", marginLeft: "0.6em" },
     ".cm-completionInfo": { maxWidth: "280px", fontFamily: tokens.fontMono, fontSize: "12px", lineHeight: "1.4" },
     ".cm-diagnostic": { fontFamily: tokens.fontMono, fontSize: "12px", padding: "4px 8px" },
@@ -59,14 +59,14 @@ const theme = EditorView.theme(
 );
 
 const highlight = HighlightStyle.define([
-  { tag: t.comment, color: "#4f6a88", fontStyle: "italic" },
-  { tag: [t.keyword, t.controlKeyword, t.definitionKeyword, t.modifier], color: "#7ab8ff" },
-  { tag: [t.string, t.special(t.string)], color: "#ffc857" },
-  { tag: [t.number, t.bool, t.null], color: "#ff9e7a" },
+  { tag: t.comment, color: tokens.textFaint, fontStyle: "italic" },
+  { tag: [t.keyword, t.controlKeyword, t.definitionKeyword, t.modifier], color: tokens.signal },
+  { tag: [t.string, t.special(t.string)], color: tokens.power },
+  { tag: [t.number, t.bool, t.null], color: tokens.driver },
   { tag: [t.function(t.variableName), t.function(t.propertyName)], color: tokens.phosphor },
   { tag: [t.variableName, t.propertyName], color: tokens.text },
-  { tag: [t.definition(t.variableName)], color: "#d8f2ff" },
-  { tag: [t.operator, t.punctuation, t.bracket], color: "#8aa8c4" },
+  { tag: [t.definition(t.variableName)], color: tokens.silk },
+  { tag: [t.operator, t.punctuation, t.bracket], color: tokens.textDim },
   { tag: t.invalid, color: tokens.danger },
 ]);
 

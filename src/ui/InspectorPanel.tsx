@@ -17,6 +17,7 @@ import { numericFields } from "./modelFields";
 import { formatEngineering } from "./parse-eng";
 import { formatQuantity } from "./format";
 import { tokens } from "./tokens";
+import { deviceStateColor, netColor } from "./semanticColors";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
@@ -126,9 +127,9 @@ export default function InspectorPanel(): React.ReactElement {
               title="Restore every parameter to the board default"
               style={{
                 background: "transparent",
-                border: "1px solid #24466e",
+                border: `1px solid ${tokens.controlBorder}`,
                 borderRadius: "2px",
-                color: "#8aa8c4",
+                color: tokens.textDim,
                 fontFamily: tokens.fontMono,
                 fontSize: "0.68rem",
                 padding: "0.15rem 0.5rem",
@@ -154,11 +155,11 @@ export default function InspectorPanel(): React.ReactElement {
                     alignItems: "baseline",
                     width: "100%",
                     textAlign: "left",
-                    background: isSelected ? "#0c2a48" : "transparent",
+                    background: isSelected ? tokens.controlActiveSoft : "transparent",
                     border: "1px solid",
-                    borderColor: isSelected ? "#1f6fb2" : "transparent",
+                    borderColor: isSelected ? tokens.controlBorder : "transparent",
                     borderRadius: "2px",
-                    color: isSelected ? "#4fd8ff" : "#aac4dc",
+                    color: isSelected ? tokens.phosphor : tokens.text,
                     fontFamily: tokens.fontMono,
                     fontSize: "0.78rem",
                     padding: "0.2rem 0.4rem",
@@ -166,7 +167,7 @@ export default function InspectorPanel(): React.ReactElement {
                   }}
                 >
                   <span style={{ fontWeight: isSelected ? "bold" : "normal" }}>{part.ref}</span>
-                  <span style={{ color: "#6a7e94" }}>{part.value}</span>
+                  <span style={{ color: tokens.textFaint }}>{part.value}</span>
                 </button>
               );
             })}
@@ -175,8 +176,9 @@ export default function InspectorPanel(): React.ReactElement {
       )}
 
       {/* ── Selected part summary + editable parameters ── */}
-      {selectedPart && (
+      {board && selectedPart && (
         <SelectedPartPanel
+          board={board}
           part={selectedPart}
           deviceState={simResult?.deviceStates[selectedPart.ref]}
           netVoltages={simResult?.netVoltages}
@@ -195,6 +197,16 @@ export default function InspectorPanel(): React.ReactElement {
           {board.parts.map((part) => {
             const amps = branchAmps(simResult, part.ref);
             const isSelected = selectedPart?.ref === part.ref;
+            const warning = simResult?.warnings.find((item) => item.ref === part.ref);
+            const currentColor = isSelected
+              ? tokens.phosphor
+              : warning?.severity === "danger"
+                ? tokens.danger
+                : warning
+                  ? tokens.thermal
+                  : amps !== null && Math.abs(amps) > 1e-9
+                    ? tokens.healthy
+                    : tokens.textFaint;
             return (
               <div
                 key={part.ref}
@@ -205,11 +217,11 @@ export default function InspectorPanel(): React.ReactElement {
                   opacity: isSelected || !selectedPart ? 1 : 0.45,
                 }}
               >
-                <span style={{ color: isSelected ? "#4fd8ff" : "#5a7a96" }}>{part.ref}</span>
+                <span style={{ color: currentColor }}>{part.ref}</span>
                 <span
                   data-testid={`inspector-current-${part.ref}`}
                   style={{
-                    color: isSelected ? "#4fd8ff" : "#8a9cb0",
+                    color: currentColor,
                     fontVariantNumeric: "tabular-nums",
                   }}
                 >
@@ -237,8 +249,8 @@ export default function InspectorPanel(): React.ReactElement {
                   {...(w.ref || w.netId ? { "data-testid": `warning-${w.ref ?? w.netId}` } : {})}
                   style={{
                     fontSize: "0.75rem",
-                    color: w.severity === "danger" ? "#e0923a" : "#c8c88a",
-                    borderLeft: `2px solid ${w.severity === "danger" ? "#a0402a" : "#6a6a2a"}`,
+                    color: w.severity === "danger" ? tokens.danger : tokens.thermal,
+                    borderLeft: `2px solid ${w.severity === "danger" ? tokens.danger : tokens.thermal}`,
                     paddingLeft: "0.5rem",
                   }}
                 >
@@ -259,8 +271,8 @@ export default function InspectorPanel(): React.ReactElement {
           <div style={section} data-testid="inspector-net">
             <div style={sectionLabel}>Net</div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <span style={{ fontWeight: "bold", color: "#4fd8ff" }}>{net.name}</span>
-              <span data-testid="inspector-net-voltage" style={{ color: "#cfe3f2", fontVariantNumeric: "tabular-nums" }}>
+              <span style={{ fontWeight: "bold", color: tokens.phosphor }}>{net.name}</span>
+              <span data-testid="inspector-net-voltage" style={{ color: tokens.text, fontVariantNumeric: "tabular-nums" }}>
                 {volts !== undefined ? formatQuantity(volts, "V") : "—"}
               </span>
             </div>
@@ -284,6 +296,7 @@ export default function InspectorPanel(): React.ReactElement {
 // ─── Selected part panel ─────────────────────────────────────────────────────
 
 interface SelectedPartPanelProps {
+  board: Board;
   part: Part;
   deviceState: string | undefined;
   netVoltages: Record<string, number> | undefined;
@@ -295,6 +308,7 @@ interface SelectedPartPanelProps {
 }
 
 function SelectedPartPanel({
+  board,
   part,
   deviceState,
   netVoltages,
@@ -312,15 +326,15 @@ function SelectedPartPanel({
   return (
     <div style={section}>
       <div style={sectionLabel}>Selected</div>
-      <div style={{ fontWeight: "bold", color: "#4fd8ff" }}>
+      <div style={{ fontWeight: "bold", color: tokens.phosphor }}>
         {part.ref}
-        <span style={{ fontWeight: "normal", color: "#8a9cb0", marginLeft: "0.4rem" }}>
+        <span style={{ fontWeight: "normal", color: tokens.textDim, marginLeft: "0.4rem" }}>
           {part.value}
         </span>
         {deviceState && (
           <span
             data-testid={`device-state-${part.ref}`}
-            style={{ marginLeft: "0.5rem", color: "#c8c88a", fontWeight: "normal" }}
+            style={{ marginLeft: "0.5rem", color: deviceStateColor(deviceState), fontWeight: "normal" }}
           >
             [{DEVICE_STATE_LABEL[deviceState] ?? deviceState}]
           </span>
@@ -338,12 +352,12 @@ function SelectedPartPanel({
         <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.05rem" }}>
           {part.pads.map((pad) => (
             <div key={pad.number} style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6a7e94" }}>
+              <span style={{ color: pad.netId ? netColor(board, pad.netId) : tokens.textFaint }}>
                 pad {pad.number}{pad.netId ? ` · ${pad.netId}` : ""}
               </span>
               <span
                 data-testid={`inspector-pad-voltage-${part.ref}-${pad.number}`}
-                style={{ color: "#aac4dc", fontVariantNumeric: "tabular-nums" }}
+                style={{ color: pad.netId ? netColor(board, pad.netId) : tokens.textDim, fontVariantNumeric: "tabular-nums" }}
               >
                 {pad.netId ? formatQuantity(netVoltages[pad.netId] ?? 0, "V") : "—"}
               </span>
@@ -393,7 +407,7 @@ function SelectedPartPanel({
         <div
           data-testid="inspector-param-error"
           role="alert"
-          style={{ color: "#cc4444", marginTop: "0.35rem", fontSize: "0.73rem" }}
+          style={{ color: tokens.danger, marginTop: "0.35rem", fontSize: "0.73rem" }}
         >
           {paramError}
         </div>
@@ -408,10 +422,10 @@ function SelectedPartPanel({
           style={{
             marginTop: "0.5rem",
             width: "100%",
-            background: model.stalled ? "#3a1410" : "#0a2238",
-            border: `1px solid ${model.stalled ? "#a0402a" : "#1f6fb2"}`,
+            background: model.stalled ? "#351b13" : "#10271f",
+            border: `1px solid ${model.stalled ? tokens.thermal : tokens.healthy}`,
             borderRadius: "2px",
-            color: model.stalled ? "#e0923a" : "#4fd8ff",
+            color: model.stalled ? tokens.thermal : tokens.healthy,
             fontFamily: tokens.fontMono,
             fontSize: "0.78rem",
             padding: "0.35rem 0",

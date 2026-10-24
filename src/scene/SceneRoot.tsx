@@ -36,7 +36,7 @@ export default function SceneRoot(): React.ReactElement | null {
   useEffect(() => {
     const current = useStore.getState().board;
     if (current && shouldAssemble(current)) useAssembly.getState().start(current);
-    else useAssembly.getState().finish();
+    else useAssembly.getState().cancel();
   }, [boardId]);
 
   const hover = useStore((s) => s.hover);

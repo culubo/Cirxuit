@@ -11,7 +11,7 @@ export const font: React.CSSProperties = { fontFamily: tokens.fontMono };
 export const backdrop = `radial-gradient(circle at 50% 45%, ${tokens.viewportCenter} 0%, ${tokens.viewportEdge} 100%)`;
 
 /** Opaque pane-header tint; side panes read as solid instrument housing. */
-export const barTint = "#081522";
+export const barTint = "#101d16";
 
 export const label: React.CSSProperties = {
   color: tokens.textFaint,
@@ -35,9 +35,9 @@ export function button(opts: { active?: boolean; primary?: boolean; danger?: boo
     cursor: disabled ? "not-allowed" : "pointer",
     whiteSpace: "nowrap",
     opacity: disabled ? 0.45 : 1,
-    color: primary || active ? "#04121f" : tokens.text,
-    background: primary ? accent : active ? "#9be8ff" : "#0d1b30",
-    border: `1px solid ${primary ? accent : active ? "#9be8ff" : tokens.panelBorder}`,
+    color: primary || active ? tokens.selectionInk : tokens.text,
+    background: primary ? accent : active ? tokens.controlActive : tokens.panelRaised,
+    border: `1px solid ${primary ? accent : active ? tokens.controlActive : tokens.panelBorder}`,
     fontWeight: primary ? 700 : 500,
   };
 }
@@ -47,7 +47,7 @@ export const select: React.CSSProperties = {
   height: "26px",
   fontSize: "0.74rem",
   color: tokens.text,
-  background: "#0d1b30",
+  background: tokens.panelRaised,
   border: `1px solid ${tokens.panelBorder}`,
   borderRadius: "3px",
   padding: "0 0.4rem",

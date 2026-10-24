@@ -136,8 +136,8 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
                     style={{
                       padding: "0.35rem 0.45rem",
                       borderRadius: "3px",
-                      background: isCurrent ? "rgba(79,216,255,0.08)" : "transparent",
-                      border: `1px solid ${isCurrent ? "#1f6fb2" : "transparent"}`,
+                      background: isCurrent ? "rgba(117,240,193,0.08)" : "transparent",
+                      border: `1px solid ${isCurrent ? tokens.controlBorder : "transparent"}`,
                     }}
                   >
                     <div style={{ display: "flex", gap: "0.45rem", alignItems: "baseline" }}>
