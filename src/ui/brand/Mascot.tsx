@@ -1,18 +1,15 @@
 /**
  * Brand art for the workbench chrome: the logo orb and the lab-coat mascot.
  *
- *   wave     hello: the guide's intro
- *   inspect  holding a board up to the light: all clear, guide finished
+ *   inspect  holding a board up to the light (the intro panel's hero)
  */
 import React from "react";
 import inspectUrl from "./mascot-inspect.webp";
-import waveUrl from "./mascot-wave.webp";
 import orbUrl from "./logo-orb.webp";
 
 export { orbUrl };
 
 const POSES = {
-  wave: waveUrl,
   inspect: inspectUrl,
 } as const;
 

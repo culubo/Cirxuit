@@ -8,7 +8,7 @@ import { useStore, type BottomTab } from "../store/useStore";
 import type { TraceEvent } from "../runtime/execute";
 import { font, severityColor, severityGlyph } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
-import Mascot from "../ui/brand/Mascot";
+import MascotTalk from "../ui/brand/MascotTalk";
 import type { ProblemSet } from "./useProblems";
 import type { Problem } from "../build/problems";
 
@@ -157,9 +157,13 @@ function ProblemsView({ problems }: Props): React.ReactElement {
 
   if (problems.all.length === 0) {
     return (
-      <div data-testid="problems-empty" style={{ ...font, display: "flex", alignItems: "center", gap: "0.7rem", fontSize: "0.74rem", color: tokens.phosphor }}>
-        <Mascot pose="inspect" size={72} />
-        <span>✓ No problems. The sketch builds, the board passes its rules check, and the circuit solves cleanly.</span>
+      <div data-testid="problems-empty" style={{ ...font, fontSize: "0.74rem", color: tokens.phosphor }}>
+        <MascotTalk
+          mood="happy"
+          size={52}
+          text="✓ No problems. The sketch builds, the board passes its rules check, and the circuit solves cleanly."
+          textStyle={{ lineHeight: 1.55, paddingTop: "0.35rem" }}
+        />
       </div>
     );
   }
@@ -172,7 +176,15 @@ function ProblemsView({ problems }: Props): React.ReactElement {
     }
   };
 
+  const errors = problems.all.filter((p) => p.severity === "error").length;
+  const n = problems.all.length;
+  const summary = errors > 0
+    ? `${errors === 1 ? "One thing stops" : `${errors} things stop`} this from running. Click a problem to jump to its line or part.`
+    : `${n === 1 ? "One thing" : `${n} things`} worth a look, though it still runs. Click one to jump to it.`;
+
   return (
+    <>
+    <MascotTalk mood="oops" size={44} text={summary} style={{ marginBottom: "0.45rem" }} textStyle={{ ...font, fontSize: "0.72rem", color: tokens.textDim, lineHeight: 1.5, paddingTop: "0.3rem" }} />
     <ul data-testid="problems-panel" style={{ listStyle: "none", margin: 0, padding: 0 }}>
       {problems.all.map((p) => {
         const clickable = p.line !== undefined || p.ref !== undefined;
@@ -208,6 +220,7 @@ function ProblemsView({ problems }: Props): React.ReactElement {
         );
       })}
     </ul>
+    </>
   );
 }
 

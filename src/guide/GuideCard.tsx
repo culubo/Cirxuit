@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useStore } from "../store/useStore";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
-import Mascot from "../ui/brand/Mascot";
+import MascotTalk from "../ui/brand/MascotTalk";
 import { guideFor } from "./guides";
 import type { Problem } from "../build/problems";
 
@@ -114,10 +114,14 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
 
         {!collapsed && (
           <div style={{ padding: "0.5rem 0.6rem 0.6rem" }}>
-            <div style={{ display: "flex", gap: "0.55rem", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-              <Mascot pose={currentIndex < 0 ? "inspect" : "wave"} size={64} style={{ marginTop: "-0.2rem" }} />
-              <p style={{ margin: 0, fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}>{guide.intro}</p>
-            </div>
+            {/* The mascot reads the intro aloud, and beams once every step is done. */}
+            <MascotTalk
+              text={guide.intro}
+              mood={currentIndex < 0 ? "happy" : "neutral"}
+              size={56}
+              style={{ marginBottom: "0.5rem" }}
+              textStyle={{ fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}
+            />
             <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.2rem" }}>
               {guide.steps.map((step, i) => {
                 const done = guideDone.includes(step.id);
