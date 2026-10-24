@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Typecheck + Vitest on Save",
+      "trigger": "PostFileSave",
+      "description": "Run TypeScript typecheck and Vitest unit tests every time a .ts or .tsx file is saved",
+      "matcher": "\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "cd /Users/culubo/Downloads/circuit-xray && npx tsc --noEmit && npx vitest run"
+      }
+    }
+  ]
+}

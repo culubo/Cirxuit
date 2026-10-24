@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "outDir": "dist",
+    "paths": {
+      "@model/*": ["./src/model/*"],
+      "@store/*": ["./src/store/*"],
+      "@scene/*": ["./src/scene/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@solver/*": ["./src/solver/*"],
+      "@runtime/*": ["./src/runtime/*"]
+    }
+  },
+  "include": ["src", "scripts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/import"
+  ]
+}

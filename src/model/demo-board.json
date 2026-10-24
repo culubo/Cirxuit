@@ -1,0 +1,707 @@
+{
+  "id": "demo-board",
+  "name": "Circuit X-Ray Demo Board",
+  "outline": [
+    { "x": 0, "y": 0 },
+    { "x": 50, "y": 0 },
+    { "x": 50, "y": 35 },
+    { "x": 0, "y": 35 }
+  ],
+  "thicknessMm": 1.6,
+  "copperLayers": ["F.Cu", "B.Cu"],
+  "groundNetId": "GND",
+  "parts": [
+    {
+      "ref": "J1",
+      "value": "5V",
+      "kind": "vsource",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+      "position": { "x": 4, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.54, "h": 5.08, "height": 8.5 },
+      "pads": [
+        {
+          "number": "+",
+          "netId": "+5V",
+          "position": { "x": 4, "y": 16 },
+          "sizeMm": { "w": 1.7, "h": 1.7 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "-",
+          "netId": "GND",
+          "position": { "x": 4, "y": 19 },
+          "sizeMm": { "w": 1.7, "h": 1.7 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "vsource",
+        "volts": 5,
+        "posPad": "+",
+        "negPad": "-"
+      },
+      "blurb": "Feeds a regulated 5 V DC rail and ground reference onto the board from an external bench supply. All current flowing through the microcontroller, sensor divider, and LED driver returns to its negative pin."
+    },
+    {
+      "ref": "U1",
+      "value": "ATmega328P",
+      "kind": "mcu",
+      "footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
+      "position": { "x": 24, "y": 17.5 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 7, "h": 7, "height": 1.2 },
+      "pads": [
+        {
+          "number": "VCC",
+          "netId": "+5V",
+          "position": { "x": 20.5, "y": 15 },
+          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "GND",
+          "netId": "GND",
+          "position": { "x": 20.5, "y": 19.5 },
+          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "D8",
+          "netId": "D8",
+          "position": { "x": 27.5, "y": 15 },
+          "sizeMm": { "w": 1.2, "h": 0.5 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "A0",
+          "netId": "A0",
+          "position": { "x": 26, "y": 21 },
+          "sizeMm": { "w": 0.5, "h": 1.2 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "mcu",
+        "vcc": 5,
+        "gndPad": "GND",
+        "vccPad": "VCC",
+        "adcBits": 10,
+        "pins": [
+          {
+            "name": "D8",
+            "pad": "D8",
+            "capabilities": ["digital"],
+            "outputOhms": 25
+          },
+          {
+            "name": "A0",
+            "pad": "A0",
+            "capabilities": ["analog_in"],
+            "outputOhms": 25
+          }
+        ]
+      },
+      "blurb": "Executes your program, sampling analog voltage on A0 with a 10-bit ADC and driving digital pin D8 between 0 V and 5 V. Because its GPIO stage has about 25 ohms of source resistance and limited current capacity, it switches the LED through Q1 rather than driving the load directly."
+    },
+    {
+      "ref": "C1",
+      "value": "100nF",
+      "kind": "capacitor",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": { "x": 18.5, "y": 15.8 },
+      "rotationDeg": 90,
+      "side": "top",
+      "body": { "w": 1.6, "h": 2.4, "height": 0.8 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "+5V",
+          "position": { "x": 18.5, "y": 15 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "GND",
+          "position": { "x": 18.5, "y": 16.6 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "capacitor",
+        "farads": 1e-7
+      },
+      "blurb": "Sits within two millimeters of U1's VCC pin to act as a local charge reservoir that shunts high-frequency switching transients to ground. At steady state DC it behaves as an open circuit and draws zero current."
+    },
+    {
+      "ref": "R1",
+      "value": "1k",
+      "kind": "resistor",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": { "x": 36, "y": 15 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.4, "h": 1.2, "height": 0.6 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "D8",
+          "position": { "x": 35, "y": 15 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "Q1_B",
+          "position": { "x": 37, "y": 15 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 1000
+      },
+      "blurb": "Limits the base current flowing from microcontroller pin D8 into Q1's base-emitter junction to about 4.2 mA when D8 is driven HIGH. Without this resistor, the base diode clamp at 0.7 V would overload the MCU output stage."
+    },
+    {
+      "ref": "Q1",
+      "value": "2N3904",
+      "kind": "npn",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "position": { "x": 42, "y": 15 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 3, "h": 3, "height": 1.1 },
+      "pads": [
+        {
+          "number": "B",
+          "netId": "Q1_B",
+          "position": { "x": 40.8, "y": 15 },
+          "sizeMm": { "w": 1, "h": 0.8 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "C",
+          "netId": "Q1_C",
+          "position": { "x": 43.2, "y": 13.8 },
+          "sizeMm": { "w": 1, "h": 0.8 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "E",
+          "netId": "GND",
+          "position": { "x": 43.2, "y": 16.2 },
+          "sizeMm": { "w": 1, "h": 0.8 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "npn",
+        "beta": 100,
+        "vbe": 0.7,
+        "vceSat": 0.2,
+        "basePad": "B",
+        "collectorPad": "C",
+        "emitterPad": "E"
+      },
+      "blurb": "Acts as a low-side NPN transistor switch that sinks current from the LED cathode to ground whenever base current flows in through R1. When D8 drives about 4.2 mA into the base, Q1 saturates with a collector-emitter drop of just 0.2 V."
+    },
+    {
+      "ref": "R2",
+      "value": "220",
+      "kind": "resistor",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": { "x": 38, "y": 9 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.4, "h": 1.2, "height": 0.6 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "+5V",
+          "position": { "x": 37, "y": 9 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "LED_A",
+          "position": { "x": 39, "y": 9 },
+          "sizeMm": { "w": 0.9, "h": 0.9 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "resistor",
+        "ohms": 220
+      },
+      "blurb": "Drops the excess voltage between the 5 V supply rail and D1's 2.0 V forward voltage to set a safe LED operating current. With Q1 saturated at 0.2 V, this 220 ohm series resistor regulates LED current to roughly 12.2 mA."
+    },
+    {
+      "ref": "D1",
+      "value": "red",
+      "kind": "led",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": { "x": 43, "y": 9 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 2.4, "h": 1.4, "height": 1.1 },
+      "pads": [
+        {
+          "number": "A",
+          "netId": "LED_A",
+          "position": { "x": 42, "y": 9 },
+          "sizeMm": { "w": 1, "h": 1 },
+          "layers": ["F.Cu"]
+        },
+        {
+          "number": "K",
+          "netId": "Q1_C",
+          "position": { "x": 44, "y": 9 },
+          "sizeMm": { "w": 1, "h": 1 },
+          "layers": ["F.Cu"]
+        }
+      ],
+      "model": {
+        "type": "led",
+        "vf": 2,
+        "rOn": 10,
+        "anodePad": "A",
+        "cathodePad": "K",
+        "color": "red"
+      },
+      "blurb": "Emits red light when forward-biased above its 2.0 V threshold as Q1 pulls its cathode toward ground. Its brightness scales with the forward current flowing from the +5V rail through R2."
+    },
+    {
+      "ref": "RV1",
+      "value": "10k",
+      "kind": "potentiometer",
+      "footprint": "Potentiometer_THT:Potentiometer_Bourns_3386P_Vertical",
+      "position": { "x": 26, "y": 30 },
+      "rotationDeg": 0,
+      "side": "top",
+      "body": { "w": 6, "h": 4, "height": 5 },
+      "pads": [
+        {
+          "number": "1",
+          "netId": "+5V",
+          "position": { "x": 23.5, "y": 30 },
+          "sizeMm": { "w": 1.4, "h": 1.4 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "2",
+          "netId": "A0",
+          "position": { "x": 26, "y": 28.5 },
+          "sizeMm": { "w": 1.4, "h": 1.4 },
+          "layers": ["F.Cu", "B.Cu"]
+        },
+        {
+          "number": "3",
+          "netId": "GND",
+          "position": { "x": 28.5, "y": 30 },
+          "sizeMm": { "w": 1.4, "h": 1.4 },
+          "layers": ["F.Cu", "B.Cu"]
+        }
+      ],
+      "model": {
+        "type": "potentiometer",
+        "ohms": 10000,
+        "wiper": 0.5,
+        "endA": "1",
+        "endB": "3",
+        "wiperPad": "2"
+      },
+      "blurb": "Forms an adjustable 10 kilohm resistive voltage divider between +5V and ground along the bottom edge of the board. Turning the wiper sweeps the voltage on U1's A0 pin smoothly from 0 V to 5 V, producing 2.5 V at the midpoint."
+    }
+  ],
+  "nets": [
+    {
+      "id": "+5V",
+      "name": "+5V",
+      "pads": [
+        { "ref": "J1", "pad": "+" },
+        { "ref": "U1", "pad": "VCC" },
+        { "ref": "C1", "pad": "1" },
+        { "ref": "R2", "pad": "1" },
+        { "ref": "RV1", "pad": "1" }
+      ]
+    },
+    {
+      "id": "GND",
+      "name": "GND",
+      "pads": [
+        { "ref": "J1", "pad": "-" },
+        { "ref": "U1", "pad": "GND" },
+        { "ref": "C1", "pad": "2" },
+        { "ref": "Q1", "pad": "E" },
+        { "ref": "RV1", "pad": "3" }
+      ]
+    },
+    {
+      "id": "D8",
+      "name": "D8",
+      "pads": [
+        { "ref": "U1", "pad": "D8" },
+        { "ref": "R1", "pad": "1" }
+      ]
+    },
+    {
+      "id": "Q1_B",
+      "name": "Q1_B",
+      "pads": [
+        { "ref": "R1", "pad": "2" },
+        { "ref": "Q1", "pad": "B" }
+      ]
+    },
+    {
+      "id": "LED_A",
+      "name": "LED_A",
+      "pads": [
+        { "ref": "R2", "pad": "2" },
+        { "ref": "D1", "pad": "A" }
+      ]
+    },
+    {
+      "id": "Q1_C",
+      "name": "Q1_C",
+      "pads": [
+        { "ref": "D1", "pad": "K" },
+        { "ref": "Q1", "pad": "C" }
+      ]
+    },
+    {
+      "id": "A0",
+      "name": "A0",
+      "pads": [
+        { "ref": "U1", "pad": "A0" },
+        { "ref": "RV1", "pad": "2" }
+      ]
+    }
+  ],
+  "vias": [
+    {
+      "netId": "GND",
+      "position": { "x": 6, "y": 19 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 18.5, "y": 18 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 18.5, "y": 19.5 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 31.2, "y": 30 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 43.2, "y": 18 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 15, "y": 16 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 16, "y": 15 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 18.5, "y": 11 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 20.5, "y": 9 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 15, "y": 28 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "+5V",
+      "position": { "x": 17, "y": 30 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 17.5, "y": 19 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 18.5, "y": 24 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "GND",
+      "position": { "x": 25.2, "y": 24 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    },
+    {
+      "netId": "Q1_C",
+      "position": { "x": 44, "y": 13 },
+      "drillMm": 0.4,
+      "diameterMm": 0.8
+    }
+  ],
+  "tracks": [
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 4, "y": 16 },
+      "end": { "x": 15, "y": 16 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 15, "y": 16 },
+      "end": { "x": 16, "y": 15 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 16, "y": 15 },
+      "end": { "x": 18.5, "y": 15 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 18.5, "y": 15 },
+      "end": { "x": 20.5, "y": 15 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 18.5, "y": 15 },
+      "end": { "x": 18.5, "y": 11 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 18.5, "y": 11 },
+      "end": { "x": 20.5, "y": 9 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 20.5, "y": 9 },
+      "end": { "x": 37, "y": 9 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 15, "y": 16 },
+      "end": { "x": 15, "y": 28 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 15, "y": 28 },
+      "end": { "x": 17, "y": 30 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "+5V",
+      "layer": "F.Cu",
+      "start": { "x": 17, "y": 30 },
+      "end": { "x": 23.5, "y": 30 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 4, "y": 19 },
+      "end": { "x": 6, "y": 19 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 18.5, "y": 16.6 },
+      "end": { "x": 18.5, "y": 18 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 20.5, "y": 19.5 },
+      "end": { "x": 18.5, "y": 19.5 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 28.5, "y": 30 },
+      "end": { "x": 31.2, "y": 30 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "F.Cu",
+      "start": { "x": 43.2, "y": 16.2 },
+      "end": { "x": 43.2, "y": 18 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 6, "y": 19 },
+      "end": { "x": 17.5, "y": 19 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 17.5, "y": 19 },
+      "end": { "x": 18.5, "y": 18 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 18.5, "y": 18 },
+      "end": { "x": 18.5, "y": 19.5 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 18.5, "y": 19.5 },
+      "end": { "x": 18.5, "y": 24 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 18.5, "y": 24 },
+      "end": { "x": 25.2, "y": 24 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 25.2, "y": 24 },
+      "end": { "x": 31.2, "y": 30 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "GND",
+      "layer": "B.Cu",
+      "start": { "x": 31.2, "y": 30 },
+      "end": { "x": 43.2, "y": 18 },
+      "widthMm": 0.5
+    },
+    {
+      "netId": "D8",
+      "layer": "F.Cu",
+      "start": { "x": 27.5, "y": 15 },
+      "end": { "x": 35, "y": 15 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "Q1_B",
+      "layer": "F.Cu",
+      "start": { "x": 37, "y": 15 },
+      "end": { "x": 40.8, "y": 15 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "LED_A",
+      "layer": "F.Cu",
+      "start": { "x": 39, "y": 9 },
+      "end": { "x": 42, "y": 9 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "Q1_C",
+      "layer": "F.Cu",
+      "start": { "x": 44, "y": 9 },
+      "end": { "x": 44, "y": 13 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "Q1_C",
+      "layer": "F.Cu",
+      "start": { "x": 44, "y": 13 },
+      "end": { "x": 43.2, "y": 13.8 },
+      "widthMm": 0.25
+    },
+    {
+      "netId": "A0",
+      "layer": "F.Cu",
+      "start": { "x": 26, "y": 21 },
+      "end": { "x": 26, "y": 28.5 },
+      "widthMm": 0.25
+    }
+  ],
+  "blocks": [
+    {
+      "id": "power",
+      "label": "Power",
+      "description": "Supplies regulated 5 V DC power to the board and locally decouples high-frequency switching noise near the microcontroller.",
+      "partRefs": ["J1", "C1"],
+      "color": "accent-power"
+    },
+    {
+      "id": "mcu",
+      "label": "Microcontroller",
+      "description": "Digitizes the analog sensor voltage on pin A0 and drives digital output pin D8 to control the LED driver stage.",
+      "partRefs": ["U1"],
+      "color": "accent-mcu"
+    },
+    {
+      "id": "led-driver",
+      "label": "LED driver",
+      "description": "Uses an NPN low-side transistor switch and current-limiting resistors to sink about 12.2 mA through the red LED when D8 is HIGH.",
+      "partRefs": ["R1", "Q1", "R2", "D1"],
+      "color": "accent-driver"
+    },
+    {
+      "id": "sensor-input",
+      "label": "Sensor input",
+      "description": "Divides the 5 V rail through a 10 kilohm potentiometer to present a variable analog voltage to pin A0.",
+      "partRefs": ["RV1"],
+      "color": "accent-sensor"
+    }
+  ]
+}
