@@ -1,3 +1,5 @@
+![Circxit animated logo](brand/circxit-logo.gif)
+
 # Circxit
 
 [![CI](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml/badge.svg)](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml)
