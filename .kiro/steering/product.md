@@ -4,7 +4,7 @@ inclusion: always
 
 # Product overview
 
-Circuit X-Ray is a browser-based tool that makes a robot's control board physically and electrically legible, so a developer can understand and validate the hardware their firmware actually runs on. Its primary user is a developer working on robotics: someone who writes the MCU code and needs to see what that code does to the board — where current flows, which rails sag under load, and when an actuator stall will brown out the controller.
+Circxit is a browser-based tool that makes a robot's control board physically and electrically legible, so a developer can understand and validate the hardware their firmware actually runs on. Its primary user is a developer working on robotics: someone who writes the MCU code and needs to see what that code does to the board — where current flows, which rails sag under load, and when an actuator stall will brown out the controller.
 
 Track: Robotics.
 

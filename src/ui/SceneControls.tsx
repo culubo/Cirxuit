@@ -7,6 +7,7 @@ import { useStore } from "../store/useStore";
 import { tokens } from "./tokens";
 import { isRobotBoard } from "../robot/robotState";
 import { useRobotStore } from "../robot/useRobotStore";
+import { useLayerSheets } from "./LayerSheets";
 
 const wrap: React.CSSProperties = {
   position: "absolute",
@@ -15,7 +16,7 @@ const wrap: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: "0.5rem",
-  fontFamily: "monospace",
+  fontFamily: tokens.fontMono,
   fontSize: "0.75rem",
   color: tokens.textDim,
   background: tokens.panel,
@@ -55,7 +56,11 @@ export default function SceneControls(): React.ReactElement {
   const robotBoard = useStore((s) => isRobotBoard(s.board));
   const robotView = useRobotStore((s) => s.robotView);
   const setRobotView = useRobotStore((s) => s.setRobotView);
+  const robotModel = useRobotStore((s) => s.model);
+  const setRobotModel = useRobotStore((s) => s.setModel);
   const inRobot = robotBoard && robotView;
+  const sheetsOpen = useLayerSheets((s) => s.open);
+  const setSheetsOpen = useLayerSheets((s) => s.setOpen);
 
   return (
     <div style={wrap}>
@@ -86,7 +91,7 @@ export default function SceneControls(): React.ReactElement {
             border: `1px solid ${showParticles ? "#1f6fb2" : tokens.hairline}`,
             borderRadius: "2px",
             color: showParticles ? tokens.phosphor : tokens.textFaint,
-            fontFamily: "monospace",
+            fontFamily: tokens.fontMono,
             fontSize: "0.72rem",
             padding: "0.2rem 0.5rem",
             cursor: "pointer",
@@ -107,7 +112,7 @@ export default function SceneControls(): React.ReactElement {
             border: `1px solid ${tokens.hairline}`,
             borderRadius: "2px",
             color: tokens.text,
-            fontFamily: "monospace",
+            fontFamily: tokens.fontMono,
             fontSize: "0.72rem",
             padding: "0.2rem 0.5rem",
             cursor: "pointer",
@@ -117,6 +122,29 @@ export default function SceneControls(): React.ReactElement {
         </button>
       </div>
 
+      {!inRobot && (
+        <div style={toggleRow}>
+          <span style={label}>Layers</span>
+          <button
+            data-testid="layer-sheets-toggle"
+            aria-pressed={sheetsOpen}
+            onClick={() => setSheetsOpen(!sheetsOpen)}
+            title="Show every board layer flat, side by side"
+            style={{
+              background: "transparent",
+              border: `1px solid ${tokens.hairline}`,
+              borderRadius: "2px",
+              color: tokens.text,
+              fontFamily: tokens.fontMono,
+              fontSize: "0.72rem",
+              padding: "0.2rem 0.5rem",
+              cursor: "pointer",
+            }}
+          >
+            Side by side
+          </button>
+        </div>
+      )}
       {robotBoard && (
         <div style={toggleRow}>
           <span style={label}>Robot view</span>
@@ -130,7 +158,7 @@ export default function SceneControls(): React.ReactElement {
               border: `1px solid ${robotView ? "#1f6fb2" : tokens.hairline}`,
               borderRadius: "2px",
               color: robotView ? tokens.phosphor : tokens.textFaint,
-              fontFamily: "monospace",
+              fontFamily: tokens.fontMono,
               fontSize: "0.72rem",
               padding: "0.2rem 0.5rem",
               cursor: "pointer",
@@ -140,6 +168,29 @@ export default function SceneControls(): React.ReactElement {
           </button>
         </div>
       )}
+      {inRobot && (
+        <div style={toggleRow}>
+          <label htmlFor="robot-model" style={label}>Robot</label>
+          <select
+            id="robot-model"
+            data-testid="robot-model-select"
+            value={robotModel}
+            onChange={(e) => setRobotModel(e.target.value as "microduck" | "expressive")}
+            style={{
+              background: tokens.panel,
+              border: `1px solid ${tokens.hairline}`,
+              borderRadius: "2px",
+              color: tokens.text,
+              fontFamily: tokens.fontMono,
+              fontSize: "0.72rem",
+              padding: "0.15rem 0.3rem",
+            }}
+          >
+            <option value="microduck">Microduck (physics)</option>
+            <option value="expressive">Cartoon robot</option>
+          </select>
+        </div>
+      )}
       {hasSchematic && !inRobot && (
         <>
           <div style={toggleRow}>
@@ -147,14 +198,18 @@ export default function SceneControls(): React.ReactElement {
             <button
               data-testid="schematic-toggle"
               aria-pressed={showSchematic}
-              onClick={() => setShowSchematic(!showSchematic)}
-              title="Show the schematic over the exploded board"
+              onClick={() => {
+                const next = !showSchematic;
+                setShowSchematic(next);
+                if (next && explode < 1) setExplode(1);
+              }}
+              title="Show the schematic and fully explode the board"
               style={{
                 background: showSchematic ? "#0a2238" : "transparent",
                 border: `1px solid ${showSchematic ? "#1f6fb2" : tokens.hairline}`,
                 borderRadius: "2px",
                 color: showSchematic ? tokens.phosphor : tokens.textFaint,
-                fontFamily: "monospace",
+                fontFamily: tokens.fontMono,
                 fontSize: "0.72rem",
                 padding: "0.2rem 0.5rem",
                 cursor: "pointer",

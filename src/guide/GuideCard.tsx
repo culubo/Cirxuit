@@ -8,6 +8,7 @@ import { useStore } from "../store/useStore";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 import MascotTalk from "../ui/brand/MascotTalk";
+import { useIntro } from "../ui/brand/intro";
 import { guideFor } from "./guides";
 import type { Problem } from "../build/problems";
 
@@ -53,6 +54,7 @@ function TargetRing({ testId }: { testId: string }): React.ReactElement | null {
 export default function GuideCard({ problems, placement = "top" }: Props): React.ReactElement | null {
   const boardId = useStore((s) => s.boardId);
   const open = useStore((s) => s.guideOpen);
+  const introOpen = useIntro((s) => s.open);
   const setOpen = useStore((s) => s.setGuideOpen);
   const guideDone = useStore((s) => s.guideDone);
   const markDone = useStore((s) => s.markGuideDone);
@@ -75,7 +77,7 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
     [guide, guideDone],
   );
 
-  if (!guide || !open) return null;
+  if (!guide || !open || introOpen) return null;
   const doneCount = guide.steps.filter((st) => guideDone.includes(st.id)).length;
   const current = currentIndex >= 0 ? guide.steps[currentIndex] : undefined;
 

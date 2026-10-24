@@ -73,13 +73,12 @@ export default function TopBar(): React.ReactElement {
         <button
           data-testid="intro-open"
           onClick={() => setIntroOpen(true)}
-          title="About Circuit X-Ray"
+          title="About Circxit"
           style={{ display: "flex", alignItems: "center", gap: "0.45rem", padding: 0, background: "transparent", border: "none", cursor: "pointer" }}
         >
           <img src={orbUrl} alt="" aria-hidden="true" width={26} height={26} style={{ display: "block" }} />
-          <span style={{ fontFamily: SILK_FONT_FAMILY, color: tokens.text, fontSize: "1.02rem", letterSpacing: "0.03em" }}>Circuit X-Ray</span>
+          <span style={{ fontFamily: SILK_FONT_FAMILY, color: tokens.text, fontSize: "1.02rem", letterSpacing: "0.03em" }}>Circxit</span>
         </button>
-        <span style={{ color: tokens.textFaint, fontSize: "0.66rem" }}>robotics hardware workbench</span>
       </div>
 
       <BoardSwitcher />

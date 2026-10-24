@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Quality bar for Circuit X-Ray
+# Quality bar for Circxit
 
 This project is judged on polish. Follow these rules in every change.
 

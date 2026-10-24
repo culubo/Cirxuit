@@ -1,4 +1,4 @@
-# Tasks: Circuit X-Ray
+# Tasks: Circxit
 
 Tasks are ordered so the core loop works end-to-end as early as possible.
 Visual polish, KiCad import, and the solver/import test suites are out of scope here.

@@ -1,8 +1,8 @@
-# Circuit X-Ray
+# Circxit
 
 [![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
 
-Circuit X-Ray makes a robot's control board physically and electrically legible, so a
+Circxit makes a robot's control board physically and electrically legible, so a
 developer can understand and validate the hardware their firmware runs on. Pull the board
 apart into its layers, click any part to see what it connects to and how much current it
 draws, run Arduino-style firmware, and watch the simulated voltages, currents, and
@@ -13,7 +13,7 @@ when a stalled actuator will brown out the controller — before it happens in t
 
 ## What it does
 
-- **Exploded 3D board** — stacked substrate, copper, components, and a function layer.
+- **Exploded 3D board + schematic** — inspect the physical stack, then open the logical circuit view beside the fabrication layers.
 - **Inspect anything** — click a part for its value, a plain-language blurb, its function
   block, and live per-branch current.
 - **DC solver** — modified nodal analysis with piecewise-linear LEDs, diodes, and NPN

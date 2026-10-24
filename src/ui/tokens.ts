@@ -1,18 +1,14 @@
 /**
- * Design tokens — the "glowing circuit blueprint" palette: deep navy ground,
- * electric-cyan traces and accents, light bloom.
- *
- * Single source of truth for colour, used by both DOM styles and three.js
- * materials. Prefer referencing a token over a raw hex wherever one exists.
+ * Design tokens — a dark lab-instrument palette with cyan electrical accents.
+ * Shared by DOM styles and three.js materials.
  */
 
 export const tokens = {
-  // Surfaces — deep navy, like a backlit circuit blueprint
-  bg: "#050b18",
-  // Workspace backdrop: deep blue at the top easing into a deep purple-pink.
-  bgTop: "#08173d",
-  bgBottom: "#230e34",
-  panel: "#0a1424",
+  // Surfaces — neutral blue-black, never purple.
+  bg: "#050a10",
+  viewportCenter: "#0e1824",
+  viewportEdge: "#050a10",
+  panel: "#0a1420",
   panelBorder: "#1c3350",
   hairline: "#142640",
 
@@ -38,7 +34,7 @@ export const tokens = {
   "accent-power": "#ffc857",
   "accent-mcu": "#4fd8ff",
   "accent-driver": "#7ab8ff",
-  "accent-sensor": "#b98cff",
+  "accent-sensor": "#56c7a4",
   "accent-warn": "#e0a84a",
 } as const;
 

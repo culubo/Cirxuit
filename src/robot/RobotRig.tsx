@@ -8,7 +8,7 @@
  * The model is three.js's RobotExpressive (CC0), served from public/models.
  * Clips used: "Walking" (walk, limp, freeze) and "Death" (collapse).
  */
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -20,6 +20,9 @@ import { applyPose, boardFitPose, type CameraPose } from "../scene/AutoFitCamera
 import { CLIPS, FREEZE_S, nextPhase, type RobotPhase } from "./robotAnim";
 import { isRobotBoard, readRobot, type RobotReading } from "./robotState";
 import { useRobotStore } from "./useRobotStore";
+
+// Physics engine and policy runtime load only when the duck is first shown.
+const DuckRig = lazy(() => import("./duck/DuckRig"));
 
 export const ROBOT_MODEL_URL = `${import.meta.env.BASE_URL}models/RobotExpressive.glb`;
 
@@ -68,18 +71,21 @@ function robotPose(board: Board, fovDeg: number, aspect: number): CameraPose {
 export default function RobotRig({ children }: { children: React.ReactNode }): React.ReactElement {
   const board = useStore((s) => s.board);
   const robotView = useRobotStore((s) => s.robotView);
+  const which = useRobotStore((s) => s.model);
   const active = robotView && isRobotBoard(board);
-  // Load the model the first time the view opens, then keep it for exits.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { if (active) setMounted(true); }, [active]);
+  // Load each model the first time it is shown, then keep it for exits.
+  const [mounted, setMounted] = useState<Record<string, boolean>>({});
+  useEffect(() => { if (active) setMounted((m) => (m[which] ? m : { ...m, [which]: true })); }, [active, which]);
   const boardGroup = useRef<THREE.Group>(null);
 
   return (
     <>
       <group ref={boardGroup}>{children}</group>
-      {mounted && board && isRobotBoard(board) && (
+      {board && isRobotBoard(board) && mounted[which] && (
         <Suspense fallback={null}>
-          <Robot board={board} active={active} boardGroup={boardGroup} />
+          {which === "microduck"
+            ? <DuckRig key="duck" board={board} active={active} boardGroup={boardGroup} />
+            : <Robot key="expressive" board={board} active={active} boardGroup={boardGroup} />}
         </Suspense>
       )}
     </>

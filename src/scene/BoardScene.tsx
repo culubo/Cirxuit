@@ -10,17 +10,16 @@ import AutoFitCamera from "./AutoFitCamera";
 import RobotRig from "../robot/RobotRig";
 import { tokens } from "../ui/tokens";
 
-/** The workspace backdrop as a scene background, matching chrome.ts `backdrop`. */
+/** Neutral radial stage background matching chrome.ts `backdrop`. */
 function backdropTexture(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  canvas.width = 2;
-  canvas.height = 256;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext("2d");
   if (ctx) {
-    const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    g.addColorStop(0, tokens.bgTop);
-    g.addColorStop(0.55, tokens.bg);
-    g.addColorStop(1, tokens.bgBottom);
+    const g = ctx.createRadialGradient(256, 230, 0, 256, 230, 370);
+    g.addColorStop(0, tokens.viewportCenter);
+    g.addColorStop(1, tokens.viewportEdge);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }

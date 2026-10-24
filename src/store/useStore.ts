@@ -154,15 +154,21 @@ const defaultMcuState: McuState = {
 // ─── persistence ───────────────────────────────────────────────────────────────
 
 const STORAGE = {
+  doc: "circxit:builder-doc",
+  codes: "circxit:codes",
+  guide: "circxit:guide-done",
+} as const;
+
+const LEGACY_STORAGE = {
   doc: "circuit-xray:builder-doc",
   codes: "circuit-xray:codes",
   guide: "circuit-xray:guide-done",
 } as const;
 
-function readJson(key: string): unknown {
+function readJson(key: string, legacyKey?: string): unknown {
   try {
     if (typeof localStorage === "undefined") return null;
-    const raw = localStorage.getItem(key);
+    const raw = localStorage.getItem(key) ?? (legacyKey ? localStorage.getItem(legacyKey) : null);
     return raw ? (JSON.parse(raw) as unknown) : null;
   } catch {
     return null;
@@ -178,12 +184,12 @@ function writeJson(key: string, value: unknown): void {
 }
 
 function initialDoc(): BuilderDoc {
-  const stored = readJson(STORAGE.doc);
+  const stored = readJson(STORAGE.doc, LEGACY_STORAGE.doc);
   return isBuilderDoc(stored) ? stored : blankDoc();
 }
 
 function initialCodes(): Record<string, string> {
-  const stored = readJson(STORAGE.codes);
+  const stored = readJson(STORAGE.codes, LEGACY_STORAGE.codes);
   if (typeof stored !== "object" || stored === null) return {};
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(stored)) if (typeof v === "string") out[k] = v;
@@ -191,7 +197,7 @@ function initialCodes(): Record<string, string> {
 }
 
 function initialGuide(): string[] {
-  const stored = readJson(STORAGE.guide);
+  const stored = readJson(STORAGE.guide, LEGACY_STORAGE.guide);
   return Array.isArray(stored) ? stored.filter((s): s is string => typeof s === "string") : [];
 }
 

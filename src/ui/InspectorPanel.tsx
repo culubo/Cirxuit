@@ -16,7 +16,7 @@ import ParamField from "./ParamField";
 import { numericFields } from "./modelFields";
 import { formatEngineering } from "./parse-eng";
 import { formatQuantity } from "./format";
-import { backdrop } from "./chrome";
+import { tokens } from "./tokens";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
@@ -51,9 +51,9 @@ const DEVICE_STATE_LABEL: Record<string, string> = {
 const panel: React.CSSProperties = {
   height: "100%",
   overflowY: "auto",
-  background: backdrop,
-  borderLeft: "1px solid #1c3350",
-  fontFamily: "monospace",
+  background: tokens.panel,
+  borderLeft: `1px solid ${tokens.panelBorder}`,
+  fontFamily: tokens.fontMono,
   fontSize: "0.8rem",
   color: "#cfe3f2",
   display: "flex",
@@ -129,7 +129,7 @@ export default function InspectorPanel(): React.ReactElement {
                 border: "1px solid #24466e",
                 borderRadius: "2px",
                 color: "#8aa8c4",
-                fontFamily: "monospace",
+                fontFamily: tokens.fontMono,
                 fontSize: "0.68rem",
                 padding: "0.15rem 0.5rem",
                 cursor: "pointer",
@@ -159,7 +159,7 @@ export default function InspectorPanel(): React.ReactElement {
                     borderColor: isSelected ? "#1f6fb2" : "transparent",
                     borderRadius: "2px",
                     color: isSelected ? "#4fd8ff" : "#aac4dc",
-                    fontFamily: "monospace",
+                    fontFamily: tokens.fontMono,
                     fontSize: "0.78rem",
                     padding: "0.2rem 0.4rem",
                     cursor: "pointer",
@@ -412,7 +412,7 @@ function SelectedPartPanel({
             border: `1px solid ${model.stalled ? "#a0402a" : "#1f6fb2"}`,
             borderRadius: "2px",
             color: model.stalled ? "#e0923a" : "#4fd8ff",
-            fontFamily: "monospace",
+            fontFamily: tokens.fontMono,
             fontSize: "0.78rem",
             padding: "0.35rem 0",
             cursor: "pointer",

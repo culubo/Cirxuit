@@ -1,6 +1,6 @@
 {
   "id": "demo-board",
-  "name": "Circuit X-Ray Demo Board",
+  "name": "Circxit Demo Board",
   "outline": [
     { "x": 0, "y": 0 },
     { "x": 50, "y": 0 },

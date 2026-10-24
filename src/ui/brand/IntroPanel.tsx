@@ -1,5 +1,5 @@
 /**
- * IntroPanel — what Circuit X-Ray is and why it exists, with the logo and
+ * IntroPanel — what Circxit is and why it exists, with the logo and
  * mascot. Floats over the 3D view (never over the editor or inspector) on a
  * first visit; the logo in the top bar reopens it.
  */
@@ -9,7 +9,7 @@ import { loadSilkFont, SILK_FONT_FAMILY } from "../../scene/art/silkArt";
 import { button, font } from "../chrome";
 import { tokens } from "../tokens";
 import Mascot, { orbUrl } from "./Mascot";
-import { SPIRAL_PINK, useIntro } from "./intro";
+import { useIntro } from "./intro";
 
 const STARTS: { board: string; title: string; detail: string }[] = [
   { board: "demo-board", title: "Light an LED", detail: "Run firmware that switches a transistor and watch the current reach the LED." },
@@ -58,7 +58,7 @@ export default function IntroPanel(): React.ReactElement | null {
         overflowY: "auto",
         background: tokens.panel,
         border: `1px solid ${tokens.panelBorder}`,
-        borderTop: `2px solid ${SPIRAL_PINK}`,
+        borderTop: `2px solid ${tokens.phosphor}`,
         borderRadius: "6px",
         boxShadow: "0 18px 50px rgba(0,0,0,0.6)",
         color: tokens.text,
@@ -78,7 +78,7 @@ export default function IntroPanel(): React.ReactElement | null {
           <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
             <img src={orbUrl} alt="" aria-hidden="true" width={50} height={50} style={{ display: "block", flex: "none" }} />
             <h1 id="intro-title" style={{ margin: 0, fontFamily: SILK_FONT_FAMILY, fontWeight: 400, fontSize: "1.75rem", letterSpacing: "0.02em", lineHeight: 1.05, whiteSpace: "nowrap" }}>
-              Circuit X-Ray
+              Circxit
             </h1>
           </div>
           <p style={{ margin: "0.7rem 0 0", fontSize: "0.86rem", lineHeight: 1.5, color: tokens.text }}>
@@ -108,7 +108,7 @@ export default function IntroPanel(): React.ReactElement | null {
             {WHY.map((w) => <li key={w} style={{ ...body, margin: 0 }}>{w}</li>)}
           </ul>
           <p style={{ ...body, marginTop: "0.45rem" }}>
-            Circuit X-Ray makes the board legible, so you can find these before you flash a single chip.
+            Circxit makes the board legible, so you can find these before you flash a single chip.
           </p>
         </section>
 
@@ -131,7 +131,7 @@ export default function IntroPanel(): React.ReactElement | null {
                   padding: "0.5rem 0.65rem",
                   background: "transparent",
                   border: `1px solid ${tokens.hairline}`,
-                  borderLeft: `2px solid ${SPIRAL_PINK}`,
+                  borderLeft: `2px solid ${tokens.phosphor}`,
                   borderRadius: "3px",
                   color: tokens.text,
                   cursor: "pointer",
@@ -158,7 +158,7 @@ const heading: React.CSSProperties = {
   fontWeight: 400,
   fontSize: "1rem",
   letterSpacing: "0.04em",
-  color: SPIRAL_PINK,
+  color: tokens.phosphor,
 };
 
 const body: React.CSSProperties = {

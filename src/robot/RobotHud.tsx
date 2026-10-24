@@ -50,7 +50,7 @@ export default function RobotHud(): React.ReactElement | null {
         display: "flex",
         gap: "0.9rem",
         alignItems: "center",
-        fontFamily: "monospace",
+        fontFamily: tokens.fontMono,
         fontSize: "0.75rem",
         color: tokens.textDim,
         background: tokens.panel,

@@ -203,3 +203,34 @@ test.describe("robot", () => {
     await page.screenshot({ path: "test-results/shots/robot-brownout.png" });
   });
 });
+
+// ── Layers side by side ─────────────────────────────────────────────────────
+test.describe("layers", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  async function openSheets(page: import("@playwright/test").Page, boardId: string): Promise<void> {
+    await page.goto("/");
+    if (boardId !== "demo-board") await page.getByTestId("board-switcher").selectOption(boardId);
+    if (await page.getByTestId("guide-panel").isVisible()) await page.getByTestId("guide-toggle").click();
+    await page.getByTestId("layer-sheets-toggle").click();
+    await expect(page.getByTestId("layer-sheet-copperTop")).toBeVisible();
+    await page.waitForTimeout(300);
+  }
+
+  test("shot: layers-demo", async ({ page }) => {
+    await openSheets(page, "demo-board");
+    await page.screenshot({ path: "test-results/shots/layers-demo.png" });
+  });
+
+  test("shot: layers-biped", async ({ page }) => {
+    await openSheets(page, "biped-power-board");
+    await page.screenshot({ path: "test-results/shots/layers-biped.png" });
+  });
+
+  test("shot: layers-focused", async ({ page }) => {
+    await openSheets(page, "demo-board");
+    await page.getByTestId("layer-sheet-copperTop").click();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: "test-results/shots/layers-focused.png" });
+  });
+});

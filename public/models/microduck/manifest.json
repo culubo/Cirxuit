@@ -1,0 +1,52 @@
+{
+  "scene": "scene.xml",
+  "xml": [
+    "scene.xml",
+    "robot_groundcontact.xml"
+  ],
+  "meshes": [
+    "assets/leg.stl",
+    "assets/yaw_roll_motion.stl",
+    "assets/face_part.stl",
+    "assets/upper_leg_rigidity_plate.stl",
+    "assets/soft_mouth_top.stl",
+    "assets/right_shell.stl",
+    "assets/jaw_soft.stl",
+    "assets/neck.stl",
+    "assets/foot_right.stl",
+    "assets/ankle_left.stl",
+    "assets/trunk_base.stl",
+    "assets/bearing_roll.stl",
+    "assets/upper_leg_left.stl",
+    "assets/neck_pitch.stl",
+    "assets/noenoeil.stl",
+    "assets/top_head_shell.stl",
+    "assets/pcb__raspberry_pi_zero_2_w.stl",
+    "assets/seeed_bearing__configuration__22x16x4.stl",
+    "assets/yaw2roll.stl",
+    "assets/m12_lens_holder.stl",
+    "assets/speaker.stl",
+    "assets/bottom_head_shell.stl",
+    "assets/hip_l.stl",
+    "assets/elec_rpi_robot_hat_pcb.stl",
+    "assets/xl330.stl",
+    "assets/lens.stl",
+    "assets/seeed_bearing__configuration_default.stl",
+    "assets/ankle_right.stl",
+    "assets/jaw.stl",
+    "assets/np_f970.stl",
+    "assets/banana_pcb_locker.stl",
+    "assets/upper_leg_right.stl",
+    "assets/left_shell.stl",
+    "assets/foot_left.stl",
+    "assets/sole_left.stl",
+    "assets/sole_right.stl",
+    "assets/power_support.stl",
+    "assets/motor_support.stl"
+  ],
+  "policy": "velstand.onnx",
+  "source": {
+    "model": "https://github.com/pollen-robotics/microduck_rl.git@b02fdea4902c2b93b7d34a83a6f05da4ececb7d3",
+    "policy": "pollen-robotics/microduck-policies@665ae4eb20bfe13bca1ef4ea6d4bb6b4a096e448"
+  }
+}

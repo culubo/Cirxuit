@@ -1,4 +1,4 @@
-# Design: Circuit X-Ray
+# Design: Circxit
 
 ## Stack
 - Vite + React + TypeScript (strict)

@@ -1,6 +1,6 @@
-# Requirements: Circuit X-Ray (working name)
+# Requirements: Circxit
 
-Track: Robotics. Pitch: the board a robot runs on is invisible to the developer writing its firmware. Circuit X-Ray makes it visible, physically and electrically, so a developer can see what each part does, where current flows, and what their code actually does to the hardware — before a stalled servo browns out the controller in the field.
+Track: Robotics. Pitch: the board a robot runs on is invisible to the developer writing its firmware. Circxit makes it visible, physically and electrically, so a developer can see what each part does, where current flows, and what their code actually does to the hardware — before a stalled servo browns out the controller in the field.
 
 ## Requirement 1: Exploded 3D board view
 User story: As a robotics developer, I want to pull a control board apart into its layers so I can see how parts, copper, and power delivery relate on the hardware my code runs on.

@@ -12,11 +12,12 @@ const BIG_STEP = 64;
 
 /** A pane width that persists in localStorage, clamped to its limits. */
 export function usePaneWidth(key: string, fallback: number, min: number, max: number): [number, (w: number) => void] {
-  const storageKey = `circuit-xray:pane:${key}`;
+  const storageKey = `circxit:pane:${key}`;
+  const legacyStorageKey = `circuit-xray:pane:${key}`;
   const clamp = useCallback((w: number) => Math.round(Math.min(max, Math.max(min, w))), [min, max]);
   const [width, setWidth] = useState(() => {
     try {
-      const stored = Number(window.localStorage.getItem(storageKey));
+      const stored = Number(window.localStorage.getItem(storageKey) ?? window.localStorage.getItem(legacyStorageKey));
       return Number.isFinite(stored) && stored > 0 ? clamp(stored) : fallback;
     } catch {
       return fallback;

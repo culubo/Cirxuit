@@ -9,6 +9,7 @@
  */
 import React, { useEffect, useState } from "react";
 import { parseEngineering } from "./parse-eng";
+import { tokens } from "./tokens";
 
 interface CommonProps {
   /** Stable key used in data-testid="inspector-param-<paramKey>". */
@@ -60,7 +61,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid #142640",
   borderRadius: "2px",
   color: "#cfe3f2",
-  fontFamily: "monospace",
+  fontFamily: tokens.fontMono,
   fontSize: "0.78rem",
   padding: "0.2rem 0.4rem",
   textAlign: "right",

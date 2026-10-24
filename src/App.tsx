@@ -8,6 +8,7 @@ import InspectorPanel from "./ui/InspectorPanel";
 import SceneControls from "./ui/SceneControls";
 import SchematicMirror from "./ui/SchematicMirror";
 import RobotHud from "./robot/RobotHud";
+import LayerSheets from "./ui/LayerSheets";
 import SceneErrorBoundary from "./ui/SceneErrorBoundary";
 import { tokens } from "./ui/tokens";
 import TopBar from "./ide/TopBar";
@@ -117,6 +118,7 @@ export default function App(): React.ReactElement {
               <SceneControls />
               <SchematicMirror />
               <RobotHud />
+              <LayerSheets />
             </>
           )}
           <GuideCard problems={problems.all} placement={mode === "build" ? "bottom" : "top"} />

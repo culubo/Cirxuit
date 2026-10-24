@@ -1,4 +1,5 @@
 import React from "react";
+import { tokens } from "./tokens";
 
 interface Props {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ export default class SceneErrorBoundary extends React.Component<Props, State> {
             alignItems: "center",
             justifyContent: "center",
             color: "#f0a030",
-            fontFamily: "monospace",
+            fontFamily: tokens.fontMono,
             fontSize: "0.9rem",
             gap: "0.5rem",
             padding: "2rem",
@@ -57,7 +58,7 @@ export default class SceneErrorBoundary extends React.Component<Props, State> {
               background: "transparent",
               border: "1px solid #f0a030",
               color: "#f0a030",
-              fontFamily: "monospace",
+              fontFamily: tokens.fontMono,
               cursor: "pointer",
             }}
             onClick={() => this.setState({ error: null })}

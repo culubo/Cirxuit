@@ -7,11 +7,11 @@ import { tokens } from "./tokens";
 
 export const font: React.CSSProperties = { fontFamily: tokens.fontMono };
 
-/** The workspace backdrop: behind the board view, the PCB editor, and both side panes, so it runs across the whole workspace. */
-export const backdrop = `linear-gradient(180deg, ${tokens.bgTop} 0%, ${tokens.bg} 55%, ${tokens.bgBottom} 100%)`;
+/** A restrained luminance vignette reserved for the center board stage. */
+export const backdrop = `radial-gradient(circle at 50% 45%, ${tokens.viewportCenter} 0%, ${tokens.viewportEdge} 100%)`;
 
-/** A translucent bar over the backdrop (pane headers), so the gradient shows through. */
-export const barTint = "rgba(6, 16, 34, 0.55)";
+/** Opaque pane-header tint; side panes read as solid instrument housing. */
+export const barTint = "#081522";
 
 export const label: React.CSSProperties = {
   color: tokens.textFaint,

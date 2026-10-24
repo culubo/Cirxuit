@@ -4,7 +4,7 @@
  */
 import React from "react";
 import { useStore, SPEEDS } from "../store/useStore";
-import { backdrop, barTint, button, font, label, select } from "../ui/chrome";
+import { barTint, button, font, label, select } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 import CodeEditor from "./CodeEditor";
 import BottomPanel from "./BottomPanel";
@@ -14,6 +14,22 @@ import type { ProblemSet } from "./useProblems";
 interface Props {
   runner: RunnerCommands;
   problems: ProblemSet;
+}
+
+type MediaIconKind = "play" | "step" | "pause" | "restart";
+
+function MediaIcon({ kind }: { kind: MediaIconKind }): React.ReactElement {
+  const paths: Record<MediaIconKind, React.ReactNode> = {
+    play: <path d="M4 2.5 12.5 8 4 13.5Z" />,
+    step: <><path d="M3 3.5 9.5 8 3 12.5Z" /><path d="M11.5 3v10" /></>,
+    pause: <><path d="M4.5 3v10" /><path d="M11.5 3v10" /></>,
+    restart: <><path d="M3 3v4h4" /><path d="M3.8 6.2A5.2 5.2 0 1 1 3.4 10" /></>,
+  };
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" width="12" height="12" fill={kind === "play" || kind === "step" ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {paths[kind]}
+    </svg>
+  );
 }
 
 export default function EditorPane({ runner, problems }: Props): React.ReactElement {
@@ -34,7 +50,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
   return (
     <section
       aria-label="Code"
-      style={{ display: "flex", flexDirection: "column", minHeight: 0, height: "100%", borderRight: `1px solid ${tokens.hairline}`, background: backdrop }}
+      style={{ display: "flex", flexDirection: "column", minHeight: 0, height: "100%", borderRight: `1px solid ${tokens.hairline}`, background: tokens.panel }}
     >
       {/* Run toolbar */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.5rem", borderBottom: `1px solid ${tokens.hairline}`, flexWrap: "wrap" }}>
@@ -45,7 +61,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
           disabled={!board || running}
           style={button({ primary: true, disabled: !board || running })}
         >
-          {running ? "Running…" : "▶ Run"}
+          {running ? "Running…" : <><MediaIcon kind="play" /> Run</>}
         </button>
         <button
           data-testid="step-button"
@@ -54,7 +70,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
           disabled={!board || running}
           style={button({ disabled: !board || running })}
         >
-          ⏭ Step
+          <MediaIcon kind="step" /> Step
         </button>
         <button
           data-testid="pause-button"
@@ -63,16 +79,17 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
           disabled={!hasTrace}
           style={button({ disabled: !hasTrace, active: playback?.playing ?? false })}
         >
-          {playback?.playing ? "❚❚ Pause" : atEnd ? "↻ Replay" : "▶ Resume"}
+          {playback?.playing ? <><MediaIcon kind="pause" /> Pause</> : atEnd ? <><MediaIcon kind="restart" /> Replay</> : <><MediaIcon kind="play" /> Resume</>}
         </button>
         <button
           data-testid="restart-button"
+          aria-label="Restart replay"
           title="Back to the start of this run"
           onClick={runner.restart}
           disabled={!hasTrace}
           style={button({ disabled: !hasTrace })}
         >
-          ⏮
+          <MediaIcon kind="restart" />
         </button>
         <label style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", marginLeft: "0.2rem" }}>
           <span style={label}>Speed</span>

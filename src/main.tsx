@@ -5,8 +5,7 @@ import App from "./App";
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element #root not found");
 
-// Dev-only handle so screenshot harnesses can inject test data (e.g. a schematic
-// before the real one lands). Not present in production builds.
+// Dev-only handle for screenshot harnesses and scene diagnostics.
 if (import.meta.env.DEV) {
   void import("./store/useStore").then(({ useStore }) => {
     (window as unknown as { __cxStore: typeof useStore }).__cxStore = useStore;

@@ -20,6 +20,8 @@ export default defineConfig({
   // page that opens the editor makes Vite discover them, re-optimize, and reload
   // the page mid-session (which also flakes e2e runs on a cold cache).
   optimizeDeps: {
+    // WASM packages locate their binaries via import.meta.url; keep them unbundled.
+    exclude: ["@mujoco/mujoco", "onnxruntime-web"],
     include: [
       "codemirror",
       "@codemirror/autocomplete",

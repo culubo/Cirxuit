@@ -7,8 +7,14 @@ import { create } from "zustand";
 import { useStore } from "../store/useStore";
 import type { RobotPhase } from "./robotAnim";
 
+/** Which robot Robot view shows. */
+export type RobotModel = "microduck" | "expressive";
+
 interface RobotStore {
   robotView: boolean;
+  /** Microduck runs in real physics; the expressive robot plays animation clips. */
+  model: RobotModel;
+  setModel: (model: RobotModel) => void;
   /** The model has loaded and is in the scene. */
   ready: boolean;
   phase: RobotPhase;
@@ -21,6 +27,8 @@ interface RobotStore {
 
 export const useRobotStore = create<RobotStore>((set, get) => ({
   robotView: false,
+  model: "microduck",
+  setModel: (model) => { if (model !== get().model) set({ model, ready: false, phase: "walk" }); },
   ready: false,
   phase: "walk",
   savedExplode: 0,
