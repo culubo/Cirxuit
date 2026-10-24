@@ -13,11 +13,19 @@ interface AppState {
   simResult: SimResult | null;
   selection: Selection;
 
+  // Runtime output
+  logs: unknown[];
+  runError: string | null;
+  running: boolean;
+
   // Actions
   setBoard: (board: Board) => void;
   setMcuState: (mcuState: McuState) => void;
   setSimResult: (simResult: SimResult | null) => void;
   setSelection: (selection: Selection) => void;
+  setLogs: (logs: unknown[]) => void;
+  setRunError: (runError: string | null) => void;
+  setRunning: (running: boolean) => void;
 }
 
 const defaultMcuState: McuState = {
@@ -31,8 +39,15 @@ export const useStore = create<AppState>((set) => ({
   simResult: null,
   selection: null,
 
+  logs: [],
+  runError: null,
+  running: false,
+
   setBoard: (board) => set({ board }),
   setMcuState: (mcuState) => set({ mcuState }),
   setSimResult: (simResult) => set({ simResult }),
   setSelection: (selection) => set({ selection }),
+  setLogs: (logs) => set({ logs }),
+  setRunError: (runError) => set({ runError }),
+  setRunning: (running) => set({ running }),
 }));

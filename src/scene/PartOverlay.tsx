@@ -36,7 +36,9 @@ export default function PartOverlay({ board }: PartOverlayProps): React.ReactEle
       {board.parts.map((part) => (
         <button
           key={part.ref}
-          data-testid={`part-${part.ref}`}
+          // No data-testid here: the canonical part-<REF> selector lives on the
+          // InspectorPanel parts list. This overlay only mirrors the 3D click
+          // target for pointer parity and keeps an accessible name.
           aria-label={`Select ${part.ref} (${part.value})`}
           style={{ ...srOnly, pointerEvents: "auto" }}
           onClick={() => setSelection({ kind: "part", ref: part.ref })}
