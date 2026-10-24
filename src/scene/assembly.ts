@@ -70,6 +70,8 @@ interface AssemblyState {
   boardId: string | null;
   /** performance.now() / 1000 at the start, or null when nothing is building. */
   startedAt: number | null;
+  pausedAt: number | null;
+  pausedSeconds: number;
   placements: Map<string, Placement>;
   duration: number;
   /** Board id that has finished building and been powered on (drives the LED chase). */
@@ -78,21 +80,41 @@ interface AssemblyState {
   /** Stop an in-progress build because its board was replaced. */
   cancel: () => void;
   finish: () => void;
+  pause: () => void;
+  resume: () => void;
   powerOn: (boardId: string) => void;
 }
 
-export const useAssembly = create<AssemblyState>((set) => ({
+export function assemblyElapsed(
+  state: Pick<AssemblyState, "startedAt" | "pausedAt" | "pausedSeconds">,
+  now = performance.now() / 1000,
+): number {
+  if (state.startedAt === null) return 0;
+  return Math.max(0, (state.pausedAt ?? now) - state.startedAt - state.pausedSeconds);
+}
+
+export const useAssembly = create<AssemblyState>((set, get) => ({
   boardId: null,
   startedAt: null,
+  pausedAt: null,
+  pausedSeconds: 0,
   placements: new Map(),
   duration: 0,
   poweredBoardId: null,
   start: (board) => {
     const { placements, duration } = schedule(board.parts);
-    set({ boardId: board.id, startedAt: performance.now() / 1000, placements, duration, poweredBoardId: null });
+    set({ boardId: board.id, startedAt: performance.now() / 1000, pausedAt: null, pausedSeconds: 0, placements, duration, poweredBoardId: null });
   },
-  cancel: () => set({ boardId: null, startedAt: null, placements: new Map(), duration: 0, poweredBoardId: null }),
-  finish: () => set({ startedAt: null }),
+  cancel: () => set({ boardId: null, startedAt: null, pausedAt: null, pausedSeconds: 0, placements: new Map(), duration: 0, poweredBoardId: null }),
+  finish: () => set({ startedAt: null, pausedAt: null, pausedSeconds: 0 }),
+  pause: () => {
+    const state = get();
+    if (state.startedAt !== null && state.pausedAt === null) set({ pausedAt: performance.now() / 1000 });
+  },
+  resume: () => {
+    const state = get();
+    if (state.pausedAt !== null) set({ pausedAt: null, pausedSeconds: state.pausedSeconds + performance.now() / 1000 - state.pausedAt });
+  },
   powerOn: (boardId) => set({ poweredBoardId: boardId }),
 }));
 

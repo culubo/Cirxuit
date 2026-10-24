@@ -21,6 +21,7 @@ when a stalled actuator will brown out the controller — before it happens in t
   inputs, shorts, and rail brownouts.
 - **Firmware, live** — an Arduino-style API (`pinMode`, `digitalWrite`, `digitalRead`,
   `analogRead`, `log`) runs in a sandboxed worker; pin states feed straight into the solver.
+- **Portable projects** — export an editable `.circxit.json` containing the design, generated PCB, and sketch; import it later to continue working, or export a PCB-only JSON snapshot.
 - **Power budgets under load** — the biped power board's four servos can be stalled
   one-click to watch the battery rail collapse and the rail warning fire.
 
@@ -51,6 +52,7 @@ npx playwright test  # end-to-end demo path
 | `solver/`   | pure MNA solver, piecewise-linear iteration, warnings                 |
 | `runtime/`  | sandboxed firmware execution in a worker, Arduino-style `McuApi`      |
 | `scene/`    | 3D board, parts, tracks, selection                                    |
+| `builder/`  | editable PCB document, generated Board, project import/export          |
 | `ui/`       | inspector, code editor, board switcher, servo stall toggle            |
 
 The solver is pure and synchronous. The runtime runs user code off the main thread

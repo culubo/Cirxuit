@@ -9,13 +9,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
 import {
-  addPart, addWire, deletePart, deleteWire, GRID_MM, movePart, padKey, padPosition,
+  addPart, addWire, BOARD_CORNER_RADIUS_MM, deletePart, deleteWire, GRID_MM, movePart, padKey, padPosition,
   placedPads, rotatePart, snap, unwiredPads, wireRoute, type PadRef,
 } from "./doc";
 import { TEMPLATES, type TemplateKind } from "./templates";
 import BuildReplay from "./BuildReplay";
 import { backdrop, button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
+import { pcb } from "../scene/palette";
 
 const MARGIN = 4;
 
@@ -26,6 +27,8 @@ export default function BuilderView(): React.ReactElement {
   const setDoc = useStore((s) => s.setBuilderDoc);
   const tool = useStore((s) => s.builderTool);
   const setTool = useStore((s) => s.setBuilderTool);
+  const stickyPlacement = useStore((s) => s.builderPlacementSticky);
+  const setStickyPlacement = useStore((s) => s.setBuilderPlacementSticky);
   const selection = useStore((s) => s.builderSelection);
   const setSelection = useStore((s) => s.setBuilderSelection);
   const pending = useStore((s) => s.pendingWire);
@@ -80,7 +83,7 @@ export default function BuilderView(): React.ReactElement {
       const { doc: next, ref } = addPart(doc, placing, p.x, p.y);
       setDoc(next);
       setSelection({ kind: "part", ref });
-      if (!e.shiftKey) setTool("select");
+      if (!e.shiftKey && !stickyPlacement) setTool("select");
       return;
     }
     if (tool === "wire") { setPending(null); return; }
@@ -148,7 +151,7 @@ export default function BuilderView(): React.ReactElement {
   );
 
   const statusText = placing
-    ? `Click on the board to place ${TEMPLATES[placing].label}. Shift-click to place several. Esc cancels.`
+    ? `Click on the board to place ${TEMPLATES[placing].label}. ${stickyPlacement ? "Repeat placement is on; Esc cancels." : "Shift-click to place several. Esc cancels."}`
     : tool === "wire"
       ? pending
         ? `Wiring from ${pending.ref} ${pending.pad}. Click another pad to connect; Esc to stop.`
@@ -200,7 +203,7 @@ export default function BuilderView(): React.ReactElement {
       >
         <defs>
           <pattern id="cx-grid" width={GRID_MM} height={GRID_MM} patternUnits="userSpaceOnUse">
-            <circle cx={GRID_MM / 2} cy={GRID_MM / 2} r={0.09} fill="#3a6ea8" opacity={0.55} />
+            <circle cx={GRID_MM / 2} cy={GRID_MM / 2} r={0.09} fill={tokens.controlBorder} opacity={0.5} />
           </pattern>
           <filter id="cx-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="0.35" result="b" />
@@ -209,8 +212,8 @@ export default function BuilderView(): React.ReactElement {
         </defs>
 
         {/* Board */}
-        <rect x={0} y={0} width={doc.widthMm} height={doc.heightMm} rx={1.2} fill="#081a36" stroke="#2a7fc0" strokeWidth={0.25} onClick={onBoardClick} />
-        <rect x={0} y={0} width={doc.widthMm} height={doc.heightMm} fill="url(#cx-grid)" pointerEvents="none" />
+        <rect data-testid="builder-board" x={0} y={0} width={doc.widthMm} height={doc.heightMm} rx={BOARD_CORNER_RADIUS_MM} fill={pcb.mask} stroke={pcb.maskOverCopper} strokeWidth={0.3} onClick={onBoardClick} />
+        <rect x={0} y={0} width={doc.widthMm} height={doc.heightMm} rx={BOARD_CORNER_RADIUS_MM} fill="url(#cx-grid)" pointerEvents="none" />
         <text x={0} y={-1.2} fontSize={1.6} fill={tokens.textFaint} style={{ fontFamily: tokens.fontMono }}>
           {doc.name} · {doc.widthMm} × {doc.heightMm} mm
         </text>

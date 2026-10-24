@@ -41,7 +41,14 @@ User story: As a robotics developer, I want to stall actuators and watch the pow
 3. WHEN a board defines rail limits and a listed net falls below its minimum voltage THE SYSTEM SHALL emit a danger warning naming that net with the board-authored message.
 4. THE SYSTEM SHALL let the user switch between the built-in boards, keeping the LED driver demo as the default.
 
-## Requirement 7 (stretch): Import a KiCad board
+## Requirement 7: Portable project files
+User story: As a developer, I want to save and share a board without losing its editable design or firmware.
+1. WHEN the user exports a project THE SYSTEM SHALL download a versioned `.circxit.json` containing the editable builder design, a generated PCB snapshot, and the sketch.
+2. WHEN the user imports a valid project THE SYSTEM SHALL restore its design and sketch and regenerate the runnable board.
+3. IF an imported file is malformed, unsupported, oversized, or internally inconsistent THEN THE SYSTEM SHALL explain the problem without changing the current design.
+4. THE SYSTEM SHALL also let the user export a PCB-only Board JSON snapshot for external tooling.
+
+## Requirement 8 (stretch): Import a KiCad board
 1. WHEN the user drops a .kicad_pcb file THE SYSTEM SHALL parse outline, footprints, pads, tracks, vias, and nets into the Board model.
 2. IF parts lack electrical models THEN THE SYSTEM SHALL still render and inspect them and mark them as "not simulated".
 

@@ -52,7 +52,7 @@ export function mountingHoles(board: Board): MountingHole[] {
     .map((pad) => ({ position: pad.position, drillMm: pad.drillMm! })));
   if (explicit.length) return explicit.filter((hole, index) => explicit.findIndex((other) =>
     Math.hypot(other.position.x - hole.position.x, other.position.y - hole.position.y) < 0.01) === index);
-  if (board.outline.length !== 4) return [];
+  if (board.outline.length !== 4 && !board.id.startsWith("custom-board")) return [];
   const b = outlineBounds(board.outline);
   if (b.width < 20 || b.height < 20) return [];
   const r = HOLE_DRILL / 2 + HOLE_KEEPOUT;

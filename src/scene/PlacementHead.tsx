@@ -7,7 +7,7 @@ import React, { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { Board, Part } from "../model/board-model";
-import { assemblyOrder, DROP_S, HOVER_MM, headPosition, landing, useAssembly } from "./assembly";
+import { assemblyOrder, assemblyElapsed, DROP_S, HOVER_MM, headPosition, landing, useAssembly } from "./assembly";
 import { machine } from "./palette";
 
 const LIFT_MM = HOVER_MM + 6;
@@ -34,10 +34,11 @@ export default function PlacementHead({ board }: { board: Board }): React.ReactE
   });
 
   function place(g: THREE.Group): void {
-    const { startedAt, placements, duration, boardId, finish } = useAssembly.getState();
+    const state = useAssembly.getState();
+    const { startedAt, placements, duration, boardId } = state;
     if (startedAt === null || boardId !== board.id) { g.visible = false; return; }
-    const t = performance.now() / 1000 - startedAt;
-    if (t > duration + 0.6) { g.visible = false; finish(); return; }
+    const t = assemblyElapsed(state);
+    if (t > duration + 0.6) { g.visible = false; return; }
     g.visible = true;
 
     const at = (p: Part) => placements.get(p.ref)?.at ?? 0;

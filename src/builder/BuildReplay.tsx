@@ -14,6 +14,7 @@ import { useStore } from "../store/useStore";
 import { isThroughHole, landPattern } from "../scene/footprint";
 import { backdrop, button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
+import { pcb } from "../scene/palette";
 
 const MARGIN = 4;
 // Timeline, seconds.
@@ -171,8 +172,8 @@ export default function BuildReplay({ boardId, onClose }: { boardId: string; onC
         </defs>
 
         {/* Board outline */}
-        <rect className="br-fade" x={minX} y={minY} width={w} height={h} rx={1.2} fill="#081a36" style={d(OUTLINE_S * 0.6)} />
-        <rect className="br-draw" pathLength={1} x={minX} y={minY} width={w} height={h} rx={1.2} fill="none" stroke="#2a7fc0" strokeWidth={0.3} style={d(0)} />
+        <rect className="br-fade" x={minX} y={minY} width={w} height={h} rx={2.4} fill={pcb.mask} style={d(OUTLINE_S * 0.6)} />
+        <rect className="br-draw" pathLength={1} x={minX} y={minY} width={w} height={h} rx={2.4} fill="none" stroke={pcb.maskOverCopper} strokeWidth={0.3} style={d(0)} />
         <text className="br-fade" x={minX} y={minY - 1.2} fontSize={1.6} fill={tokens.textFaint} style={{ ...d(0.2), fontFamily: tokens.fontMono }}>
           {board.name} · {w} × {h} mm
         </text>

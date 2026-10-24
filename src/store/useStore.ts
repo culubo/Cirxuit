@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { Board, ElectricalModel, McuState, SimResult } from "../model/board-model";
 import { solve } from "../solver/solve";
 import { applyTraceEvent, type TraceEvent } from "../runtime/execute";
-import { blankDoc, isBuilderDoc, type BuilderDoc, type PadRef } from "../builder/doc";
+import { blankDoc, CUSTOM_BOARD_ID, isBuilderDoc, type BuilderDoc, type PadRef } from "../builder/doc";
 import type { TemplateKind } from "../builder/templates";
 import { starterSketch } from "../ide/starters";
 
@@ -98,6 +98,7 @@ interface AppState {
   // Builder
   builderDoc: BuilderDoc;
   builderTool: BuilderTool;
+  builderPlacementSticky: boolean;
   builderSelection: BuilderSelection;
   pendingWire: PadRef | null;
 
@@ -141,7 +142,10 @@ interface AppState {
   setGuideOpen: (open: boolean) => void;
   markGuideDone: (id: string) => void;
   setBuilderDoc: (doc: BuilderDoc) => void;
+  /** Replace the editable board and optional sketch as one imported project. */
+  importBuilderProject: (doc: BuilderDoc, sketch?: string) => void;
   setBuilderTool: (tool: BuilderTool) => void;
+  setBuilderPlacementSticky: (sticky: boolean) => void;
   setBuilderSelection: (selection: BuilderSelection) => void;
   setPendingWire: (pad: PadRef | null) => void;
 }
@@ -241,6 +245,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   builderDoc: initialDoc(),
   builderTool: "select",
+  builderPlacementSticky: false,
   builderSelection: null,
   pendingWire: null,
 
@@ -318,7 +323,7 @@ export const useStore = create<AppState>((set, get) => ({
       };
     }),
 
-  setMode: (mode) => set({ mode, pendingWire: null }),
+  setMode: (mode) => set({ mode, pendingWire: null, builderPlacementSticky: false }),
   setCode: (code) =>
     set((state) => ({
       codes: { ...state.codes, [state.boardId ?? ""]: code },
@@ -355,7 +360,34 @@ export const useStore = create<AppState>((set, get) => ({
   markGuideDone: (id) =>
     set((state) => (state.guideDone.includes(id) ? {} : { guideDone: [...state.guideDone, id] })),
   setBuilderDoc: (builderDoc) => set({ builderDoc }),
-  setBuilderTool: (builderTool) => set({ builderTool, pendingWire: null }),
+  importBuilderProject: (builderDoc, sketch) =>
+    set((state) => ({
+      builderDoc,
+      boardId: CUSTOM_BOARD_ID,
+      mode: "build",
+      builderTool: "select",
+      builderPlacementSticky: false,
+      builderSelection: null,
+      pendingWire: null,
+      mcuState: { modes: {}, outputs: {} },
+      selection: null,
+      hover: null,
+      logs: [],
+      runError: null,
+      running: false,
+      playback: null,
+      lastRun: null,
+      ...(sketch === undefined ? {} : {
+        codes: { ...state.codes, [CUSTOM_BOARD_ID]: sketch },
+        codeRev: state.codeRev + 1,
+      }),
+    })),
+  setBuilderTool: (builderTool) => set((state) => ({
+    builderTool,
+    pendingWire: null,
+    builderPlacementSticky: builderTool.startsWith("place:") ? state.builderPlacementSticky : false,
+  })),
+  setBuilderPlacementSticky: (builderPlacementSticky) => set({ builderPlacementSticky }),
   setBuilderSelection: (builderSelection) => set({ builderSelection }),
   setPendingWire: (pendingWire) => set({ pendingWire }),
 }));

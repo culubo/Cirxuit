@@ -108,24 +108,28 @@ export default function App(): React.ReactElement {
         <EditorPane runner={runner} problems={problems} />
 
         <section aria-label={mode === "build" ? "Board editor" : "Board view"} style={{ position: "relative", minWidth: 0, minHeight: 0, background: backdrop }}>
-          {mode === "build" ? (
-            <BuilderView />
-          ) : (
-            <>
-              <SceneErrorBoundary>
-                <BoardScene />
-              </SceneErrorBoundary>
-              <SceneControls />
-              <SchematicMirror />
-              <RobotHud />
-              <LayerSheets />
-            </>
-          )}
+          <div key={mode} className={`cx-mode-view ${mode === "build" ? "cx-mode-build" : "cx-mode-simulate"}`} style={{ position: "absolute", inset: 0, minWidth: 0, minHeight: 0 }}>
+            {mode === "build" ? (
+              <BuilderView />
+            ) : (
+              <>
+                <SceneErrorBoundary>
+                  <BoardScene />
+                </SceneErrorBoundary>
+                <SceneControls />
+                <SchematicMirror />
+                <RobotHud />
+                <LayerSheets />
+              </>
+            )}
+          </div>
           <GuideCard problems={problems.all} placement={mode === "build" ? "bottom" : "top"} />
           <IntroPanel />
         </section>
 
-        {mode === "build" ? <BuilderSidebar boardProblems={problems.board} /> : <InspectorPanel />}
+        <div key={`side-${mode}`} className={`cx-mode-view ${mode === "build" ? "cx-mode-build" : "cx-mode-simulate"}`} style={{ minWidth: 0, minHeight: 0 }}>
+          {mode === "build" ? <BuilderSidebar boardProblems={problems.board} /> : <InspectorPanel />}
+        </div>
 
         <PaneResizer side="left" label="Resize the code editor" width={editorWidth} {...EDITOR_PANE} onResize={setEditorWidth} />
         <PaneResizer side="right" label="Resize the inspector" width={inspectorWidth} {...INSPECTOR_PANE} onResize={setInspectorWidth} />

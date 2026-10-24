@@ -17,7 +17,7 @@ import * as THREE from "three";
 import type { Part } from "../../model/board-model";
 import { useStore } from "../../store/useStore";
 import { tokens } from "../../ui/tokens";
-import { DROP_S, HOVER_MM, landing, useAssembly } from "../assembly";
+import { assemblyElapsed, DROP_S, HOVER_MM, landing, useAssembly } from "../assembly";
 import { packageFamily, type PackageFamily } from "../footprint";
 import ChipLed from "./ChipLed";
 import ChipPassive from "./ChipPassive";
@@ -127,14 +127,15 @@ export default function PartModel({ part, dimmed, thicknessMm }: PartModelProps)
   useFrame(() => {
     const g = placed.current;
     if (!g) return;
-    const { startedAt, placements } = useAssembly.getState();
+    const state = useAssembly.getState();
+    const { startedAt, placements } = state;
     const slot = startedAt === null ? undefined : placements.get(part.ref);
     if (!slot || startedAt === null) {
       g.visible = true;
       g.position.z = 0;
       return;
     }
-    const t = performance.now() / 1000 - startedAt - slot.at;
+    const t = assemblyElapsed(state) - slot.at;
     g.visible = t >= 0;
     g.position.z = HOVER_MM * (1 - landing(t / DROP_S));
   });

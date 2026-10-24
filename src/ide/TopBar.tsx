@@ -133,6 +133,7 @@ export default function TopBar(): React.ReactElement {
       {helpOpen && (
         <div
           data-testid="help-panel"
+          className="cx-enter"
           role="dialog"
           aria-label="Keyboard shortcuts"
           style={{ position: "absolute", top: "40px", right: "0.75rem", zIndex: 40, width: "22rem", background: tokens.panel, border: `1px solid ${tokens.panelBorder}`, borderRadius: "4px", padding: "0.7rem 0.8rem", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}

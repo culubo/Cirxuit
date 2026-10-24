@@ -8,6 +8,7 @@ import { tokens } from "./tokens";
 import { isRobotBoard } from "../robot/robotState";
 import { useRobotStore } from "../robot/useRobotStore";
 import { useLayerSheets } from "./LayerSheets";
+import { useAssembly } from "../scene/assembly";
 
 const wrap: React.CSSProperties = {
   position: "absolute",
@@ -61,11 +62,16 @@ export default function SceneControls(): React.ReactElement {
   const robotModel = useRobotStore((s) => s.model);
   const setRobotModel = useRobotStore((s) => s.setModel);
   const inRobot = robotBoard && robotView;
+  const currentBoardId = useStore((s) => s.board?.id ?? null);
+  const assemblyBoardId = useAssembly((s) => s.boardId);
+  const assemblyStarted = useAssembly((s) => s.startedAt !== null);
+  const assemblyPaused = useAssembly((s) => s.pausedAt !== null);
+  const assemblyActive = assemblyStarted && assemblyBoardId === currentBoardId;
   const sheetsOpen = useLayerSheets((s) => s.open);
   const setSheetsOpen = useLayerSheets((s) => s.setOpen);
 
   return (
-    <div style={wrap}>
+    <div className="cx-enter" style={wrap}>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
         <span style={label}>Explode</span>
         <input
@@ -81,6 +87,29 @@ export default function SceneControls(): React.ReactElement {
           style={{ width: "100%", accentColor: tokens.phosphor }}
         />
       </div>
+
+      {assemblyActive && (
+        <div style={toggleRow}>
+          <span style={label}>Board build</span>
+          <button
+            data-testid="assembly-pause"
+            aria-pressed={assemblyPaused}
+            onClick={() => assemblyPaused ? useAssembly.getState().resume() : useAssembly.getState().pause()}
+            style={{
+              background: assemblyPaused ? tokens.controlActiveSoft : "transparent",
+              border: `1px solid ${assemblyPaused ? tokens.controlBorder : tokens.hairline}`,
+              borderRadius: "2px",
+              color: assemblyPaused ? tokens.phosphor : tokens.text,
+              fontFamily: tokens.fontMono,
+              fontSize: "0.72rem",
+              padding: "0.2rem 0.5rem",
+              cursor: "pointer",
+            }}
+          >
+            {assemblyPaused ? "Resume" : "Pause"}
+          </button>
+        </div>
+      )}
 
       {!reference && <><div style={toggleRow}>
         <span style={label}>Current flow</span>

@@ -16,6 +16,7 @@
 | `runtime/` | sandboxed user code (Web Worker), McuApi, timeouts | model, solver |
 | `scene/` | board, layers, parts, tracks, particles, explode animation | model, sim result |
 | `ui/` | inspector panel, code editor, toolbar, warnings feed | everything via store |
+| `builder/` | editable PCB document, Board derivation, versioned project import/export | model, store |
 | `import/` (stretch) | .kicad_pcb S-expression parser to Board | model |
 
 Data flow: user action -> store -> solver.solve(board, mcuState) -> SimResult -> scene + ui. The solver is pure and synchronous.

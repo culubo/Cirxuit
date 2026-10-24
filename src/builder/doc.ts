@@ -43,6 +43,25 @@ export interface BuilderDoc {
 }
 
 export const TRACE_WIDTH_MM = 0.5;
+export const BOARD_CORNER_RADIUS_MM = 2.4;
+
+/** Clockwise rounded rectangle outline, explicitly closed for board geometry. */
+export function roundedRectOutline(width: number, height: number, radius = BOARD_CORNER_RADIUS_MM): Vec2[] {
+  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+  const points: Vec2[] = [];
+  const corner = (cx: number, cy: number, start: number): void => {
+    for (let i = 0; i <= 4; i++) {
+      const angle = start + (i / 4) * (Math.PI / 2);
+      points.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+    }
+  };
+  corner(width - r, r, -Math.PI / 2);
+  corner(width - r, height - r, 0);
+  corner(r, height - r, Math.PI / 2);
+  corner(r, r, Math.PI);
+  points.push({ ...points[0]! });
+  return points;
+}
 
 export function blankDoc(): BuilderDoc {
   return { name: "My board", widthMm: 60, heightMm: 40, parts: [], wires: [] };
@@ -280,9 +299,7 @@ export function docToBoard(doc: BuilderDoc): Board {
   return {
     id: CUSTOM_BOARD_ID,
     name: doc.name,
-    outline: [
-      { x: 0, y: 0 }, { x: doc.widthMm, y: 0 }, { x: doc.widthMm, y: doc.heightMm }, { x: 0, y: doc.heightMm },
-    ],
+    outline: roundedRectOutline(doc.widthMm, doc.heightMm),
     thicknessMm: 1.6,
     copperLayers: ["F.Cu", "B.Cu"],
     parts,

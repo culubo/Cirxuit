@@ -9,7 +9,7 @@
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { headPosition, useAssembly } from "./assembly";
+import { assemblyElapsed, headPosition, useAssembly } from "./assembly";
 
 /** Close-up framing: distance from the nozzle tip, tilt from vertical, orbit speed. */
 const FOLLOW_DIST = 46;
@@ -52,7 +52,8 @@ export default function AssemblyCamera(): null {
   const target = useRef(new THREE.Vector3());
 
   useFrame((_, delta) => {
-    const { startedAt, duration, boardId } = useAssembly.getState();
+    const assembly = useAssembly.getState();
+    const { startedAt, duration, boardId, pausedAt } = assembly;
     const now = performance.now() / 1000;
     let s = shot.current;
 
@@ -79,7 +80,8 @@ export default function AssemblyCamera(): null {
       return;
     }
 
-    const t = now - s.startedAt;
+    if (pausedAt !== null) return;
+    const t = assemblyElapsed(assembly, now);
     if (!s.pulling && t < s.duration) {
       // Follow the head with a slow orbit, easing in from the overview.
       const kT = 1 - Math.exp(-delta / TARGET_TAU);
@@ -110,7 +112,9 @@ export default function AssemblyCamera(): null {
     camera.lookAt(look);
     if (u >= 1) {
       shot.current = null;
-      useAssembly.getState().powerOn(s.boardId);
+      const assemblyState = useAssembly.getState();
+      assemblyState.powerOn(s.boardId);
+      assemblyState.finish();
       if (controls) {
         controls.target.copy(s.homeTarget);
         controls.enabled = true;

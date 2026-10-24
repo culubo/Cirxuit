@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { chooseBoard } from "./helpers";
 
 /**
  * Visual-polish verification harness. Not part of acceptance — it captures PNGs
@@ -42,7 +43,7 @@ test("shot: selected", async ({ page }) => {
 
 test("shot: biped-stalled", async ({ page }) => {
   await page.goto("/");
-  await page.getByTestId("board-switcher").selectOption("biped-power-board");
+  await chooseBoard(page, "biped-power-board");
   for (const ref of ["J2", "J3", "J4", "J5"]) {
     await page.getByTestId(`part-${ref}`).click();
     const toggle = page.getByTestId("stall-toggle");
@@ -112,7 +113,7 @@ async function openExploded(
 ): Promise<void> {
   await page.goto("/");
   if (boardId !== "demo-board") {
-    await page.getByTestId("board-switcher").selectOption(boardId);
+    await chooseBoard(page, boardId);
   }
   // Keep the guide card from covering the viewport in the shots.
   if (await page.getByTestId("guide-panel").isVisible()) {
@@ -164,7 +165,7 @@ test.describe("robot", () => {
 
   async function openRobot(page: import("@playwright/test").Page): Promise<void> {
     await page.goto("/");
-    await page.getByTestId("board-switcher").selectOption("biped-power-board");
+    await chooseBoard(page, "biped-power-board");
     if (await page.getByTestId("guide-panel").isVisible()) await page.getByTestId("guide-toggle").click();
     await page.getByTestId("robot-view-toggle").click();
     await expect(page.getByTestId("robot-state")).toHaveAttribute("data-robot-ready", "true", { timeout: 15_000 });
@@ -210,7 +211,7 @@ test.describe("layers", () => {
 
   async function openSheets(page: import("@playwright/test").Page, boardId: string): Promise<void> {
     await page.goto("/");
-    if (boardId !== "demo-board") await page.getByTestId("board-switcher").selectOption(boardId);
+    if (boardId !== "demo-board") await chooseBoard(page, boardId);
     if (await page.getByTestId("guide-panel").isVisible()) await page.getByTestId("guide-toggle").click();
     await page.getByTestId("layer-sheets-toggle").click();
     await expect(page.getByTestId("layer-sheet-copperTop")).toBeVisible();

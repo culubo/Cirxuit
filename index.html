@@ -11,8 +11,20 @@
       button, input, select, textarea { font: inherit; }
       button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #75f0c1; outline-offset: 1px; }
       @keyframes cx-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(117,240,193,0.5); } 50% { opacity: 0.58; box-shadow: 0 0 0 6px rgba(117,240,193,0); } }
+      @keyframes cx-fade-up { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes cx-slide-build { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+      @keyframes cx-slide-simulate { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: translateX(0); } }
       .cx-guide-ring { animation: cx-pulse 1.4s ease-in-out infinite; }
-      @media (prefers-reduced-motion: reduce) { .cx-guide-ring { animation: none; } }
+      .cx-enter { animation: cx-fade-up 190ms cubic-bezier(.2,.8,.3,1) both; }
+      .cx-mode-build { animation: cx-slide-build 220ms cubic-bezier(.2,.8,.3,1) both; }
+      .cx-mode-simulate { animation: cx-slide-simulate 220ms cubic-bezier(.2,.8,.3,1) both; }
+      button { transition: transform 140ms ease, filter 140ms ease, border-color 140ms ease, background-color 140ms ease; }
+      @media (hover: hover) and (pointer: fine) { button:not(:disabled):hover { transform: translateY(-1px); filter: brightness(1.12); } }
+      @media (prefers-reduced-motion: reduce) {
+        .cx-guide-ring, .cx-enter, .cx-mode-build, .cx-mode-simulate { animation: none; }
+        button { transition: none; }
+        button:not(:disabled):hover { transform: none; }
+      }
     </style>
   </head>
   <body>

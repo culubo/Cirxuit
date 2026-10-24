@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { chooseBoard } from "./helpers";
 
 // Robot view on the biped board: the robot's state follows the solved VBAT rail.
 // Two stalled servos pull VBAT below its 6 V limit (brownout); releasing them
@@ -19,7 +20,7 @@ test("robot view walks, browns out under two stalled servos, and recovers", asyn
   await page.goto("/");
   // Only the biped board offers the robot.
   await expect(page.getByTestId("robot-view-toggle")).toHaveCount(0);
-  await page.getByTestId("board-switcher").selectOption("biped-power-board");
+  await chooseBoard(page, "biped-power-board");
 
   const toggle = page.getByTestId("robot-view-toggle");
   await expect(toggle).toBeVisible();

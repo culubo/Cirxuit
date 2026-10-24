@@ -3,7 +3,7 @@
  * left (never over the editor, inspector, or run controls). Steps tick off from
  * live state; the current step's control gets a pulsing outline.
  */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
@@ -61,6 +61,10 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
   const state = useStore();
   const [collapsed, setCollapsed] = useState(false);
   const [point, setPoint] = useState(true);
+  const [selectedStepId, setSelectedStepId] = useState<string | null>(null);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ clientX: number; clientY: number; x: number; y: number } | null>(null);
 
   const guide = guideFor(boardId);
 
@@ -72,39 +76,72 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
     }
   }, [guide, guideDone, markDone, state, problems]);
 
-  const currentIndex = useMemo(
+  const nextIndex = useMemo(
     () => (guide ? guide.steps.findIndex((st) => !guideDone.includes(st.id)) : -1),
     [guide, guideDone],
   );
+  const selectedIndex = guide ? guide.steps.findIndex((step) => step.id === selectedStepId) : -1;
+  const activeIndex = selectedIndex >= 0 ? selectedIndex : nextIndex;
+
+  useEffect(() => { setSelectedStepId(null); }, [boardId]);
+  useEffect(() => { setPosition(null); }, [placement]);
+
+  const clampPosition = (x: number, y: number): { x: number; y: number } => {
+    const panel = panelRef.current;
+    const parent = panel?.parentElement;
+    if (!panel || !parent) return { x, y };
+    return {
+      x: Math.max(0, Math.min(x, parent.clientWidth - panel.offsetWidth)),
+      y: Math.max(0, Math.min(y, parent.clientHeight - Math.min(panel.offsetHeight, parent.clientHeight))),
+    };
+  };
 
   if (!guide || !open || introOpen) return null;
   const doneCount = guide.steps.filter((st) => guideDone.includes(st.id)).length;
-  const current = currentIndex >= 0 ? guide.steps[currentIndex] : undefined;
+  const current = activeIndex >= 0 ? guide.steps[activeIndex] : undefined;
 
   return (
     <>
       {point && current?.target && <TargetRing testId={current.target} />}
       <div
+        ref={panelRef}
         data-testid="guide-panel"
         role="region"
         aria-label="Guide"
+        className="cx-enter cx-floating-panel"
         style={{
           ...font,
           position: "absolute",
-          ...(placement === "top" ? { top: "0.75rem" } : { bottom: "0.75rem" }),
-          left: "0.75rem",
+          ...(position ? { left: position.x, top: position.y } : placement === "top" ? { top: "0.75rem", left: "0.75rem" } : { bottom: "0.75rem", left: "0.75rem" }),
           zIndex: 20,
           width: collapsed ? "auto" : "19rem",
           maxHeight: placement === "top" ? "calc(100% - 10rem)" : "calc(100% - 4rem)",
           overflowY: "auto",
-          background: "rgba(8,20,38,0.94)",
+          background: "rgba(12,23,18,0.96)",
           border: `1px solid ${tokens.panelBorder}`,
           borderRadius: "5px",
           boxShadow: "0 6px 20px rgba(0,0,0,0.45)",
           color: tokens.text,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.6rem", borderBottom: collapsed ? "none" : `1px solid ${tokens.hairline}` }}>
+        <div
+          data-testid="guide-drag-handle"
+          onPointerDown={(event) => {
+            if ((event.target as HTMLElement).closest("button, input")) return;
+            const panel = panelRef.current;
+            if (!panel) return;
+            drag.current = { clientX: event.clientX, clientY: event.clientY, x: panel.offsetLeft, y: panel.offsetTop };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            const start = drag.current;
+            if (!start) return;
+            setPosition(clampPosition(start.x + event.clientX - start.clientX, start.y + event.clientY - start.clientY));
+          }}
+          onPointerUp={() => { drag.current = null; }}
+          onPointerCancel={() => { drag.current = null; }}
+          style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.6rem", borderBottom: collapsed ? "none" : `1px solid ${tokens.hairline}`, cursor: "grab", touchAction: "none", userSelect: "none" }}
+        >
           <span style={{ color: tokens.phosphor, fontSize: "0.72rem", fontWeight: 700 }}>GUIDE</span>
           <span style={{ fontSize: "0.72rem", color: tokens.text, flex: 1 }}>{guide.title}</span>
           <span style={{ fontSize: "0.66rem", color: tokens.textFaint }}>{doneCount}/{guide.steps.length}</span>
@@ -119,7 +156,7 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
             {/* The mascot reads the intro aloud, and beams once every step is done. */}
             <MascotTalk
               text={guide.intro}
-              mood={currentIndex < 0 ? "happy" : "neutral"}
+              mood={doneCount === guide.steps.length ? "happy" : "neutral"}
               size={120}
               style={{ marginBottom: "0.5rem" }}
               textStyle={{ fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}
@@ -127,19 +164,30 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
             <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.2rem" }}>
               {guide.steps.map((step, i) => {
                 const done = guideDone.includes(step.id);
-                const isCurrent = i === currentIndex;
+                const isCurrent = i === activeIndex;
                 return (
                   <li
                     key={step.id}
                     data-testid={`guide-step-${step.id}`}
                     data-done={done ? "true" : "false"}
-                    style={{
-                      padding: "0.35rem 0.45rem",
-                      borderRadius: "3px",
-                      background: isCurrent ? "rgba(117,240,193,0.08)" : "transparent",
-                      border: `1px solid ${isCurrent ? tokens.controlBorder : "transparent"}`,
-                    }}
+                    data-active={isCurrent ? "true" : "false"}
                   >
+                    <button
+                      type="button"
+                      aria-pressed={isCurrent}
+                      onClick={() => setSelectedStepId(step.id)}
+                      style={{
+                        ...font,
+                        width: "100%",
+                        padding: "0.35rem 0.45rem",
+                        textAlign: "left",
+                        borderRadius: "3px",
+                        cursor: "pointer",
+                        color: tokens.text,
+                        background: isCurrent ? "rgba(117,240,193,0.08)" : "transparent",
+                        border: `1px solid ${isCurrent ? tokens.controlBorder : "transparent"}`,
+                      }}
+                    >
                     <div style={{ display: "flex", gap: "0.45rem", alignItems: "baseline" }}>
                       <span style={{ color: done ? tokens.phosphor : isCurrent ? tokens.text : tokens.textFaint, width: "1rem", fontSize: "0.72rem" }}>
                         {done ? "✓" : `${i + 1}.`}
@@ -153,11 +201,12 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
                         {step.detail}
                       </div>
                     )}
+                    </button>
                   </li>
                 );
               })}
             </ol>
-            {currentIndex < 0 ? (
+            {doneCount === guide.steps.length && !current ? (
               <div style={{ marginTop: "0.5rem", fontSize: "0.7rem", color: tokens.phosphor }}>All done. Try another board from the Board menu.</div>
             ) : (
               <label style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.5rem", fontSize: "0.66rem", color: tokens.textFaint, cursor: "pointer" }}>

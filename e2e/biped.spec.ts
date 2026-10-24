@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import type { Board, Part } from "../src/model/board-model";
+import { chooseBoard } from "./helpers";
 
 const SERVO_REFS = ["J2", "J3", "J4", "J5"] as const;
 const biped = JSON.parse(readFileSync(resolve(process.cwd(), "src/model/biped-power-board.json"), "utf8")) as Board;
@@ -61,9 +62,7 @@ test("biped servo stalls show the VBAT warning exactly when the calculated rail 
   await page.goto("/");
   const switcher = page.getByTestId("board-switcher");
   await expect(switcher).toBeVisible();
-  await expect(switcher.locator('option[value="biped-power-board"]')).toHaveCount(1);
-  await switcher.selectOption("biped-power-board");
-  await expect(switcher).toHaveValue("biped-power-board");
+  await chooseBoard(page, "biped-power-board");
   for (const ref of SERVO_REFS) await expect(page.getByTestId(`part-${ref}`)).toBeVisible();
   await expect(page.getByTestId("warning-feed")).toBeVisible();
   await checkWarning();
