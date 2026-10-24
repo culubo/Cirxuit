@@ -4,7 +4,7 @@
  */
 import React from "react";
 import { useStore, SPEEDS } from "../store/useStore";
-import { button, font, label, select } from "../ui/chrome";
+import { backdrop, barTint, button, font, label, select } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 import CodeEditor from "./CodeEditor";
 import BottomPanel from "./BottomPanel";
@@ -34,7 +34,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
   return (
     <section
       aria-label="Code"
-      style={{ display: "flex", flexDirection: "column", minHeight: 0, height: "100%", borderRight: `1px solid ${tokens.hairline}`, background: "#060e1c" }}
+      style={{ display: "flex", flexDirection: "column", minHeight: 0, height: "100%", borderRight: `1px solid ${tokens.hairline}`, background: backdrop }}
     >
       {/* Run toolbar */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.5rem", borderBottom: `1px solid ${tokens.hairline}`, flexWrap: "wrap" }}>
@@ -89,7 +89,7 @@ export default function EditorPane({ runner, problems }: Props): React.ReactElem
       </div>
 
       {/* File tab + build chip */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.6rem", height: "28px", borderBottom: `1px solid ${tokens.hairline}`, background: "#081426" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.6rem", height: "28px", borderBottom: `1px solid ${tokens.hairline}`, background: barTint }}>
         <span style={{ ...font, fontSize: "0.74rem", color: tokens.text }}>{fileName}</span>
         <button
           data-testid="build-chip"

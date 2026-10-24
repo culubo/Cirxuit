@@ -17,6 +17,8 @@ import { useProblems } from "./ide/useProblems";
 import { useRunner } from "./ide/useRunner";
 import GuideCard from "./guide/GuideCard";
 import IntroPanel from "./ui/brand/IntroPanel";
+import PaneResizer, { usePaneWidth } from "./ui/PaneResizer";
+import { backdrop } from "./ui/chrome";
 import BuilderView from "./builder/BuilderView";
 import BuilderSidebar from "./builder/BuilderSidebar";
 
@@ -85,8 +87,14 @@ function BoardLoader(): null {
   return null;
 }
 
+// Side pane widths (px): default, minimum, maximum.
+const EDITOR_PANE = { fallback: 420, min: 280, max: 720 };
+const INSPECTOR_PANE = { fallback: 340, min: 260, max: 600 };
+
 export default function App(): React.ReactElement {
   const mode = useStore((s) => s.mode);
+  const [editorWidth, setEditorWidth] = usePaneWidth("editor", EDITOR_PANE.fallback, EDITOR_PANE.min, EDITOR_PANE.max);
+  const [inspectorWidth, setInspectorWidth] = usePaneWidth("inspector", INSPECTOR_PANE.fallback, INSPECTOR_PANE.min, INSPECTOR_PANE.max);
   const problems = useProblems();
   const runner = useRunner();
 
@@ -95,10 +103,10 @@ export default function App(): React.ReactElement {
       <BoardLoader />
       <TopBar />
 
-      <main style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: "minmax(330px, 420px) minmax(0, 1fr) 340px" }}>
+      <main style={{ position: "relative", flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: `${editorWidth}px minmax(0, 1fr) ${inspectorWidth}px` }}>
         <EditorPane runner={runner} problems={problems} />
 
-        <section aria-label={mode === "build" ? "Board editor" : "Board view"} style={{ position: "relative", minWidth: 0, minHeight: 0 }}>
+        <section aria-label={mode === "build" ? "Board editor" : "Board view"} style={{ position: "relative", minWidth: 0, minHeight: 0, background: backdrop }}>
           {mode === "build" ? (
             <BuilderView />
           ) : (
@@ -116,6 +124,9 @@ export default function App(): React.ReactElement {
         </section>
 
         {mode === "build" ? <BuilderSidebar boardProblems={problems.board} /> : <InspectorPanel />}
+
+        <PaneResizer side="left" label="Resize the code editor" width={editorWidth} {...EDITOR_PANE} onResize={setEditorWidth} />
+        <PaneResizer side="right" label="Resize the inspector" width={inspectorWidth} {...INSPECTOR_PANE} onResize={setInspectorWidth} />
       </main>
 
       <StatusBar problems={problems} />

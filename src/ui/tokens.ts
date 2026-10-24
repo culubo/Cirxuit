@@ -9,6 +9,9 @@
 export const tokens = {
   // Surfaces — deep navy, like a backlit circuit blueprint
   bg: "#050b18",
+  // Workspace backdrop: deep blue at the top easing into a deep purple-pink.
+  bgTop: "#08173d",
+  bgBottom: "#230e34",
   panel: "#0a1424",
   panelBorder: "#1c3350",
   hairline: "#142640",

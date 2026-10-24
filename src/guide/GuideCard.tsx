@@ -118,7 +118,7 @@ export default function GuideCard({ problems, placement = "top" }: Props): React
             <MascotTalk
               text={guide.intro}
               mood={currentIndex < 0 ? "happy" : "neutral"}
-              size={56}
+              size={120}
               style={{ marginBottom: "0.5rem" }}
               textStyle={{ fontSize: "0.7rem", color: tokens.textDim, lineHeight: 1.5 }}
             />

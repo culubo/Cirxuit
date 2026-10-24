@@ -16,6 +16,7 @@ import ParamField from "./ParamField";
 import { numericFields } from "./modelFields";
 import { formatEngineering } from "./parse-eng";
 import { formatQuantity } from "./format";
+import { backdrop } from "./chrome";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ const DEVICE_STATE_LABEL: Record<string, string> = {
 const panel: React.CSSProperties = {
   height: "100%",
   overflowY: "auto",
-  background: "#0a1424",
+  background: backdrop,
   borderLeft: "1px solid #1c3350",
   fontFamily: "monospace",
   fontSize: "0.8rem",

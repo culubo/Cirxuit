@@ -22,6 +22,8 @@ export type MascotMood = "neutral" | "happy" | "oops";
 const REST: Record<MascotMood, string> = { neutral: restUrl, happy: happyUrl, oops: oopsUrl };
 const TALK = [talkAUrl, talkBUrl, talkCUrl, talkBUrl];
 const MOUTH_MS = 110;
+/** The face art's height ÷ width (cropped tight to the head). */
+const ASPECT = 237 / 320;
 
 // Decode every frame up front so the first syllables don't flicker.
 if (typeof Image !== "undefined") {
@@ -35,7 +37,7 @@ function prefersReducedMotion(): boolean {
 interface MascotTalkProps {
   text: string;
   mood?: MascotMood;
-  /** Head size, px. */
+  /** Head width, px (height follows the art). */
   size?: number;
   /** Typing speed, characters per second. */
   cps?: number;
@@ -77,9 +79,9 @@ export default function MascotTalk({ text, mood = "neutral", size = 56, cps = 55
         alt=""
         aria-hidden="true"
         width={size}
-        height={size}
+        height={Math.round(size * ASPECT)}
         draggable={false}
-        style={{ display: "block", flex: "none", userSelect: "none", marginTop: `-${size * 0.08}px` }}
+        style={{ display: "block", flex: "none", userSelect: "none" }}
       />
       <p style={{ margin: 0, ...textStyle }}>
         {text.slice(0, shown)}

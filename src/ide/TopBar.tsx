@@ -26,6 +26,10 @@ export default function TopBar(): React.ReactElement {
   const mode = useStore((s) => s.mode);
   const setMode = useStore((s) => s.setMode);
   const boardId = useStore((s) => s.boardId);
+  const boardName = useStore((s) => s.board?.name ?? "");
+  const builderDoc = useStore((s) => s.builderDoc);
+  const setBuilderDoc = useStore((s) => s.setBuilderDoc);
+  const ownBoard = boardId === CUSTOM_BOARD_ID;
   const setBoardId = useStore((s) => s.setBoardId);
   const guideOpen = useStore((s) => s.guideOpen);
   const setGuideOpen = useStore((s) => s.setGuideOpen);
@@ -79,6 +83,29 @@ export default function TopBar(): React.ReactElement {
       </div>
 
       <BoardSwitcher />
+
+      {/* Your own board takes a name here (the same name the Build PCB sidebar edits);
+          built-in boards show theirs read-only. */}
+      {ownBoard ? (
+        <input
+          data-testid="board-name"
+          aria-label="Board name"
+          value={builderDoc.name}
+          maxLength={40}
+          placeholder="Name your board"
+          onChange={(e) => setBuilderDoc({ ...builderDoc, name: e.target.value })}
+          title="Name your board. It prints on the silkscreen and the exported file."
+          style={{ ...font, width: "13rem", height: "26px", padding: "0 0.5rem", fontSize: "0.76rem", color: tokens.text, background: "#06101c", border: `1px solid ${tokens.hairline}`, borderRadius: "3px" }}
+        />
+      ) : (
+        <span
+          data-testid="board-name"
+          title="Built-in boards keep their names. Pick My board in the Board menu to name your own."
+          style={{ ...font, maxWidth: "16rem", fontSize: "0.74rem", color: tokens.textDim, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+        >
+          {boardName}
+        </span>
+      )}
 
       <div role="tablist" aria-label="Mode" style={{ display: "flex", gap: "0.2rem", padding: "2px", border: `1px solid ${tokens.hairline}`, borderRadius: "4px" }}>
         {tab("simulate", "Simulate", "Run firmware against the board and watch the circuit")}

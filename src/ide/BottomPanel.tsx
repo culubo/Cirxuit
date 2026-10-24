@@ -48,7 +48,7 @@ export default function BottomPanel({ problems }: Props): React.ReactElement {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "#060c18" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "transparent" }}>
       <div role="tablist" style={{ display: "flex", alignItems: "stretch", height: "28px", borderBottom: `1px solid ${tokens.hairline}` }}>
         {tabs.map((t) => (
           <button
@@ -160,7 +160,7 @@ function ProblemsView({ problems }: Props): React.ReactElement {
       <div data-testid="problems-empty" style={{ ...font, fontSize: "0.74rem", color: tokens.phosphor }}>
         <MascotTalk
           mood="happy"
-          size={52}
+          size={104}
           text="✓ No problems. The sketch builds, the board passes its rules check, and the circuit solves cleanly."
           textStyle={{ lineHeight: 1.55, paddingTop: "0.35rem" }}
         />
@@ -184,7 +184,7 @@ function ProblemsView({ problems }: Props): React.ReactElement {
 
   return (
     <>
-    <MascotTalk mood="oops" size={44} text={summary} style={{ marginBottom: "0.45rem" }} textStyle={{ ...font, fontSize: "0.72rem", color: tokens.textDim, lineHeight: 1.5, paddingTop: "0.3rem" }} />
+    <MascotTalk mood="oops" size={92} text={summary} style={{ marginBottom: "0.45rem" }} textStyle={{ ...font, fontSize: "0.72rem", color: tokens.textDim, lineHeight: 1.5, paddingTop: "0.3rem" }} />
     <ul data-testid="problems-panel" style={{ listStyle: "none", margin: 0, padding: 0 }}>
       {problems.all.map((p) => {
         const clickable = p.line !== undefined || p.ref !== undefined;

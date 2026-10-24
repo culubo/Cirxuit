@@ -13,7 +13,7 @@ import { PALETTE_ORDER, TEMPLATES, valueLabel } from "./templates";
 import ParamField from "../ui/ParamField";
 import { formatEngineering } from "../ui/parse-eng";
 import { numericFields } from "../ui/modelFields";
-import { button, font, label, severityColor, severityGlyph } from "../ui/chrome";
+import { backdrop, button, font, label, severityColor, severityGlyph } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 import type { Problem } from "../build/problems";
 
@@ -52,7 +52,7 @@ export default function BuilderSidebar({ boardProblems }: { boardProblems: Probl
   };
 
   return (
-    <aside aria-label="Builder" style={{ ...font, height: "100%", overflowY: "auto", background: "#0a1424", borderLeft: `1px solid ${tokens.panelBorder}`, color: tokens.text, fontSize: "0.78rem" }}>
+    <aside aria-label="Builder" style={{ ...font, height: "100%", overflowY: "auto", background: backdrop, borderLeft: `1px solid ${tokens.panelBorder}`, color: tokens.text, fontSize: "0.78rem" }}>
       {/* Palette */}
       <div style={section}>
         <div style={{ ...label, marginBottom: "0.4rem" }}>Parts palette</div>

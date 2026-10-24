@@ -12,7 +12,7 @@ import type { Board, Part, Vec2 } from "../model/board-model";
 import { boardEntry } from "../model/board-registry";
 import { useStore } from "../store/useStore";
 import { isThroughHole, landPattern } from "../scene/footprint";
-import { button, font } from "../ui/chrome";
+import { backdrop, button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 
 const MARGIN = 4;
@@ -142,7 +142,7 @@ export default function BuildReplay({ boardId, onClose }: { boardId: string; onC
   const d = (s: number): React.CSSProperties => ({ animationDelay: `${s.toFixed(3)}s` });
 
   return (
-    <div data-testid="build-replay" style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: tokens.bg, zIndex: 30 }}>
+    <div data-testid="build-replay" style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: backdrop, zIndex: 30 }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.6rem", borderBottom: `1px solid ${tokens.hairline}` }}>
         <button onClick={() => setRun((n) => n + 1)} style={button()}>↻ Replay</button>
         <button

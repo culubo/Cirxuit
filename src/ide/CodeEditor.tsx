@@ -30,12 +30,13 @@ import { tokens } from "../ui/tokens";
 
 const theme = EditorView.theme(
   {
-    "&": { height: "100%", backgroundColor: "#060e1c", color: tokens.text, fontSize: "13px" },
+    // Transparent so the workspace gradient shows behind the code.
+    "&": { height: "100%", backgroundColor: "transparent", color: tokens.text, fontSize: "13px" },
     ".cm-scroller": { fontFamily: tokens.fontMono, lineHeight: "1.55" },
     ".cm-content": { caretColor: tokens.phosphor, padding: "8px 0" },
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: tokens.phosphor },
     "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection": { backgroundColor: "#1a3c66 !important" },
-    ".cm-gutters": { backgroundColor: "#060e1c", color: "#3d5878", border: "none", borderRight: `1px solid ${tokens.hairline}` },
+    ".cm-gutters": { backgroundColor: "transparent", color: "#3d5878", border: "none", borderRight: `1px solid ${tokens.hairline}` },
     ".cm-activeLineGutter": { backgroundColor: "transparent", color: "#8aa8c4" },
     ".cm-activeLine": { backgroundColor: "rgba(79,216,255,0.04)" },
     ".cm-matchingBracket": { backgroundColor: "rgba(79,216,255,0.18)", outline: "none" },

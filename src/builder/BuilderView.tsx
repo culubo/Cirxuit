@@ -14,7 +14,7 @@ import {
 } from "./doc";
 import { TEMPLATES, type TemplateKind } from "./templates";
 import BuildReplay from "./BuildReplay";
-import { button, font } from "../ui/chrome";
+import { backdrop, button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 
 const MARGIN = 4;
@@ -160,8 +160,9 @@ export default function BuilderView(): React.ReactElement {
           : "Drag parts to move them. R rotates, Delete removes, W starts wiring.";
 
   return (
-    <div style={{ position: "relative", display: "flex", flexDirection: "column", height: "100%", background: tokens.bg }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.6rem", borderBottom: `1px solid ${tokens.hairline}` }}>
+    <div style={{ position: "relative", display: "flex", flexDirection: "column", height: "100%", background: backdrop }}>
+      {/* Wraps when the editor is narrow (panes are resizable). */}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.6rem", borderBottom: `1px solid ${tokens.hairline}` }}>
         {toolBtn("select", "↖ Select", "V")}
         {toolBtn("wire", "⌇ Wire", "W")}
         {toolBtn("delete", "✕ Delete", "Del")}

@@ -76,8 +76,8 @@ export default function IntroPanel(): React.ReactElement | null {
       <div style={{ display: "flex", gap: "1rem", alignItems: "center", padding: "1.2rem 1.3rem 0.4rem" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-            <img src={orbUrl} alt="" aria-hidden="true" width={56} height={56} style={{ display: "block", flex: "none" }} />
-            <h1 id="intro-title" style={{ margin: 0, fontFamily: SILK_FONT_FAMILY, fontWeight: 400, fontSize: "1.9rem", letterSpacing: "0.03em", lineHeight: 1.05 }}>
+            <img src={orbUrl} alt="" aria-hidden="true" width={50} height={50} style={{ display: "block", flex: "none" }} />
+            <h1 id="intro-title" style={{ margin: 0, fontFamily: SILK_FONT_FAMILY, fontWeight: 400, fontSize: "1.75rem", letterSpacing: "0.02em", lineHeight: 1.05, whiteSpace: "nowrap" }}>
               Circuit X-Ray
             </h1>
           </div>
@@ -85,7 +85,7 @@ export default function IntroPanel(): React.ReactElement | null {
             See inside the board your robot runs on.
           </p>
         </div>
-        <Mascot pose="inspect" size={150} style={{ marginRight: "0.4rem" }} />
+        <Mascot pose="inspect" size={260} style={{ margin: "-1rem -0.4rem -1.2rem 0" }} />
       </div>
 
       <div style={{ padding: "0.4rem 1.3rem 1.1rem", display: "flex", flexDirection: "column", gap: "0.9rem" }}>
