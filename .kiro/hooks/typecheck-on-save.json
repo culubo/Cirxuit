@@ -8,7 +8,7 @@
       "matcher": "\\.(ts|tsx)$",
       "action": {
         "type": "command",
-        "command": "cd /Users/culubo/Downloads/circuit-xray && npx tsc --noEmit && npx vitest run"
+        "command": "npx tsc --noEmit && npx vitest run"
       }
     }
   ]

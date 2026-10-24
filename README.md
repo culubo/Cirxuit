@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml/badge.svg)](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml)
 
-[Open the live demo](https://circuit-xray.vercel.app/) · [Three-minute video script](docs/demo-video-script.md)
+[Open the live demo](https://circuit-xray.vercel.app/) · [Video script](docs/demo-video-script.md) · [Hackachusetts submission notes](docs/hackachusetts-submission.md)
 
 Circxit makes a robot's control board physically and electrically legible, so a
 developer can understand and validate the hardware their firmware runs on. Pull the board

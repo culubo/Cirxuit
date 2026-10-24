@@ -10,7 +10,7 @@ Track: Robotics.
 
 - The core demo loads a hand-authored board, lets the developer inspect parts and nets, run Arduino-style firmware, and see the resulting simulated voltages, currents, warnings, and actuator/LED state.
 - The scene uses an exploded 3D board and function blocks to tie physical layout to electrical behavior, so a developer can reason about power delivery and signal paths before committing to hardware.
-- Two built-in boards ship today: the LED driver demo (the default, and the automated demo path) and a biped power board whose four servos can be stalled to watch the battery rail collapse and the rail warning fire.
+- Built-in boards include the LED driver demo (the default, and the automated demo path), a biped power concept whose four servos can be stalled to watch the battery rail collapse, a robot-controller assembly demo, and the published Microduck Robot HAT as a non-simulated layout reference.
 - A servo is modelled as a DC resistive load (low stall resistance, higher run resistance); stalling actuators is how a developer stress-tests a power budget here.
 - A KiCad board importer is a stretch capability. Boards without electrical models can still be viewed, but should not imply simulated behavior for those parts.
 

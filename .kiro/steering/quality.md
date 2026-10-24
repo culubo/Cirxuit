@@ -24,7 +24,7 @@ This project is judged on polish. Follow these rules in every change.
 - Do not add features after 6 PM. Fix bugs and polish only.
 
 ## Test selectors for e2e/biped.spec.ts
-- board-switcher (<select>), option value "biped-power-board"
+- board-switcher (listbox trigger), board-option-biped-power-board (option)
 - part-J2 ... part-J5 in the parts list
 - stall-toggle in the inspector for servo parts
 - warning-feed container; each warning item warning-<netId>

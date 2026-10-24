@@ -1,19 +1,20 @@
-# Circxit demo video — target 2:45 to 3:00
+# Circxit demo video — target 2:35–2:45
 
-Record the screen at 16:9 after the final build is deployed. Speak at a natural pace and leave the short pauses for the visuals. The quoted lines are the voiceover; the actions are a shot list, not words to read.
+The Hackachusetts limit is **less than three minutes**. Leave at least 15 seconds of margin in the exported file, including the title and end card. Record the browser running on the computer it was built for. The quoted lines are voiceover; the actions are the shot list.
 
 | Time | On screen | Voiceover |
 | --- | --- | --- |
-| 0:00–0:20 | Start on the LED driver board, already framed close enough to read it. | “When a robot acts strangely, I want to see the board and the code in the same place. This is Circxit. It lets me run a sketch against a circuit model and inspect what happens.” |
-| 0:20–0:55 | Show the sketch, run it, then select the LED or transistor. Pause on the voltage and current readings. | “Here’s a small example. The sketch changes an output pin. That drives a transistor, which switches the LED. When I run it, the current path appears on the board, and I can click a part to see its electrical readings. I can trace the effect of one line of code all the way to a component.” |
-| 0:55–1:20 | Open the schematic, then the layer sheets. Move slowly between views. | “The same circuit has a schematic and a physical PCB view. I can pull the board apart into layers, then use the schematic to check how the parts connect. That makes it easier to move between a symptom I see in code and a connection I can actually find on the board.” |
-| 1:20–1:55 | Switch to Biped power. Stall two servos and show the rail warning and Robot view. | “This board models a battery powering a walking robot. If two servos stall, their load pulls the battery rail down. The controller can brown out. In Circxit I can make that happen deliberately and see the warning, instead of discovering it only after the robot fails.” |
-| 1:55–2:20 | Switch to the robot controller; play the assembly sequence. | “There’s also a build view. The robot controller is assembled part by part, so the layout is something you can watch take shape, then inspect when it powers on.” |
-| 2:20–2:47 | Switch to Microduck Robot HAT, open the layers, then show it inside the translucent head in Robot view. | “For Microduck, I imported Pollen Robotics’ published Robot HAT design. Its outline, copper layers, tracks, vias, and footprints come from the KiCad source. Here it is in the robot’s head. This view is a hardware reference: the separate RK3566 computer is still a CAD stand-in, and I’m not claiming to simulate that processor.” |
-| 2:47–3:00 | Return to a clean hero view with the site URL visible. | “The goal is simple: make robot electronics easier to see, test, and explain. You can try Circxit in the browser.” |
+| 0:00–0:17 | Start close on the LED driver board. | “A robot can fail because of one line of code or one connection on its board. I built Circxit to see both at once.” |
+| 0:17–0:48 | Show the sketch, run it, then select the LED or transistor. Hold on the readings. | “Here, changing an output pin drives a transistor and switches an LED. When I run the sketch, Circxit shows the current path. I can click a part to inspect its voltage and current, then follow the effect of my code through the circuit.” |
+| 0:48–1:12 | Open the schematic and the PCB layer sheets. Move slowly. | “The same board has a schematic and a physical layer view. I can pull the layers apart and check where each connection goes. That helps me find a hardware cause without guessing from the code alone.” |
+| 1:12–1:43 | Switch to Biped power, stall two servos, show the rail warning, then Robot view. | “Here’s a more serious case. Two stalled servos demand more current, the battery rail sags, and the controller can brown out. Circxit lets me stress the power budget deliberately and see the warning before I build that mistake into a robot.” |
+| 1:43–2:04 | Show the robot controller placement sequence, then its completed board. | “The build view shows how a controller comes together, part by part. Once it is assembled, I can inspect the board and run its lamp test.” |
+| 2:04–2:30 | Briefly show `.kiro/specs/circxit/requirements.md`, a task list, `.kiro/steering/quality.md`, and a hook file, then return to the app. | “I used Kiro’s specs to turn the idea into requirements, design decisions, and small implementation tasks. Steering documents kept the electrical model and visual rules consistent. Hooks ran type checks and tests as the project changed, while browser tests checked the real demo path.” |
+| 2:30–2:42 | Hold on a clean Circxit view with the URL as an edited end card. | “Circxit makes robot electronics easier to see, test, and explain. You can try it in the browser.” |
 
-## Recording notes
+## Recording and submission notes
 
-- Capture the screen first, then add the voiceover. Keep the mouse still while each result is visible.
-- Use the built-in LED demo and Biped power board for the live electrical readings. The Microduck HAT is a sourced layout reference, so do not press Run or claim live current values for it.
-- If any transition takes longer, trim the wait in editing rather than speeding up the whole video.
+- Capture screen footage first, then record the voiceover. Keep the pointer still while readings and warnings are visible.
+- Use the original LED and Biped boards for live electrical readings. The sourced Microduck HAT is a layout reference, not a live electrical simulation.
+- Keep third-party logos, trademarks, and copyrighted music out of the video unless you have permission. Use the app’s original demo boards for this cut.
+- Export at 2:45 or shorter. Upload the video publicly to one of the platforms named in the rules and put its link in the submission form.
