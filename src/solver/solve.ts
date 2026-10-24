@@ -684,7 +684,7 @@ function buildWarnings(
           warnings.push({
             severity: "danger",
             ref: part.ref,
-            message: `${part.ref} is drawing ${(b.amps * 1000).toFixed(1)} mA, which exceeds its 20 mA rating. Increase the series resistor (R2) to limit the current.`,
+            message: `${part.ref} overcurrent: drawing ${(b.amps * 1000).toFixed(1)} mA, which exceeds its 20 mA rating. Increase the series resistor (R2) to limit the current.`,
           });
         }
       }

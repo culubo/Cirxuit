@@ -14,8 +14,10 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
-import type { Board, SimResult } from "../model/board-model";
+import type { Board, ElectricalModel, Part, SimResult } from "../model/board-model";
 import { createRuntime, type Runtime } from "../runtime/runtime";
+import ParamField from "./ParamField";
+import { formatEngineering } from "./parse-eng";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
@@ -28,6 +30,64 @@ function branchAmps(simResult: SimResult | null, ref: string): number | null {
   const b = simResult.branches.find((br) => br.ref === ref);
   return b?.amps ?? null;
 }
+
+/** A single editable numeric field derived from a part's electrical model. */
+interface NumericFieldDesc {
+  key: string;            // "ohms", "vf", "beta", "volts", "runOhms", "stallOhms"
+  label: string;
+  value: number;
+  /** Build a new model with this field replaced by `v`. */
+  withValue: (v: number) => ElectricalModel;
+}
+
+/** Return the editable numeric fields for a model (excludes the pot wiper slider). */
+function numericFields(model: ElectricalModel): NumericFieldDesc[] {
+  switch (model.type) {
+    case "resistor":
+      return [{ key: "ohms", label: "ohms", value: model.ohms, withValue: (v) => ({ ...model, ohms: v }) }];
+    case "led":
+      return [{ key: "vf", label: "vf (V)", value: model.vf, withValue: (v) => ({ ...model, vf: v }) }];
+    case "diode":
+      return [{ key: "vf", label: "vf (V)", value: model.vf, withValue: (v) => ({ ...model, vf: v }) }];
+    case "npn":
+      return [{ key: "beta", label: "beta", value: model.beta, withValue: (v) => ({ ...model, beta: v }) }];
+    case "vsource":
+      return [{ key: "volts", label: "volts (V)", value: model.volts, withValue: (v) => ({ ...model, volts: v }) }];
+    case "servo":
+      return [
+        { key: "runOhms", label: "run Ω", value: model.runOhms, withValue: (v) => ({ ...model, runOhms: v }) },
+        { key: "stallOhms", label: "stall Ω", value: model.stallOhms, withValue: (v) => ({ ...model, stallOhms: v }) },
+      ];
+    case "potentiometer":
+    case "capacitor":
+    case "mcu":
+      return [];
+    default: {
+      const _exhaustive: never = model;
+      return _exhaustive;
+    }
+  }
+}
+
+/** Look up the original numeric value of a field for modified-marker detection. */
+function originalFieldValue(
+  originalBoard: Board | null,
+  ref: string,
+  key: string,
+): number | undefined {
+  const model = originalBoard?.parts.find((p) => p.ref === ref)?.model;
+  if (!model) return undefined;
+  const found = (model as Record<string, unknown>)[key];
+  return typeof found === "number" ? found : undefined;
+}
+
+const DEVICE_STATE_LABEL: Record<string, string> = {
+  on: "on",
+  off: "off",
+  cutoff: "cutoff",
+  active: "active",
+  saturated: "saturated",
+};
 
 // ─── styles ──────────────────────────────────────────────────────────────────
 
@@ -77,8 +137,12 @@ export default function InspectorPanel(): React.ReactElement {
   const setRunError = useStore((s) => s.setRunError);
   const setRunning = useStore((s) => s.setRunning);
   const toggleServoStall = useStore((s) => s.toggleServoStall);
+  const setPartParam = useStore((s) => s.setPartParam);
+  const resetBoard = useStore((s) => s.resetBoard);
+  const originalBoard = useStore((s) => s.originalBoard);
 
   const [code, setCode] = useState("// Arduino-style code\ndigitalWrite(8, HIGH);");
+  const [paramError, setParamError] = useState<string | null>(null);
 
   // Create the runtime once per board and keep it for the panel's lifetime.
   const runtimeRef = useRef<Runtime | null>(null);
@@ -90,6 +154,12 @@ export default function InspectorPanel(): React.ReactElement {
     selection?.kind === "part"
       ? (board?.parts.find((p) => p.ref === selection.ref) ?? null)
       : null;
+
+  const selectedRef = selectedPart?.ref ?? null;
+  // Clear any stale validation message when the selected part changes.
+  useEffect(() => {
+    setParamError(null);
+  }, [selectedRef]);
 
   const handleRun = useCallback(async () => {
     const runtime = runtimeRef.current;
@@ -121,7 +191,26 @@ export default function InspectorPanel(): React.ReactElement {
       {/* ── Parts list — one data-testid="part-<REF>" per part ── */}
       {board && (
         <div style={section}>
-          <div style={sectionLabel}>Parts</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={sectionLabel}>Parts</div>
+            <button
+              data-testid="reset-board-button"
+              onClick={() => resetBoard()}
+              title="Restore every parameter to the board default"
+              style={{
+                background: "transparent",
+                border: "1px solid #2a4a2a",
+                borderRadius: "2px",
+                color: "#8aa88a",
+                fontFamily: "monospace",
+                fontSize: "0.68rem",
+                padding: "0.15rem 0.5rem",
+                cursor: "pointer",
+              }}
+            >
+              Reset board
+            </button>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
             {board.parts.map((part) => {
               const isSelected = selectedPart?.ref === part.ref;
@@ -158,45 +247,17 @@ export default function InspectorPanel(): React.ReactElement {
         </div>
       )}
 
-      {/* ── Selected part summary ── */}
+      {/* ── Selected part summary + editable parameters ── */}
       {selectedPart && (
-        <div style={section}>
-          <div style={sectionLabel}>Selected</div>
-          <div style={{ fontWeight: "bold", color: "#7ec8a0" }}>
-            {selectedPart.ref}
-            <span style={{ fontWeight: "normal", color: "#8a9a8a", marginLeft: "0.4rem" }}>
-              {selectedPart.value}
-            </span>
-          </div>
-          {selectedPart.blurb && (
-            <div style={{ color: "#7a8a7a", marginTop: "0.25rem", fontSize: "0.75rem" }}>
-              {selectedPart.blurb}
-            </div>
-          )}
-
-          {/* One-click Stall toggle for servo parts. */}
-          {selectedPart.model?.type === "servo" && (
-            <button
-              data-testid="stall-toggle"
-              aria-pressed={selectedPart.model.stalled}
-              onClick={() => toggleServoStall(selectedPart.ref)}
-              style={{
-                marginTop: "0.5rem",
-                width: "100%",
-                background: selectedPart.model.stalled ? "#3a1410" : "#0e2a0e",
-                border: `1px solid ${selectedPart.model.stalled ? "#a0402a" : "#2a6a2a"}`,
-                borderRadius: "2px",
-                color: selectedPart.model.stalled ? "#e0923a" : "#7ec8a0",
-                fontFamily: "monospace",
-                fontSize: "0.78rem",
-                padding: "0.35rem 0",
-                cursor: "pointer",
-              }}
-            >
-              {selectedPart.model.stalled ? "● Stalled — click to release" : "○ Running — click to stall"}
-            </button>
-          )}
-        </div>
+        <SelectedPartPanel
+          part={selectedPart}
+          deviceState={simResult?.deviceStates[selectedPart.ref]}
+          originalBoard={originalBoard}
+          paramError={paramError}
+          onParamError={setParamError}
+          onCommit={(model) => { setPartParam(selectedPart.ref, model); }}
+          onToggleStall={() => toggleServoStall(selectedPart.ref)}
+        />
       )}
 
       {/* ── Branch currents — always rendered so inspector-current-<REF> exists ── */}
@@ -244,8 +305,8 @@ export default function InspectorPanel(): React.ReactElement {
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
               {simResult!.warnings.map((w, i) => (
                 <div
-                  key={`${w.netId ?? w.ref ?? "w"}-${i}`}
-                  {...(w.netId ? { "data-testid": `warning-${w.netId}` } : {})}
+                  key={`${w.ref ?? w.netId ?? "w"}-${i}`}
+                  {...(w.ref || w.netId ? { "data-testid": `warning-${w.ref ?? w.netId}` } : {})}
                   style={{
                     fontSize: "0.75rem",
                     color: w.severity === "danger" ? "#e0923a" : "#c8c88a",
@@ -337,6 +398,129 @@ export default function InspectorPanel(): React.ReactElement {
             ))}
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Selected part panel ─────────────────────────────────────────────────────
+
+interface SelectedPartPanelProps {
+  part: Part;
+  deviceState: string | undefined;
+  originalBoard: Board | null;
+  paramError: string | null;
+  onParamError: (message: string | null) => void;
+  onCommit: (model: ElectricalModel) => void;
+  onToggleStall: () => void;
+}
+
+function SelectedPartPanel({
+  part,
+  deviceState,
+  originalBoard,
+  paramError,
+  onParamError,
+  onCommit,
+  onToggleStall,
+}: SelectedPartPanelProps): React.ReactElement {
+  const model = part.model;
+  const fields = model ? numericFields(model) : [];
+  const isPot = model?.type === "potentiometer";
+  const isServo = model?.type === "servo";
+
+  return (
+    <div style={section}>
+      <div style={sectionLabel}>Selected</div>
+      <div style={{ fontWeight: "bold", color: "#7ec8a0" }}>
+        {part.ref}
+        <span style={{ fontWeight: "normal", color: "#8a9a8a", marginLeft: "0.4rem" }}>
+          {part.value}
+        </span>
+        {deviceState && (
+          <span
+            data-testid={`device-state-${part.ref}`}
+            style={{ marginLeft: "0.5rem", color: "#c8c88a", fontWeight: "normal" }}
+          >
+            [{DEVICE_STATE_LABEL[deviceState] ?? deviceState}]
+          </span>
+        )}
+      </div>
+
+      {part.blurb && (
+        <div style={{ color: "#7a8a7a", marginTop: "0.25rem", fontSize: "0.75rem" }}>
+          {part.blurb}
+        </div>
+      )}
+
+      {/* Editable numeric parameters */}
+      {model && (fields.length > 0 || isPot) && (
+        <div style={{ marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.1rem" }}>
+          {fields.map((f) => {
+            const orig = originalFieldValue(originalBoard, part.ref, f.key);
+            const modified = orig !== undefined && orig !== f.value;
+            return (
+              <ParamField
+                key={f.key}
+                kind="text"
+                paramKey={f.key}
+                label={f.label}
+                value={formatEngineering(f.value)}
+                modified={modified}
+                onCommit={(v) => onCommit(f.withValue(v))}
+                onError={onParamError}
+              />
+            );
+          })}
+
+          {isPot && model.type === "potentiometer" && (
+            <ParamField
+              kind="slider"
+              paramKey="wiper"
+              label="wiper"
+              value={model.wiper}
+              min={0}
+              max={1}
+              step={0.01}
+              modified={originalFieldValue(originalBoard, part.ref, "wiper") !== model.wiper}
+              onCommit={(v) => onCommit({ ...model, wiper: v })}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Shared inline validation error */}
+      {paramError && (
+        <div
+          data-testid="inspector-param-error"
+          role="alert"
+          style={{ color: "#cc4444", marginTop: "0.35rem", fontSize: "0.73rem" }}
+        >
+          {paramError}
+        </div>
+      )}
+
+      {/* One-click Stall toggle for servo parts. */}
+      {isServo && model.type === "servo" && (
+        <button
+          data-testid="stall-toggle"
+          aria-pressed={model.stalled}
+          onClick={onToggleStall}
+          style={{
+            marginTop: "0.5rem",
+            width: "100%",
+            background: model.stalled ? "#3a1410" : "#0e2a0e",
+            border: `1px solid ${model.stalled ? "#a0402a" : "#2a6a2a"}`,
+            borderRadius: "2px",
+            color: model.stalled ? "#e0923a" : "#7ec8a0",
+            fontFamily: "monospace",
+            fontSize: "0.78rem",
+            padding: "0.35rem 0",
+            cursor: "pointer",
+          }}
+        >
+          {model.stalled ? "● Stalled — click to release" : "○ Running — click to stall"}
+        </button>
       )}
     </div>
   );
