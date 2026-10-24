@@ -1,27 +1,45 @@
 import React, { useEffect } from "react";
-import type { Board } from "./model/board-model";
 import { solve } from "./solver/solve";
 import { useStore } from "./store/useStore";
+import { boardEntry, DEFAULT_BOARD_ID } from "./model/board-registry";
 import BoardScene from "./scene/BoardScene";
 import PartOverlay from "./scene/PartOverlay";
 import InspectorPanel from "./ui/InspectorPanel";
+import BoardSwitcher from "./ui/BoardSwitcher";
 import SceneErrorBoundary from "./ui/SceneErrorBoundary";
 
+/**
+ * Loads the board selected by `boardId` from the registry, re-solves it, and
+ * writes board + simResult into the store.  Runs whenever the id changes, so the
+ * board switcher simply sets a new id.
+ */
 function BoardLoader(): null {
+  const boardId = useStore((s) => s.boardId);
+  const setBoardId = useStore((s) => s.setBoardId);
   const setBoard = useStore((s) => s.setBoard);
   const setSimResult = useStore((s) => s.setSimResult);
-  const mcuState = useStore((s) => s.mcuState);
+  const resetRuntimeState = useStore((s) => s.resetRuntimeState);
+
+  // Pick a default board on first mount.
+  useEffect(() => {
+    if (boardId === null) setBoardId(DEFAULT_BOARD_ID);
+  }, [boardId, setBoardId]);
 
   useEffect(() => {
-    // Dynamic import so Vite can tree-shake and code-split the JSON.
-    void import("./model/demo-board.json").then((mod) => {
-      const board = mod.default as Board;
+    if (boardId === null) return;
+    const entry = boardEntry(boardId);
+    if (!entry) return;
+
+    let cancelled = false;
+    void entry.load().then((board) => {
+      if (cancelled) return;
+      // Fresh board: clear any prior selection / code state, then solve.
+      resetRuntimeState();
       setBoard(board);
-      setSimResult(solve(board, mcuState));
+      setSimResult(solve(board, { modes: {}, outputs: {} }));
     });
-    // mcuState intentionally omitted — we only want this to run once on mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBoard, setSimResult]);
+    return () => { cancelled = true; };
+  }, [boardId, setBoard, setSimResult, resetRuntimeState]);
 
   return null;
 }
@@ -44,10 +62,13 @@ export default function App(): React.ReactElement {
         <BoardScene />
       </SceneErrorBoundary>
 
-      {/* HTML overlay: invisible per-part buttons for testid / a11y */}
+      {/* Board switcher (top-left) */}
+      <BoardSwitcher />
+
+      {/* HTML overlay: invisible per-part buttons for pointer parity / a11y */}
       {board && <PartOverlay board={board} />}
 
-      {/* Inspector panel: code editor, run button, branch currents */}
+      {/* Inspector panel: parts list, code editor, run button, branch currents */}
       <InspectorPanel />
     </div>
   );

@@ -8,6 +8,7 @@ export type Selection =
 
 interface AppState {
   // Data
+  boardId: string | null;
   board: Board | null;
   mcuState: McuState;
   simResult: SimResult | null;
@@ -19,6 +20,7 @@ interface AppState {
   running: boolean;
 
   // Actions
+  setBoardId: (boardId: string) => void;
   setBoard: (board: Board) => void;
   setMcuState: (mcuState: McuState) => void;
   setSimResult: (simResult: SimResult | null) => void;
@@ -26,6 +28,8 @@ interface AppState {
   setLogs: (logs: unknown[]) => void;
   setRunError: (runError: string | null) => void;
   setRunning: (running: boolean) => void;
+  /** Reset per-board transient state (selection, mcuState, logs, error). */
+  resetRuntimeState: () => void;
 }
 
 const defaultMcuState: McuState = {
@@ -34,6 +38,7 @@ const defaultMcuState: McuState = {
 };
 
 export const useStore = create<AppState>((set) => ({
+  boardId: null,
   board: null,
   mcuState: defaultMcuState,
   simResult: null,
@@ -43,6 +48,7 @@ export const useStore = create<AppState>((set) => ({
   runError: null,
   running: false,
 
+  setBoardId: (boardId) => set({ boardId }),
   setBoard: (board) => set({ board }),
   setMcuState: (mcuState) => set({ mcuState }),
   setSimResult: (simResult) => set({ simResult }),
@@ -50,4 +56,12 @@ export const useStore = create<AppState>((set) => ({
   setLogs: (logs) => set({ logs }),
   setRunError: (runError) => set({ runError }),
   setRunning: (running) => set({ running }),
+  resetRuntimeState: () =>
+    set({
+      mcuState: { modes: {}, outputs: {} },
+      selection: null,
+      logs: [],
+      runError: null,
+      running: false,
+    }),
 }));

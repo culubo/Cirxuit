@@ -640,5 +640,21 @@ function buildWarnings(
     }
   }
 
+  // ── Rail limits ──────────────────────────────────────────────────────────────
+  // When a configured rail net sags below its minimum, emit a danger warning with
+  // the net id and the board-authored message.
+  if (board.railLimits) {
+    for (const limit of board.railLimits) {
+      const v = V(limit.netId);
+      if (v < limit.minVolts) {
+        warnings.push({
+          severity: "danger",
+          netId: limit.netId,
+          message: limit.message,
+        });
+      }
+    }
+  }
+
   return warnings;
 }
