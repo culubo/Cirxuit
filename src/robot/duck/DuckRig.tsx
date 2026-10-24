@@ -47,6 +47,8 @@ interface DuckScene {
   trunk: number;
   /** Top-centre of the trunk shell, in the trunk body's frame (m). */
   seat: THREE.Vector3;
+  /** Neck joint position in the trunk body's frame (m). */
+  neckX: number;
   trunkLen: number;
   trunkWid: number;
   eyes: THREE.MeshStandardMaterial[];
@@ -112,6 +114,7 @@ function buildScene(sim: DuckSim): DuckScene {
   };
 
   const trunk = mj.mj_name2id(model, mj.mjtObj.mjOBJ_BODY.value, "trunk_base");
+  const neck = mj.mj_name2id(model, mj.mjtObj.mjOBJ_BODY.value, "neck");
   const trunkBox = new THREE.Box3();
   for (let g = 0; g < model.ngeom; g++) {
     if (model.geom_group[g] !== 2 || model.geom_type[g] !== MESH) continue;
@@ -135,6 +138,7 @@ function buildScene(sim: DuckSim): DuckScene {
     bodies,
     trunk,
     seat: new THREE.Vector3(center.x, center.y, trunkBox.max.z),
+    neckX: model.body_pos[neck * 3] as number,
     trunkLen: size.x,
     trunkWid: size.y,
     eyes,
@@ -247,9 +251,14 @@ export default function DuckRig({ board, active, boardGroup }: {
     const trunk = scene.bodies[scene.trunk]!;
     tmp.trunkPos.copy(trunk.position);
     tmp.trunkQ.copy(trunk.quaternion);
-    const s = Math.min(1, (0.9 * scene.trunkLen * MM) / bounds.w, (0.9 * scene.trunkWid * MM) / bounds.h);
-    const lift = board.thicknessMm * s + 1.5;   // board's bottom face clears the shell
-    tmp.seat.copy(scene.seat).multiplyScalar(MM).addScaledVector(new THREE.Vector3(0, 0, 1), lift)
+    // The shell curves away at its sides. A board sized to the full bounding
+    // box overhangs that curve and appears to float above the duck's back.
+    const s = Math.min(0.75, (0.9 * scene.trunkLen * MM) / bounds.w, (0.9 * scene.trunkWid * MM) / bounds.h);
+    const lift = board.thicknessMm * s + 0.5;   // board's bottom face just clears the shell
+    // Keep the front edge behind the neck joint; centering on the whole trunk
+    // puts the PCB and its components through the moving neck hardware.
+    const seatX = Math.min(scene.seat.x * MM, scene.neckX * MM - 12 - bounds.w * s / 2);
+    tmp.seat.copy(scene.seat).multiplyScalar(MM).setX(seatX).addScaledVector(new THREE.Vector3(0, 0, 1), lift)
       .applyQuaternion(tmp.trunkQ).add(tmp.trunkPos);
     if (g) {
       const se = 1 + (s - 1) * e;
