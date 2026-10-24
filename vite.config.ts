@@ -16,6 +16,23 @@ export default defineConfig({
   worker: {
     format: "es",
   },
+  // Pre-bundle the editor and parser at server start. Without this, the first
+  // page that opens the editor makes Vite discover them, re-optimize, and reload
+  // the page mid-session (which also flakes e2e runs on a cold cache).
+  optimizeDeps: {
+    include: [
+      "codemirror",
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/lang-javascript",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/highlight",
+      "acorn",
+    ],
+  },
   test: {
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{ts,tsx}"],

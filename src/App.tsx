@@ -2,18 +2,37 @@ import React, { useEffect } from "react";
 import { solve } from "./solver/solve";
 import { useStore } from "./store/useStore";
 import { boardEntry, DEFAULT_BOARD_ID } from "./model/board-registry";
+import { CUSTOM_BOARD_ID, docToBoard, type BuilderDoc } from "./builder/doc";
 import BoardScene from "./scene/BoardScene";
-import PartOverlay from "./scene/PartOverlay";
 import InspectorPanel from "./ui/InspectorPanel";
-import BoardSwitcher from "./ui/BoardSwitcher";
 import SceneControls from "./ui/SceneControls";
 import SceneErrorBoundary from "./ui/SceneErrorBoundary";
 import { tokens } from "./ui/tokens";
+import TopBar from "./ide/TopBar";
+import EditorPane from "./ide/EditorPane";
+import StatusBar from "./ide/StatusBar";
+import { useProblems } from "./ide/useProblems";
+import { useRunner } from "./ide/useRunner";
+import GuideCard from "./guide/GuideCard";
+import BuilderView from "./builder/BuilderView";
+import BuilderSidebar from "./builder/BuilderSidebar";
+
+/** Short content hash so the derived board's id changes whenever the user edits it. */
+function docHash(doc: BuilderDoc): string {
+  const text = JSON.stringify(doc);
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+}
+
+function customBoard(doc: BuilderDoc): ReturnType<typeof docToBoard> {
+  return { ...docToBoard(doc), id: `${CUSTOM_BOARD_ID}@${docHash(doc)}` };
+}
 
 /**
- * Loads the board selected by `boardId` from the registry, re-solves it, and
- * writes board + simResult into the store.  Runs whenever the id changes, so the
- * board switcher simply sets a new id.
+ * Loads the board selected by `boardId`, re-solves it, and writes board and
+ * simResult into the store. For My board, the board is derived from the
+ * builder document and re-derived live as it is edited.
  */
 function BoardLoader(): null {
   const boardId = useStore((s) => s.boardId);
@@ -21,60 +40,79 @@ function BoardLoader(): null {
   const setBoard = useStore((s) => s.setBoard);
   const setSimResult = useStore((s) => s.setSimResult);
   const resetRuntimeState = useStore((s) => s.resetRuntimeState);
+  const builderDoc = useStore((s) => s.builderDoc);
 
   // Pick a default board on first mount.
   useEffect(() => {
     if (boardId === null) setBoardId(DEFAULT_BOARD_ID);
   }, [boardId, setBoardId]);
 
+  // Fresh board: clear any prior selection / run state, then load and solve.
   useEffect(() => {
     if (boardId === null) return;
+    resetRuntimeState();
+    if (boardId === CUSTOM_BOARD_ID) {
+      const board = customBoard(useStore.getState().builderDoc);
+      setBoard(board);
+      setSimResult(solve(board, { modes: {}, outputs: {} }));
+      return;
+    }
     const entry = boardEntry(boardId);
     if (!entry) return;
-
     let cancelled = false;
     void entry.load().then((board) => {
       if (cancelled) return;
-      // Fresh board: clear any prior selection / code state, then solve.
-      resetRuntimeState();
       setBoard(board);
       setSimResult(solve(board, { modes: {}, outputs: {} }));
     });
     return () => { cancelled = true; };
   }, [boardId, setBoard, setSimResult, resetRuntimeState]);
 
+  // My board: keep the derived board in step with builder edits.
+  useEffect(() => {
+    if (boardId !== CUSTOM_BOARD_ID) return;
+    const s = useStore.getState();
+    const board = customBoard(builderDoc);
+    if (s.board?.id === board.id) return;
+    s.setBoard(board);
+    s.setSimResult(solve(board, s.mcuState));
+    s.setPlayback(null);
+  }, [boardId, builderDoc]);
+
   return null;
 }
 
 export default function App(): React.ReactElement {
-  const board = useStore((s) => s.board);
+  const mode = useStore((s) => s.mode);
+  const problems = useProblems();
+  const runner = useRunner();
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        background: tokens.bg,
-        position: "relative",
-      }}
-    >
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: tokens.bg, color: tokens.text }}>
       <BoardLoader />
+      <TopBar />
 
-      <SceneErrorBoundary>
-        <BoardScene />
-      </SceneErrorBoundary>
+      <main style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: "minmax(330px, 420px) minmax(0, 1fr) 340px" }}>
+        <EditorPane runner={runner} problems={problems} />
 
-      {/* Board switcher (top-left) */}
-      <BoardSwitcher />
+        <section aria-label={mode === "build" ? "Board editor" : "Board view"} style={{ position: "relative", minWidth: 0, minHeight: 0 }}>
+          {mode === "build" ? (
+            <BuilderView />
+          ) : (
+            <>
+              <SceneErrorBoundary>
+                <BoardScene />
+              </SceneErrorBoundary>
+              <SceneControls />
+            </>
+          )}
+          <GuideCard problems={problems.all} placement={mode === "build" ? "bottom" : "top"} />
+        </section>
 
-      {/* Scene controls: explode slider + flow toggles (bottom-left) */}
-      <SceneControls />
+        {mode === "build" ? <BuilderSidebar boardProblems={problems.board} /> : <InspectorPanel />}
+      </main>
 
-      {/* HTML overlay: invisible per-part buttons for pointer parity / a11y */}
-      {board && <PartOverlay board={board} />}
-
-      {/* Inspector panel: parts list, code editor, run button, branch currents */}
-      <InspectorPanel />
+      <StatusBar problems={problems} />
     </div>
   );
 }

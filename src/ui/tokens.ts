@@ -17,6 +17,7 @@ export const tokens = {
   text: "#cfe3f2",
   textDim: "#7a8ea4",
   textFaint: "#5a7a96",
+  fontMono: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
 
   // Accents (meaning-carrying)
   phosphor: "#4fd8ff",    // current / selection — electric cyan (name kept for callers)

@@ -1,22 +1,19 @@
 /**
- * InspectorPanel — right-side overlay. It is the only place user code runs, and
- * it runs exclusively through the worker runtime (createRuntime(board).run()).
+ * InspectorPanel — the right-hand column in Simulate mode.
  *
- * Responsibilities:
  *   • Parts list with data-testid="part-<REF>" entries (click to select).
- *   • data-testid="code-editor"  — Arduino-style textarea.
- *   • data-testid="run-button"   — runs the code via the runtime worker.
+ *   • The selected part: blurb, device state, pad voltages, editable values,
+ *     and the servo Stall toggle.
  *   • data-testid="inspector-current-<REF>" — live branch current per part.
- *   • Shows logs and the friendly error message from a timeout / thrown error.
+ *   • The solver's warnings, tagged warning-<ref> / warning-<netId>.
  *
- * On error or timeout the store's mcuState / simResult are left unchanged
- * (the runtime returns the pre-run snapshot), so the 3D scene does not change.
+ * The sketch editor, Run, and the console live in the editor pane.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "../store/useStore";
 import type { Board, ElectricalModel, Part, SimResult } from "../model/board-model";
-import { createRuntime, type Runtime } from "../runtime/runtime";
 import ParamField from "./ParamField";
+import { numericFields } from "./modelFields";
 import { formatEngineering } from "./parse-eng";
 import { formatQuantity } from "./format";
 
@@ -26,44 +23,6 @@ function branchAmps(simResult: SimResult | null, ref: string): number | null {
   if (!simResult) return null;
   const b = simResult.branches.find((br) => br.ref === ref);
   return b?.amps ?? null;
-}
-
-/** A single editable numeric field derived from a part's electrical model. */
-interface NumericFieldDesc {
-  key: string;            // "ohms", "vf", "beta", "volts", "runOhms", "stallOhms"
-  label: string;
-  value: number;
-  /** Build a new model with this field replaced by `v`. */
-  withValue: (v: number) => ElectricalModel;
-}
-
-/** Return the editable numeric fields for a model (excludes the pot wiper slider). */
-function numericFields(model: ElectricalModel): NumericFieldDesc[] {
-  switch (model.type) {
-    case "resistor":
-      return [{ key: "ohms", label: "ohms", value: model.ohms, withValue: (v) => ({ ...model, ohms: v }) }];
-    case "led":
-      return [{ key: "vf", label: "vf (V)", value: model.vf, withValue: (v) => ({ ...model, vf: v }) }];
-    case "diode":
-      return [{ key: "vf", label: "vf (V)", value: model.vf, withValue: (v) => ({ ...model, vf: v }) }];
-    case "npn":
-      return [{ key: "beta", label: "beta", value: model.beta, withValue: (v) => ({ ...model, beta: v }) }];
-    case "vsource":
-      return [{ key: "volts", label: "volts (V)", value: model.volts, withValue: (v) => ({ ...model, volts: v }) }];
-    case "servo":
-      return [
-        { key: "runOhms", label: "run Ω", value: model.runOhms, withValue: (v) => ({ ...model, runOhms: v }) },
-        { key: "stallOhms", label: "stall Ω", value: model.stallOhms, withValue: (v) => ({ ...model, stallOhms: v }) },
-      ];
-    case "potentiometer":
-    case "capacitor":
-    case "mcu":
-      return [];
-    default: {
-      const _exhaustive: never = model;
-      return _exhaustive;
-    }
-  }
 }
 
 /** Look up the original numeric value of a field for modified-marker detection. */
@@ -89,15 +48,10 @@ const DEVICE_STATE_LABEL: Record<string, string> = {
 // ─── styles ──────────────────────────────────────────────────────────────────
 
 const panel: React.CSSProperties = {
-  position: "absolute",
-  top: "1rem",
-  right: "1rem",
-  bottom: "1rem",
-  width: "23rem",
+  height: "100%",
   overflowY: "auto",
   background: "#0a1424",
-  border: "1px solid #1c3350",
-  borderRadius: "3px",
+  borderLeft: "1px solid #1c3350",
   fontFamily: "monospace",
   fontSize: "0.8rem",
   color: "#cfe3f2",
@@ -124,28 +78,13 @@ export default function InspectorPanel(): React.ReactElement {
   const board = useStore((s) => s.board);
   const selection = useStore((s) => s.selection);
   const simResult = useStore((s) => s.simResult);
-  const logs = useStore((s) => s.logs);
-  const runError = useStore((s) => s.runError);
-  const running = useStore((s) => s.running);
   const setSelection = useStore((s) => s.setSelection);
-  const setMcuState = useStore((s) => s.setMcuState);
-  const setSimResult = useStore((s) => s.setSimResult);
-  const setLogs = useStore((s) => s.setLogs);
-  const setRunError = useStore((s) => s.setRunError);
-  const setRunning = useStore((s) => s.setRunning);
   const toggleServoStall = useStore((s) => s.toggleServoStall);
   const setPartParam = useStore((s) => s.setPartParam);
   const resetBoard = useStore((s) => s.resetBoard);
   const originalBoard = useStore((s) => s.originalBoard);
 
-  const [code, setCode] = useState("// Arduino-style code\ndigitalWrite(8, HIGH);");
   const [paramError, setParamError] = useState<string | null>(null);
-
-  // Create the runtime once per board and keep it for the panel's lifetime.
-  const runtimeRef = useRef<Runtime | null>(null);
-  useEffect(() => {
-    runtimeRef.current = board ? createRuntime(board) : null;
-  }, [board]);
 
   const selectedPart =
     selection?.kind === "part"
@@ -158,32 +97,22 @@ export default function InspectorPanel(): React.ReactElement {
     setParamError(null);
   }, [selectedRef]);
 
-  const handleRun = useCallback(async () => {
-    const runtime = runtimeRef.current;
-    if (!board || !runtime || running) return;
-
-    setRunning(true);
-    setRunError(null);
-    try {
-      const result = await runtime.run(code);
-      // On a thrown error or timeout the runtime returns the pre-run snapshot,
-      // so writing it back leaves the scene unchanged.
-      setMcuState(result.mcuState);
-      setSimResult(result.simResult);
-      setLogs(result.logs);
-      setRunError(result.error ?? null);
-    } catch (e: unknown) {
-      // Defensive: the runtime resolves rather than rejects, but never swallow.
-      setRunError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setRunning(false);
-    }
-  }, [board, code, running, setMcuState, setSimResult, setLogs, setRunError, setRunning]);
-
-  const logLines = useMemo(() => logs.map((l) => String(l)), [logs]);
+  if (board && board.parts.length === 0) {
+    return (
+      <aside aria-label="Inspector" style={panel}>
+        <div style={section}>
+          <div style={sectionLabel}>Parts</div>
+          <div style={{ color: "#7a8ea4", fontSize: "0.75rem", lineHeight: 1.5 }}>
+            This board has no parts yet. Switch to <b style={{ color: "#cfe3f2" }}>Build PCB</b> in the top bar to
+            place a supply, a microcontroller, and some parts, then come back here to run it.
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
-    <div style={panel}>
+    <aside aria-label="Inspector" style={panel}>
 
       {/* ── Parts list — one data-testid="part-<REF>" per part ── */}
       {board && (
@@ -320,84 +249,13 @@ export default function InspectorPanel(): React.ReactElement {
         </div>
       )}
 
-      {/* ── Code editor ── */}
-      <div style={section}>
-        <div style={sectionLabel}>Code</div>
-        <textarea
-          data-testid="code-editor"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          rows={4}
-          spellCheck={false}
-          style={{
-            width: "100%",
-            background: "#06101c",
-            border: "1px solid #142640",
-            borderRadius: "2px",
-            color: "#cfe3f2",
-            fontFamily: "monospace",
-            fontSize: "0.78rem",
-            padding: "0.4rem",
-            resize: "vertical",
-            boxSizing: "border-box",
-            outline: "none",
-          }}
-        />
-      </div>
-
-      {/* ── Run button ── */}
-      <div style={{ padding: "0.5rem 0.8rem" }}>
-        <button
-          data-testid="run-button"
-          onClick={() => void handleRun()}
-          disabled={!board || running}
-          style={{
-            width: "100%",
-            background: board && !running ? "#0a2238" : "#08142a",
-            border: `1px solid ${board && !running ? "#1f6fb2" : "#163252"}`,
-            borderRadius: "2px",
-            color: board && !running ? "#4fd8ff" : "#3a5a7a",
-            fontFamily: "monospace",
-            fontSize: "0.8rem",
-            padding: "0.35rem 0",
-            cursor: board && !running ? "pointer" : "not-allowed",
-          }}
-        >
-          {running ? "Running…" : "Run"}
-        </button>
-      </div>
-
-      {/* ── Error (friendly message) ── */}
-      {runError && (
-        <div
-          data-testid="run-error"
-          role="alert"
-          style={{
-            ...section,
-            borderBottom: "none",
-            color: "#e0923a",
-            background: "#1c1206",
-          }}
-        >
-          <div style={{ ...sectionLabel, color: "#a06a2a" }}>Error</div>
-          {runError}
+      {/* Nothing selected: say what the panel is for. */}
+      {board && !selectedPart && (
+        <div style={{ ...section, color: "#7a8ea4", fontSize: "0.74rem", lineHeight: 1.5 }}>
+          Click a part above or on the board to see what it does, the voltage on each pad, and its editable values.
         </div>
       )}
-
-      {/* ── Logs ── */}
-      {logLines.length > 0 && (
-        <div style={{ ...section, borderBottom: "none" }} data-testid="run-logs">
-          <div style={sectionLabel}>Log</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            {logLines.map((line, i) => (
-              <div key={i} style={{ color: "#8aa8c4", whiteSpace: "pre-wrap" }}>
-                {line}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+    </aside>
   );
 }
 

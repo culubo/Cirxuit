@@ -15,15 +15,22 @@
 
 import type { Board, McuState, SimResult } from "../model/board-model";
 import { solve } from "../solver/solve";
-import type { ExecuteResult } from "./execute";
+import type { ExecuteResult, TraceEvent } from "./execute";
 
 // ─── public types ──────────────────────────────────────────────────────────────
 
 export interface RunResult {
   mcuState: McuState;
   simResult: SimResult;
+  /** MCU state the run started from; replaying `trace` over it gives `mcuState`. */
+  startState: McuState;
   logs: unknown[];
+  /** Every pin call and log the run made, in order, with its source line. */
+  trace: TraceEvent[];
+  traceTruncated: boolean;
   error?: string;
+  /** Source line executing when the sketch threw, if known. */
+  errorLine?: number;
 }
 
 export interface Runtime {
@@ -50,20 +57,38 @@ function isNode(): boolean {
 // ─── abstraction over the two worker backends ──────────────────────────────────
 
 interface JobHandle {
+  /**
+   * Resolves once the worker has loaded and the sketch is executing. The
+   * execution budget starts here, so module loading does not count against it.
+   */
+  readonly ready: Promise<void>;
   /** Resolves with the worker's ExecuteResult, or rejects if terminated/errored. */
   readonly promise: Promise<ExecuteResult>;
   terminate(): void;
 }
 
+/** A worker that has not loaded within this long is reported as failed to start. */
+const STARTUP_LIMIT_MS = 15_000;
+
 /** Browser module Worker backend. */
 function runInBrowserWorker(request: WorkerRequest): JobHandle {
   const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
+  let markReady: () => void = () => {};
+  const ready = new Promise<void>((resolve) => { markReady = resolve; });
   const promise = new Promise<ExecuteResult>((resolve, reject) => {
-    worker.onmessage = (e: MessageEvent<ExecuteResult>): void => resolve(e.data);
-    worker.onerror = (e: ErrorEvent): void => reject(new Error(e.message));
+    worker.onmessage = (e: MessageEvent<ExecuteResult | { type: "ready" }>): void => {
+      const data = e.data;
+      if ("type" in data && data.type === "ready") {
+        // Loaded: hand it the sketch and start the clock.
+        worker.postMessage(request);
+        markReady();
+        return;
+      }
+      resolve(data as ExecuteResult);
+    };
+    worker.onerror = (e: ErrorEvent): void => reject(new Error(e.message || "The code runner failed to load."));
   });
-  worker.postMessage(request);
-  return { promise, terminate: () => worker.terminate() };
+  return { ready, promise, terminate: () => worker.terminate() };
 }
 
 /** Node worker_threads backend (used by Vitest). */
@@ -106,7 +131,8 @@ function runInNodeWorker(request: WorkerRequest): JobHandle {
     worker.on("message", (msg: ExecuteResult) => resolve(msg));
     worker.on("error", (err: Error) => reject(err));
   });
-  return { promise, terminate: () => void worker.terminate() };
+  // Under Node the budget covers startup too, as the runtime tests expect.
+  return { ready: Promise.resolve(), promise, terminate: () => void worker.terminate() };
 }
 
 /**
@@ -155,24 +181,46 @@ export function createRuntime(board: Board): Runtime {
           resolve(result);
         };
 
-        const timer = setTimeout(() => {
+        const failWith = (error: string): void => {
           finish({
             mcuState: snapMcu,
+            startState: snapMcu,
             simResult: snapSim,
             logs: [],
-            error: "Execution timed out — possible infinite loop.",
+            trace: [],
+            traceTruncated: false,
+            error,
           });
-        }, TIMEOUT_MS);
+        };
+
+        // The 500 ms budget is for running the sketch, so start it once the
+        // worker has loaded. A worker that never loads gets its own message.
+        let timer: ReturnType<typeof setTimeout> = setTimeout(
+          () => failWith("The code runner did not start. Reload the page and try again."),
+          STARTUP_LIMIT_MS,
+        );
+        void job.ready.then(() => {
+          if (settled) return;
+          clearTimeout(timer);
+          timer = setTimeout(() => failWith("Execution timed out — possible infinite loop."), TIMEOUT_MS);
+        });
 
         job.promise.then(
           (exec: ExecuteResult) => {
+            const trace = exec.trace ?? [];
+            const traceTruncated = exec.traceTruncated ?? false;
             if (exec.error !== undefined) {
-              // User code threw — roll back persistent state.
+              // User code threw — roll back persistent state, keep the trace so
+              // the IDE can show what happened before the throw.
               finish({
                 mcuState: snapMcu,
+                startState: snapMcu,
                 simResult: snapSim,
                 logs: exec.logs,
+                trace,
+                traceTruncated,
                 error: exec.error,
+                ...(exec.errorLine !== undefined ? { errorLine: exec.errorLine } : {}),
               });
               return;
             }
@@ -180,14 +228,17 @@ export function createRuntime(board: Board): Runtime {
             const newSim = solve(board, exec.mcuState);
             mcuState = exec.mcuState;
             simResult = newSim;
-            finish({ mcuState: exec.mcuState, simResult: newSim, logs: exec.logs });
+            finish({ mcuState: exec.mcuState, startState: snapMcu, simResult: newSim, logs: exec.logs, trace, traceTruncated });
           },
           (err: unknown) => {
             // Worker crashed or was terminated mid-flight — roll back.
             finish({
               mcuState: snapMcu,
+              startState: snapMcu,
               simResult: snapSim,
               logs: [],
+              trace: [],
+              traceTruncated: false,
               error: err instanceof Error ? err.message : String(err),
             });
           },

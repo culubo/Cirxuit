@@ -51,3 +51,52 @@ test("shot: biped-stalled", async ({ page }) => {
   await page.waitForTimeout(SETTLE_MS);
   await page.screenshot({ path: "test-results/shots/biped-stalled.png" });
 });
+
+// ── IDE workbench ────────────────────────────────────────────────────────────
+test.describe("ide", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("shot: ide-default", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForTimeout(SETTLE_MS * 2);
+    await page.screenshot({ path: "test-results/shots/ide-default.png" });
+  });
+
+  test("shot: ide-slow-replay", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("speed-select").selectOption("1");
+    await page.getByTestId("run-button").click();
+    await page.getByTestId("tab-trace").click();
+    await page.waitForTimeout(2300);
+    await page.screenshot({ path: "test-results/shots/ide-slow-replay.png" });
+  });
+
+  test("shot: ide-build-error", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("code-editor").fill('pinMode(8, OUTPUT);\ndigitalwrite(99, HIGH);\ndelay(500);\n');
+    await page.waitForTimeout(600);
+    await page.getByTestId("run-button").click();
+    await page.waitForTimeout(SETTLE_MS);
+    await page.screenshot({ path: "test-results/shots/ide-build-error.png" });
+  });
+
+  test("shot: builder", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("mode-build").click();
+    await page.getByTestId("builder-starter").click();
+    await page.getByTestId("palette-npn").click();
+    await page.getByTestId("builder-canvas").click({ position: { x: 380, y: 520 } });
+    await page.waitForTimeout(SETTLE_MS);
+    await page.screenshot({ path: "test-results/shots/builder.png" });
+  });
+
+  test("shot: builder-simulated", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("mode-build").click();
+    await page.getByTestId("builder-starter").click();
+    await page.getByTestId("builder-simulate").click();
+    await page.getByTestId("run-button").click();
+    await page.waitForTimeout(SETTLE_MS * 2);
+    await page.screenshot({ path: "test-results/shots/builder-simulated.png" });
+  });
+});
