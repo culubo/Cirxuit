@@ -22,16 +22,6 @@ import { formatQuantity } from "./format";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
-/**
- * Branch-current readout. Fixed to milliamps so the number is comparable at a
- * glance across the list and so the e2e current parser (which reads mA) stays
- * valid. Three significant figures, monospace.
- */
-function fmtMilliAmps(amps: number): string {
-  if (!Number.isFinite(amps)) return "—";
-  return `${(amps * 1000).toPrecision(3)} mA`;
-}
-
 function branchAmps(simResult: SimResult | null, ref: string): number | null {
   if (!simResult) return null;
   const b = simResult.branches.find((br) => br.ref === ref);
@@ -293,7 +283,7 @@ export default function InspectorPanel(): React.ReactElement {
                     fontVariantNumeric: "tabular-nums",
                   }}
                 >
-                  {amps !== null ? fmtMilliAmps(amps) : "—"}
+                  {amps !== null ? formatQuantity(amps, "A") : "—"}
                 </span>
               </div>
             );
