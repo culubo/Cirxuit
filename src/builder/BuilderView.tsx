@@ -13,6 +13,7 @@ import {
   placedPads, rotatePart, snap, unwiredPads, wireRoute, type PadRef,
 } from "./doc";
 import { TEMPLATES, type TemplateKind } from "./templates";
+import BuildReplay from "./BuildReplay";
 import { button, font } from "../ui/chrome";
 import { tokens } from "../ui/tokens";
 
@@ -34,6 +35,7 @@ export default function BuilderView(): React.ReactElement {
   const [cursor, setCursor] = useState<Point | null>(null);
   const [hoverPad, setHoverPad] = useState<string | null>(null);
   const drag = useRef<{ ref: string; dx: number; dy: number; moved: boolean } | null>(null);
+  const [replay, setReplay] = useState(false);
 
   const unwired = useMemo(() => unwiredPads(doc), [doc]);
   const placing: TemplateKind | null = tool.startsWith("place:") ? (tool.slice(6) as TemplateKind) : null;
@@ -172,6 +174,14 @@ export default function BuilderView(): React.ReactElement {
         >
           ⟳ Rotate
         </button>
+        <button
+          data-testid="build-replay-open"
+          title="Watch the 40-part robot controller being laid out and routed"
+          onClick={() => setReplay(true)}
+          style={button()}
+        >
+          ▶ Watch a board get routed
+        </button>
         <span data-testid="builder-hint" style={{ ...font, marginLeft: "0.6rem", fontSize: "0.72rem", color: tokens.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {statusText}
         </span>
@@ -300,6 +310,8 @@ export default function BuilderView(): React.ReactElement {
           />
         )}
       </svg>
+
+      {replay && <BuildReplay boardId="robot-controller-board" onClose={() => setReplay(false)} />}
     </div>
   );
 }

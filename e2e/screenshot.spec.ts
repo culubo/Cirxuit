@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * Visual-polish verification harness. Not part of acceptance — it captures PNGs
@@ -155,5 +155,51 @@ test.describe("schematic", () => {
   test("shot: schematic-biped", async ({ page }) => {
     await openExploded(page, "biped-power-board", "");
     await page.screenshot({ path: "test-results/shots/schematic-biped.png" });
+  });
+});
+
+// ── Robot view ──────────────────────────────────────────────────────────────
+test.describe("robot", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  async function openRobot(page: import("@playwright/test").Page): Promise<void> {
+    await page.goto("/");
+    await page.getByTestId("board-switcher").selectOption("biped-power-board");
+    if (await page.getByTestId("guide-panel").isVisible()) await page.getByTestId("guide-toggle").click();
+    await page.getByTestId("robot-view-toggle").click();
+    await expect(page.getByTestId("robot-state")).toHaveAttribute("data-robot-ready", "true", { timeout: 15_000 });
+  }
+  async function stall(page: import("@playwright/test").Page, ref: string): Promise<void> {
+    await page.getByTestId(`part-${ref}`).click();
+    await page.getByTestId("stall-toggle").click();
+  }
+
+  test("shot: robot-transition", async ({ page }) => {
+    await openRobot(page);
+    await page.waitForTimeout(650);
+    await page.screenshot({ path: "test-results/shots/robot-transition.png" });
+  });
+
+  test("shot: robot-walking", async ({ page }) => {
+    await openRobot(page);
+    await page.waitForTimeout(2200);
+    await page.screenshot({ path: "test-results/shots/robot-walking.png" });
+  });
+
+  test("shot: robot-limping", async ({ page }) => {
+    await openRobot(page);
+    await stall(page, "J2");
+    await page.waitForTimeout(2200);
+    await page.screenshot({ path: "test-results/shots/robot-limping.png" });
+  });
+
+  test("shot: robot-brownout", async ({ page }) => {
+    await openRobot(page);
+    await page.waitForTimeout(1600);
+    await stall(page, "J2");
+    await stall(page, "J3");
+    await expect(page.getByTestId("robot-state")).toHaveAttribute("data-robot-phase", "collapse");
+    await page.waitForTimeout(2500);
+    await page.screenshot({ path: "test-results/shots/robot-brownout.png" });
   });
 });

@@ -5,6 +5,8 @@
 import React from "react";
 import { useStore } from "../store/useStore";
 import { tokens } from "./tokens";
+import { isRobotBoard } from "../robot/robotState";
+import { useRobotStore } from "../robot/useRobotStore";
 
 const wrap: React.CSSProperties = {
   position: "absolute",
@@ -50,6 +52,10 @@ export default function SceneControls(): React.ReactElement {
   const setShowSchematic = useStore((s) => s.setShowSchematic);
   const schematicOpacity = useStore((s) => s.schematicOpacity);
   const setSchematicOpacity = useStore((s) => s.setSchematicOpacity);
+  const robotBoard = useStore((s) => isRobotBoard(s.board));
+  const robotView = useRobotStore((s) => s.robotView);
+  const setRobotView = useRobotStore((s) => s.setRobotView);
+  const inRobot = robotBoard && robotView;
 
   return (
     <div style={wrap}>
@@ -62,6 +68,8 @@ export default function SceneControls(): React.ReactElement {
           max={1}
           step={0.01}
           value={explode}
+          disabled={inRobot}
+          title={inRobot ? "The board stays assembled inside the robot" : undefined}
           onChange={(e) => setExplode(Number(e.target.value))}
           style={{ width: "100%", accentColor: tokens.phosphor }}
         />
@@ -109,7 +117,30 @@ export default function SceneControls(): React.ReactElement {
         </button>
       </div>
 
-      {hasSchematic && (
+      {robotBoard && (
+        <div style={toggleRow}>
+          <span style={label}>Robot view</span>
+          <button
+            data-testid="robot-view-toggle"
+            aria-pressed={robotView}
+            onClick={() => setRobotView(!robotView)}
+            title="Show the robot this board powers"
+            style={{
+              background: robotView ? "#0a2238" : "transparent",
+              border: `1px solid ${robotView ? "#1f6fb2" : tokens.hairline}`,
+              borderRadius: "2px",
+              color: robotView ? tokens.phosphor : tokens.textFaint,
+              fontFamily: "monospace",
+              fontSize: "0.72rem",
+              padding: "0.2rem 0.5rem",
+              cursor: "pointer",
+            }}
+          >
+            {robotView ? "On" : "Off"}
+          </button>
+        </div>
+      )}
+      {hasSchematic && !inRobot && (
         <>
           <div style={toggleRow}>
             <span style={label}>Schematic</span>

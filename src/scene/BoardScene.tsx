@@ -7,6 +7,7 @@ import Lighting from "./Lighting";
 import SceneRoot from "./SceneRoot";
 import CurrentParticles from "./CurrentParticles";
 import AutoFitCamera from "./AutoFitCamera";
+import RobotRig from "../robot/RobotRig";
 import { tokens } from "../ui/tokens";
 
 /**
@@ -28,8 +29,11 @@ export default function BoardScene(): React.ReactElement {
       <OrbitControls makeDefault enableDamping dampingFactor={0.1} />
       <AutoFitCamera />
 
-      <SceneRoot />
-      <CurrentParticles />
+      {/* In Robot view the board (with its particles) moves into the robot's chest. */}
+      <RobotRig>
+        <SceneRoot />
+        <CurrentParticles />
+      </RobotRig>
 
       <EffectComposer>
         <Bloom

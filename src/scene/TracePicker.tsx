@@ -57,10 +57,16 @@ export default function TracePicker({ board }: { board: Board }): React.ReactEle
     }
   });
 
+  // Board-space hit point, even when the board group is moved (Robot view).
+  const boardPoint = (e: ThreeEvent<PointerEvent | MouseEvent>): { x: number; y: number } => {
+    const p = e.object.parent ? e.object.parent.worldToLocal(e.point.clone()) : e.point;
+    return { x: p.x, y: -p.y };
+  };
   const handlers = (layer: "F.Cu" | "B.Cu") => ({
     onPointerMove: (e: ThreeEvent<PointerEvent>) => {
       const s = useStore.getState();
-      const t = traceAt(board, layer, e.point.x, -e.point.y);
+      const at = boardPoint(e);
+      const t = traceAt(board, layer, at.x, at.y);
       if (t) {
         if (s.hover?.kind !== "part") s.setHover({ kind: "net", netId: t.netId });
       } else if (s.hover?.kind === "net") {
@@ -72,7 +78,8 @@ export default function TracePicker({ board }: { board: Board }): React.ReactEle
       if (s.hover?.kind === "net") s.setHover(null);
     },
     onClick: (e: ThreeEvent<MouseEvent>) => {
-      const t = traceAt(board, layer, e.point.x, -e.point.y);
+      const at = boardPoint(e);
+      const t = traceAt(board, layer, at.x, at.y);
       if (!t) return; // let the click fall through to deselect
       e.stopPropagation();
       useStore.getState().setSelection({ kind: "net", netId: t.netId });
