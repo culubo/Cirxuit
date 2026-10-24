@@ -1,17 +1,16 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { Track } from "../model/board-model";
+import { copperMaterial } from "./materials";
 
 interface TrackStripProps {
   track: Track;
+  /** True when a selection exists and this track is not on a focused net. */
+  dimmed: boolean;
 }
 
-const LAYER_COLORS: Record<string, THREE.Color> = {
-  "F.Cu": new THREE.Color("#d4a843"),   // copper yellow (front)
-  "B.Cu": new THREE.Color("#c0392b"),   // copper red (back)
-  "In1.Cu": new THREE.Color("#8e44ad"), // inner 1
-  "In2.Cu": new THREE.Color("#2980b9"), // inner 2
-};
+const DIM_OPACITY = 0.18;
 
 const LAYER_Z: Record<string, number> = {
   "F.Cu": 0.05,
@@ -24,7 +23,7 @@ const LAYER_Z: Record<string, number> = {
  * Renders a single copper track as a flat rectangular strip.
  * Positioned mid-way between start and end, rotated to align with the track direction.
  */
-export default function TrackStrip({ track }: TrackStripProps): React.ReactElement {
+export default function TrackStrip({ track, dimmed }: TrackStripProps): React.ReactElement {
   const { geometry, position, rotationZ } = useMemo(() => {
     const dx = track.end.x - track.start.x;
     const dy = track.end.y - track.start.y; // in board space (+y down)
@@ -52,11 +51,17 @@ export default function TrackStrip({ track }: TrackStripProps): React.ReactEleme
     };
   }, [track]);
 
-  const color = LAYER_COLORS[track.layer] ?? new THREE.Color("#d4a843");
+  const material = useMemo(() => copperMaterial(track.layer === "B.Cu"), [track.layer]);
+
+  // Ease opacity toward the dim target when the track is off the focused net.
+  useFrame((_, delta) => {
+    const targetOpacity = dimmed ? DIM_OPACITY : 1;
+    const k = 1 - Math.exp(-delta / 0.06); // ~200 ms settle
+    material.opacity += (targetOpacity - material.opacity) * k;
+    material.transparent = material.opacity < 0.99;
+  });
 
   return (
-    <mesh geometry={geometry} position={position} rotation={[0, 0, rotationZ]}>
-      <meshStandardMaterial color={color} roughness={0.4} metalness={0.6} />
-    </mesh>
+    <mesh geometry={geometry} position={position} rotation={[0, 0, rotationZ]} material={material} />
   );
 }

@@ -6,7 +6,9 @@ import BoardScene from "./scene/BoardScene";
 import PartOverlay from "./scene/PartOverlay";
 import InspectorPanel from "./ui/InspectorPanel";
 import BoardSwitcher from "./ui/BoardSwitcher";
+import SceneControls from "./ui/SceneControls";
 import SceneErrorBoundary from "./ui/SceneErrorBoundary";
+import { tokens } from "./ui/tokens";
 
 /**
  * Loads the board selected by `boardId` from the registry, re-solves it, and
@@ -52,7 +54,7 @@ export default function App(): React.ReactElement {
       style={{
         width: "100%",
         height: "100%",
-        background: "#0d1117",
+        background: tokens.bg,
         position: "relative",
       }}
     >
@@ -64,6 +66,9 @@ export default function App(): React.ReactElement {
 
       {/* Board switcher (top-left) */}
       <BoardSwitcher />
+
+      {/* Scene controls: explode slider + flow toggles (bottom-left) */}
+      <SceneControls />
 
       {/* HTML overlay: invisible per-part buttons for pointer parity / a11y */}
       {board && <PartOverlay board={board} />}

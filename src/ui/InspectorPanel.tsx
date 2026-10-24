@@ -18,10 +18,17 @@ import type { Board, ElectricalModel, Part, SimResult } from "../model/board-mod
 import { createRuntime, type Runtime } from "../runtime/runtime";
 import ParamField from "./ParamField";
 import { formatEngineering } from "./parse-eng";
+import { formatQuantity } from "./format";
 
 // ─── formatting ───────────────────────────────────────────────────────────────
 
+/**
+ * Branch-current readout. Fixed to milliamps so the number is comparable at a
+ * glance across the list and so the e2e current parser (which reads mA) stays
+ * valid. Three significant figures, monospace.
+ */
 function fmtMilliAmps(amps: number): string {
+  if (!Number.isFinite(amps)) return "—";
   return `${(amps * 1000).toPrecision(3)} mA`;
 }
 
@@ -252,6 +259,7 @@ export default function InspectorPanel(): React.ReactElement {
         <SelectedPartPanel
           part={selectedPart}
           deviceState={simResult?.deviceStates[selectedPart.ref]}
+          netVoltages={simResult?.netVoltages}
           originalBoard={originalBoard}
           paramError={paramError}
           onParamError={setParamError}
@@ -408,6 +416,7 @@ export default function InspectorPanel(): React.ReactElement {
 interface SelectedPartPanelProps {
   part: Part;
   deviceState: string | undefined;
+  netVoltages: Record<string, number> | undefined;
   originalBoard: Board | null;
   paramError: string | null;
   onParamError: (message: string | null) => void;
@@ -418,6 +427,7 @@ interface SelectedPartPanelProps {
 function SelectedPartPanel({
   part,
   deviceState,
+  netVoltages,
   originalBoard,
   paramError,
   onParamError,
@@ -450,6 +460,25 @@ function SelectedPartPanel({
       {part.blurb && (
         <div style={{ color: "#7a8a7a", marginTop: "0.25rem", fontSize: "0.75rem" }}>
           {part.blurb}
+        </div>
+      )}
+
+      {/* Live pad voltages, formatted with SI prefixes via formatQuantity. */}
+      {netVoltages && part.pads.length > 0 && (
+        <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.05rem" }}>
+          {part.pads.map((pad) => (
+            <div key={pad.number} style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#6a7a6a" }}>
+                pad {pad.number}{pad.netId ? ` · ${pad.netId}` : ""}
+              </span>
+              <span
+                data-testid={`inspector-pad-voltage-${part.ref}-${pad.number}`}
+                style={{ color: "#aac0aa", fontVariantNumeric: "tabular-nums" }}
+              >
+                {pad.netId ? formatQuantity(netVoltages[pad.netId] ?? 0, "V") : "—"}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 

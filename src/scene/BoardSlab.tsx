@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
 import type { Vec2 } from "../model/board-model";
+import { solderMaskMaterial } from "./materials";
 
 interface BoardSlabProps {
   outline: Vec2[];
@@ -34,9 +35,9 @@ export default function BoardSlab({ outline, thicknessMm }: BoardSlabProps): Rea
     return new THREE.ExtrudeGeometry(shape, extrudeSettings);
   }, [outline, thicknessMm]);
 
+  const material = useMemo(() => solderMaskMaterial(), []);
+
   return (
-    <mesh geometry={geometry} position={[0, 0, -thicknessMm]}>
-      <meshStandardMaterial color="#1a5e20" roughness={0.6} metalness={0.05} />
-    </mesh>
+    <mesh geometry={geometry} position={[0, 0, -thicknessMm]} material={material} castShadow receiveShadow />
   );
 }

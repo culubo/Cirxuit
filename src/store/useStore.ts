@@ -22,6 +22,11 @@ interface AppState {
   runError: string | null;
   running: boolean;
 
+  // Scene controls
+  explode: number;        // 0..1 layer separation target
+  showParticles: boolean;
+  electronFlow: boolean;  // false = conventional current direction
+
   // Actions
   setBoardId: (boardId: string) => void;
   setBoard: (board: Board) => void;
@@ -31,6 +36,9 @@ interface AppState {
   setLogs: (logs: unknown[]) => void;
   setRunError: (runError: string | null) => void;
   setRunning: (running: boolean) => void;
+  setExplode: (explode: number) => void;
+  setShowParticles: (showParticles: boolean) => void;
+  setElectronFlow: (electronFlow: boolean) => void;
   /** Reset per-board transient state (selection, mcuState, logs, error). */
   resetRuntimeState: () => void;
   /** Flip a servo part's stalled flag and re-solve the board. */
@@ -58,6 +66,10 @@ export const useStore = create<AppState>((set) => ({
   runError: null,
   running: false,
 
+  explode: 0,
+  showParticles: true,
+  electronFlow: false,
+
   setBoardId: (boardId) => set({ boardId }),
   // Capture a pristine snapshot alongside the live board for modified/reset.
   setBoard: (board) => set({ board, originalBoard: structuredClone(board) }),
@@ -67,6 +79,9 @@ export const useStore = create<AppState>((set) => ({
   setLogs: (logs) => set({ logs }),
   setRunError: (runError) => set({ runError }),
   setRunning: (running) => set({ running }),
+  setExplode: (explode) => set({ explode }),
+  setShowParticles: (showParticles) => set({ showParticles }),
+  setElectronFlow: (electronFlow) => set({ electronFlow }),
   resetRuntimeState: () =>
     set({
       mcuState: { modes: {}, outputs: {} },
