@@ -177,7 +177,7 @@ export default function InspectorPanel(): React.ReactElement {
           {/* One-click Stall toggle for servo parts. */}
           {selectedPart.model?.type === "servo" && (
             <button
-              data-testid={`stall-toggle-${selectedPart.ref}`}
+              data-testid="stall-toggle"
               aria-pressed={selectedPart.model.stalled}
               onClick={() => toggleServoStall(selectedPart.ref)}
               style={{
@@ -229,6 +229,35 @@ export default function InspectorPanel(): React.ReactElement {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* ── Warnings feed — always mounted when a board is loaded. Each warning
+           with a netId also carries data-testid="warning-<netId>" so e2e can
+           assert rail state. ── */}
+      {board && (
+        <div style={section} data-testid="warning-feed">
+          <div style={sectionLabel}>Warnings</div>
+          {(simResult?.warnings.length ?? 0) === 0 ? (
+            <div style={{ color: "#5a7a5a", fontSize: "0.75rem" }}>No warnings.</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              {simResult!.warnings.map((w, i) => (
+                <div
+                  key={`${w.netId ?? w.ref ?? "w"}-${i}`}
+                  {...(w.netId ? { "data-testid": `warning-${w.netId}` } : {})}
+                  style={{
+                    fontSize: "0.75rem",
+                    color: w.severity === "danger" ? "#e0923a" : "#c8c88a",
+                    borderLeft: `2px solid ${w.severity === "danger" ? "#a0402a" : "#6a6a2a"}`,
+                    paddingLeft: "0.5rem",
+                  }}
+                >
+                  {w.message}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
