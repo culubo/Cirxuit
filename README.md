@@ -1,6 +1,8 @@
 # Circxit
 
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![CI](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml/badge.svg)](https://github.com/culubo/Cirxuit/actions/workflows/ci.yml)
+
+[Open the live demo](https://circuit-xray.vercel.app/) · [Three-minute video script](docs/demo-video-script.md)
 
 Circxit makes a robot's control board physically and electrically legible, so a
 developer can understand and validate the hardware their firmware runs on. Pull the board
@@ -31,6 +33,8 @@ when a stalled actuator will brown out the controller — before it happens in t
   switches an LED, plus a potentiometer on an ADC input.
 - **Biped power (concept)** — a 2S LiPo feeding four leg servos and a controller through
   the battery's internal resistance and a fuse; stall the servos to brown out the rail.
+- **Robot controller (assembly demo)** — watch placement and inspect the assembled board.
+- **Microduck Robot HAT (reference)** — an imported four-layer board from [Pollen Robotics' published KiCad design](https://github.com/pollen-robotics/elec_RPI_Robot_HAT). This is a layout reference, not an electrical simulation. The separate RK3566 compute board is represented by a CAD stand-in; see [hardware notes](docs/microduck-hardware.md).
 
 Switch between them with the board selector in the top-left.
 
