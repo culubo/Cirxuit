@@ -10,9 +10,12 @@ export default defineConfig({
   // so this suite runs serially (matching CI) rather than fully parallel.
   fullyParallel: false,
   forbidOnly: !!process.env["CI"],
+  // Linux CI renders the WebGL scene in software, so interactions can take
+  // longer than on a desktop with a GPU.
+  timeout: process.env["CI"] ? 90_000 : 30_000,
   retries: process.env["CI"] ? 2 : 1,
   workers: 1,
-  reporter: "html",
+  reporter: process.env["CI"] ? [["list"], ["html", { open: "never" }]] : "html",
   use: {
     baseURL,
     trace: "on-first-retry",
