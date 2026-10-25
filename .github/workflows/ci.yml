@@ -51,8 +51,10 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
+      # screenshot.spec.ts captures images for manual review; it has no assertions
+      # and takes much longer than the functional browser acceptance suite.
       - name: E2E tests
-        run: npx playwright test
+        run: npx playwright test --grep-invert "shot:"
 
       - name: Upload Playwright report
         if: failure()
